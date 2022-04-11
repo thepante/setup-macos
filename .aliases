@@ -1,0 +1,63 @@
+alias ls='ls -G'
+alias -g grep='grep --color=auto'
+alias cp='cp -iv'
+alias mv='mv -iv'
+
+alias hosts='sudo nvim /etc/hosts'
+alias vhosts='nvim /usr/local/etc/httpd/extra/httpd-vhosts.conf'
+
+# folders
+alias projects='cd ~/Projects'
+alias pj='cd ~/Projects'
+alias dl='cd ~/Downloads'
+alias cn='cd ~/Documents/Canillita'
+
+alias adonis='ssh fabian@****'
+alias perseo='ssh -L 33306:0.0.0.0:3306 fabian@****'
+alias awspante='ssh -i "~/.ssh/****" ****.amazonaws.com'
+
+# falta fix - mejor usar una fn
+# alias co='fd -HLI -t f . -E node_modules -E .git -E *cache | code $(fzf)'
+
+# export FZF_DEFAULT_COMMAND='fd'
+
+
+# mogrify - convertir imgs
+function conv(){
+  args=("$@")
+    dest=converted
+    limit=500 #limit size en KB
+    width= #width para -resize
+    target= #especificar input
+    [[ ! -d "$dest" ]] && mkdir "$dest" 
+    for ((i=0; i < $#; i++)) {
+      if [[ ${args[$i]} = "-limit" ]] then
+        limit=${args[$i+1]}
+      elif [[ ${args[$i]} = "-width" ]] then
+        width=${args[$i+1]}
+      elif [[ ${args[$i]} = "-target" ]] then
+        target=${args[$i+1]}
+      fi
+    }
+  mogrify -verbose -path $dest -format jpg -define jpeg:extent=${limit}KB $([[ ${width} ]] && echo -resize $width) *$([[ ${target} ]] && echo .$target)
+}
+
+# workaround nvim relativo ya que me volví loco queriendo hacer que nvim establezca cwd a la carpeta por args
+function nvim(){
+  bin=/usr/local/bin/nvim
+  if [ ! -z "$1" ]; then
+    if [[ -d $1 ]]; then
+      cd "$1"; $bin; cd -;
+    else
+       $bin $1;
+    fi
+  else
+    $bin
+  fi
+}
+
+# git pull sin cd
+function pull(){
+  cd "$1" && git pull && cd ..;
+}
+
