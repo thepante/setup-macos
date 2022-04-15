@@ -591,6 +591,7 @@
 
   ],
   "Non Ascii Font" : "FiraCodeNerdFontCompleteM-Retina 12",
+  "Mouse Reporting allow mouse wheel" : false,
   "Ansi 13 Color" : {
     "Red Component" : 0.70508623123168945,
     "Color Space" : "sRGB",
