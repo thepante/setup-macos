@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-languages=`echo "bash rust go python php nodejs typescript javascript html css" | tr ' ' '\n'`
-core_utils=`echo "xargs find mv sed awk" | tr ' ' '\n'`
+languages=`echo "bash rust go python php angular nodejs typescript javascript jquery html css" | tr ' ' '\n'`
+core_utils=`echo "xargs find rg mv sed awk vim" | tr ' ' '\n'`
 selected=`printf "$languages\n$core_utils" | fzf`
 
 read -p "Search: " query

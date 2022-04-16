@@ -31,6 +31,7 @@ lang en_US.UTF-8
 " escape insert mode
 inoremap kj <esc>
 cnoremap kj <C-c>
+tnoremap kj <C-\><C-n>
 
 " Set leader
 nnoremap <SPACE> <Nop>
@@ -38,12 +39,11 @@ let mapleader=" "
 
 " Rename a symbol
 nmap <leader>r <Plug>(coc-rename)
+nmap <leader>R #Ncgn
 
 " Disable arrow keys
 noremap <Up> <Nop>
 noremap <Down> <Nop>
-" noremap <Left> <Nop>
-" noremap <Right> <Nop>
 noremap <Left> :bprev<CR>
 noremap <Right> :bnext<CR>
 
@@ -52,14 +52,15 @@ noremap <Right> :bnext<CR>
 " nmap <C-j> o<Esc>k
 
 " Insert spaces before/after cursor
-nmap <C-h> i<space><Right><Esc>
-nmap <C-l> a<space><Left><Esc>
+" nmap <C-h> i<space><Right><Esc>
+" nmap <C-l> a<space><Left><Esc>
 
 " Undo changes since last save
 nmap U :edit!<CR>
 
 " Clear search using enter
-noremap <CR> :noh<CR>
+" noremap <CR> :noh<CR>
+noremap <CR> :noh<CR>:echo ''<CR>
 
 " Move lines
 nnoremap <C-j> :m .+1<CR>==
@@ -81,8 +82,11 @@ nmap <leader>l :wincmd l<CR>
 
 " Close buffer
 " nnoremap <C-w> :b#<bar>bd#<CR>
-nnoremap <leader>w :b#<bar>bd#<CR>
+" nnoremap <leader>w :b#<bar>bd#<CR>
+nnoremap <leader>w :bd<CR>
 " nnoremap <leader>w :bp<bar>sp<bar>bn<bar>bd<CR>
+" tnoremap <leader>w :bd!<CR>
+
 
 " Comment toggle
 " nnoremap <S-N> :Commentary<CR>
@@ -107,18 +111,37 @@ nmap dab va{o{oVd
 " Tab to go matching pair
 map <Tab> %
 
+" Coc Rest-client request
+noremap <Leader><CR> :CocCommand rest-client.request<CR>
+
 " Explore files
-command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
 map <C-Q> :NvimTreeToggle<CR>
 map <C-e> :FZF ~/<CR>
 map <C-T> :exe ":FZF " . expand("%:h")<CR>
 map <C-p> :ProjectFiles<CR>
+" map <C-P> :Telescope find_files<CR>
 map <C-o> :CocList symbols<CR>
 map <C-l> :BLines<CR>
 map <C-Y> :Rg<CR>
 
+" Navigation with Harpoon
+" map <leader>p :lua require("harpoon.ui").toggle_quick_menu()<CR>
+map <leader>p :Telescope harpoon marks theme=dropdown<CR>
+map <leader>m :lua require("harpoon.mark").add_file()<CR>
+map <leader>a :lua require("harpoon.ui").nav_prev()<CR>
+map <leader>d :lua require("harpoon.ui").nav_next()<CR>
+
 " set rtp+=/usr/local/opt/FZF
 
+" Git commands
+" nnoremap <leader>gs :Git status<CR>
+nnoremap <leader>gs :!git fetch && git status<CR>
+nnoremap <leader>gp :Git pull<CR>
+nnoremap <leader>gf :Git diff %<CR>
+nnoremap <leader>gd :Gdiffsplit<CR>
+
+hi DiffAdd gui=NONE guifg=green guibg=black
 
 " Paste remplace inside string - without yank
 nnoremap cv vi"pgvy
@@ -128,9 +151,9 @@ nnoremap ccv vi'pgvy
 "imap <S-.> >
 
 " FZF window & preview
-let g:fzf_layout = { 'down': '~20%' }
+let g:fzf_layout = { 'down': '~30%' }
 let g:fzf_preview_window = ['right:40%:hidden', 'ctrl-/']
-let $FZF_DEFAULT_OPTS = '--margin=0,5'
+let $FZF_DEFAULT_OPTS = '--margin=0'
 
 " Coc extensions
 let g:coc_global_extensions = [
@@ -155,9 +178,12 @@ set nocompatible
 
 call plug#begin('~/.local/share/nvim/plugged')
   " Interface
-  Plug 'mhinz/vim-signify'
+  Plug 'rktjmp/lush.nvim'
+  Plug 'lewis6991/gitsigns.nvim'
+  " Plug 'mhinz/vim-signify'
   Plug 'ap/vim-buftabline'
   Plug 'ojroques/nvim-hardline'
+  Plug 'itchyny/lightline.vim'
   Plug 'echasnovski/mini.nvim', { 'branch': 'stable' }
   Plug 'lukas-reineke/indent-blankline.nvim'
 
@@ -175,6 +201,9 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'kyazdani42/nvim-tree.lua'
+  Plug 'nvim-lua/plenary.nvim'
+  Plug 'nvim-telescope/telescope.nvim'
+  Plug 'ThePrimeagen/harpoon'
   " Plug 'antoinemadec/coc-fzf'
   " Plug 'gfanto/fzf-lsp.nvim'
 
@@ -182,13 +211,15 @@ call plug#begin('~/.local/share/nvim/plugged')
   " Plug 'justinmk/vim-sneak'
   Plug 'ggandor/lightspeed.nvim'
 
-  " Code helpers
+  " Code helpers & refactoring
   Plug 'tpope/vim-surround'
   Plug 'alvan/vim-closetag'
   Plug 'mattn/emmet-vim'
+  Plug 'AndrewRadev/splitjoin.vim'
   Plug 'michaeljsmith/vim-indent-object'
 
   " Syntax highlight & text objects
+  Plug 'yuezk/vim-js'
   Plug 'sheerun/vim-polyglot'
   Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
@@ -211,31 +242,29 @@ call plug#end()
 set termguicolors
 set background=dark
 " colorscheme ayu
-" colorscheme iceberg "3
-" colorscheme gruvbox8_hard "2
-colorscheme embark "1
+" colorscheme gruvbox8_hard
+" colorscheme zenwritten
+" colorscheme tokyobones
+" colorscheme neobones
+colorscheme rosebones "3
+" colorscheme iceberg "2
+" colorscheme embark "1
 
 " " Light theme este?
 " let g:aquarium_style="light"
 " colorscheme aquarium
 
 let g:zenbones = #{ solid_line_nr: v:true, darken_comments: 45 }
-let g:zenbones_compat = 1
+let g:zenbones_compat = 0
 
 " set background=light
 " colorscheme PaperColor
 " colorscheme github_light "2
 " colorscheme inspired-github "1
 " colorscheme zenwritten
-" colorscheme zenbones
+" " colorscheme zenbones
 
-" let g:signify_sign_add = '▊'
-" let g:signify_sign_change = '▊'
-" let g:signify_sign_add = '│'
-" let g:signify_sign_change = '│'
-
-
-" let g:nvim_tree_respect_buf_cwd = 1
+let g:nvim_tree_git_hl = 1
 " let g:nvim_tree_highlight_opened_files = 1
 
 let g:nvim_tree_show_icons = {
@@ -270,11 +299,51 @@ let g:nvim_tree_icons = {
     \   }
     \ }
 
+
+let g:lightline = {
+    \ 'colorscheme': 'rosebones',
+    \ 'active': {
+    \   'left': [ [ 'mode', 'paste' ],
+    \             [ 'gitbranch', 'gitstatus', 'readonly' ],
+    \             [ 'filename', 'modified' ]
+    \           ],
+    \   'right': [ [ 'cwd' ],
+    \              [],
+    \              [ 'lineinfo', 'fileformat', 'filetype' ]
+    \            ],
+    \ },
+    \ 'inactive': {
+    \   'left': [ [ 'mode', 'paste' ],
+    \             [ 'gitbranch', 'gitstatus', 'readonly' ],
+    \             [ 'filename', 'modified' ]
+    \           ],
+    \   'right': [ [ 'cwd' ],
+    \              [],
+    \              [ 'lineinfo', 'fileformat', 'filetype' ]
+    \            ],
+    \ },
+    \ 'component': {
+    \   'filename': '%{expand("%")}%<',
+    \   'lineinfo': '%3l:%-2v',
+    \   'cwd': '%{fnamemodify(getcwd(), ":t")}',
+    \   'gitstatus': '%{get(b:,"gitsigns_status","")}',
+    \   'gitbranch': '(%{get(b:,"gitsigns_head","")})',
+    \ },
+    \ 'subseparator': {
+    \   'left': '',
+    \   'right': '⋅',
+    \ },
+  \ }
+
 lua <<EOF
+require('gitsigns').setup()
+require('telescope').setup { defaults = { preview = false } }
+require('telescope').load_extension('harpoon')
+
 -- local mini_indentscope = require('mini.indentscope')
 -- mini_indentscope.setup({ draw = { animation = mini_indentscope.gen_animation('none') } })
-
 -- require('mini.indentscope').setup {}
+
 require('mini.trailspace').setup {}
 -- require('mini.surround').setup {}
 
@@ -291,30 +360,37 @@ require('indent_blankline').setup {
 require('nvim-tree').setup {
   -- update_cwd = 0,
   filters = {
-    custom = { '.git', 'node_modules' },
+    dotfiles = false,
+    custom = { '.git', 'node_modules', '.DS_Store' },
   },
   update_cwd = true,
   update_focused_file = {
     enable = true,
   },
+  actions = {
+    open_file = {
+      quit_on_open = true,
+    },
+  },
 }
 
-require('hardline').setup {
-  sections = {
-    {class = 'mode', item = require('hardline.parts.mode').get_item},
-    {class = 'high', item = require('hardline.parts.git').get_item, hide = 100}, -- custom @ /parts/git.lua
-    '%<',
-    {class = 'low', item = require('hardline.parts.filename').get_item},
-    '%>',
-    {class = 'med', item = '%='},
-    {class = 'high', item = vim.bo.fileformat},
-    {class = 'error', item = require('hardline.parts.lsp').get_error},
-    {class = 'warning', item = require('hardline.parts.lsp').get_warning},
-    {class = 'low', item = require('hardline.parts.line').get_item}, -- custom @ /parts/line.lua
-    {class = 'high', item = require('hardline.parts.filetype').get_item, hide = 60},
-    {class = 'med', item = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")},
-  }
-}
+-- require('hardline').setup {
+--   theme = 'codeschool_light',
+--   sections = {
+--     {class = 'mode', item = require('hardline.parts.mode').get_item},
+--     {class = 'high', item = require('hardline.parts.git').get_item, hide = 100}, -- custom @ /parts/git.lua
+--     '%<',
+--     {class = 'low', item = require('hardline.parts.filename').get_item},
+--     '%>',
+--     {class = 'med', item = '%='},
+--     {class = 'high', item = vim.bo.fileformat},
+--     {class = 'error', item = require('hardline.parts.lsp').get_error},
+--     {class = 'warning', item = require('hardline.parts.lsp').get_warning},
+--     {class = 'low', item = require('hardline.parts.line').get_item}, -- custom @ /parts/line.lua
+--     {class = 'high', item = require('hardline.parts.filetype').get_item, hide = 60},
+--     {class = 'med', item = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")},
+--   }
+-- }
 
 require('auto-session').setup {
   log_level = 'error',
@@ -337,6 +413,7 @@ require'nvim-treesitter.configs'.setup {
     },
   },
 }
+
 EOF
 
 " --- Vim-Closetag
@@ -358,13 +435,11 @@ let g:closetag_regions = {
 let g:closetag_shortcut = '>'
 
 " Emmet (,, same as to set , as leader)
-imap ,, <C-y>,
-" let g:user_emmet_leader_key=','
+" imap ,, <C-y>,
+let g:user_emmet_leader_key=','
 let g:user_emmet_install_global = 0
 autocmd FileType html,css,jsx,tsx,vue,php,blade,php.css.html EmmetInstall
 
-" PENDIENTE:
-" au FileType html imap <buffer><expr><tab> <sid>zen_html_tab()
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
@@ -376,17 +451,20 @@ inoremap <silent><expr> <TAB>
       \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
+" Trigger emmet with tab or enter - TODO (combinar con el anterior)
+function! s:zen_html_tab()
+  return "\,,"
+endfunction
+" autocmd FileType html imap <buffer><expr><tab> <sid>zen_html_tab()
+" autocmd FileType html imap <buffer><expr><CR> <sid>zen_html_tab()
+
 function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
 " Use <c-space> to trigger completion.
-if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
-else
-  inoremap <silent><expr> <c-@> coc#refresh()
-endif
+inoremap <silent><expr> <c-space> coc#refresh()
 
 " Make <CR> auto-select the first completion item and notify coc.nvim to
 " format on enter, <cr> could be remapped by other vim plugin
@@ -395,9 +473,9 @@ inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
 
 " GoTo code navigation
 nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gi <Plug>(coc-references)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gr <Plug>(coc-implementation)
-nmap <silent> gi <Plug>(coc-references)
 
 " K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -441,33 +519,41 @@ if exists('g:vscode')
   nnoremap <silent> <C-r> :<C-u>call VSCodeNotify('redo')<CR>
 endif
 
+" " Set the title of the Terminal to the currently open file
+" function! SetTerminalTitle()
+"     let titleString = expand('%:t')
+"     if len(titleString) > 0
+"         let &titlestring = expand('%:t')
+"         " this is the format iTerm2 expects when setting the window title
+"         let args = "\033];".&titlestring."\007"
+"         let cmd = 'silent !echo -e "'.args.'"'
+"         execute cmd
+"         redraw!
+"     endif
+" endfunction
+" autocmd VimEnter * call SetTerminalTitle()
+
 augroup highlight_yank
   autocmd!
-  au TextYankPost * silent! lua vim.highlight.on_yank({higroup="IncSearch", timeout=200})
+  au TextYankPost * silent! lua vim.highlight.on_yank({higroup="IncSearch", timeout=100})
 augroup END
 
-" Auto close if last real buffer (no NvimTree)
-" autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif
+function! s:duplicate_file()
+  execute 'saveas' expand('%:p') . "-copy_" . localtime()
+endfunction
+command! Duplicate execute s:duplicate_file()
 
 map <Up> <nop>
 map <Down> <Nop>
-noremap <ScrollWheelUp> <nop>
-noremap <S-ScrollWheelUp> <nop>
-noremap <C-ScrollWheelUp> <nop>
-noremap <ScrollWheelDown> <nop>
-noremap <S-ScrollWheelDown> <nop>
-noremap <C-ScrollWheelDown> <nop>
-noremap <ScrollWheelLeft> <nop>
-noremap <S-ScrollWheelLeft> <nop>
-noremap <C-ScrollWheelLeft> <nop>
-noremap <ScrollWheelRight> <nop>
-noremap <S-ScrollWheelRight> <nop>
-noremap <C-ScrollWheelRight> <nop>
+noremap <ScrollWheelUp> <Nop>
+noremap <ScrollWheelDown> <Nop>
 
-
+autocmd TermOpen * startinsert
 autocmd BufNewFile,BufRead .aliases set syntax=bash
 
 " autocmd VimEnter * silent! cd %:p:h
+" autocmd VimEnter * :RestoreSession<CR>:echo ''<CR>
+
 autocmd VimEnter * :RestoreSession<CR>
 autocmd VimLeave * :SaveSession<CR>
 
