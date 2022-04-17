@@ -80,7 +80,7 @@
   "Unlimited Scrollback" : false,
   "Custom Command" : "No",
   "AWDS Tab Option" : "Recycle",
-  "Title Components" : 512,
+  "Title Components" : 2,
   "Keyboard Map" : {
     "0xf70b-0x40000-0x0" : {
       "Action" : 10,

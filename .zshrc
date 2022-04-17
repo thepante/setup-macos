@@ -55,7 +55,7 @@ source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # FZF related
-fzf_excluded="-E node_modules -E .git -E '*cache' -E '*go/pkg' -E 'Media' -E 'Movies' -E '.zsh_*'"
+fzf_excluded="-E node_modules -E .git -E '*cache' -E '*go/pkg' -E 'Media' -E 'Movies' -E '.zsh_*' -E '.DS_Store'"
 export FZF_DEFAULT_OPTS='--ansi --multi'
 export FZF_DEFAULT_COMMAND='fd -HLI -t f . '$fzf_excluded
 export FZF_DIRS_COMMAND='fd -HLI -t d . '$fzf_excluded
@@ -65,6 +65,12 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 export HOMEBREW_NO_AUTO_UPDATE=1
+export LANG="UTF-8"
+
+precmd() {
+  # sets the tab title to current dir
+  echo -ne "\e]1;${PWD##*/}\a"
+}
 
 clear
 # chpwd() ls

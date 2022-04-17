@@ -48,7 +48,7 @@ function nvim(){
   bin=/usr/local/bin/nvim
   if [ ! -z "$1" ]; then
     if [[ -d $1 ]]; then
-      cd "$1"; $bin; cd -;
+      cd "$1" && echo -ne "\e]1;${PWD##*/}\a"; $bin; cd -;
     else
        $bin $1;
     fi

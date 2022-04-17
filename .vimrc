@@ -44,22 +44,13 @@ nmap <leader>R #Ncgn
 " Disable arrow keys
 noremap <Up> <Nop>
 noremap <Down> <Nop>
-noremap <Left> :bprev<CR>
-noremap <Right> :bnext<CR>
-
-" Insert empty line
-" nmap <C-k> O<Esc>j
-" nmap <C-j> o<Esc>k
-
-" Insert spaces before/after cursor
-" nmap <C-h> i<space><Right><Esc>
-" nmap <C-l> a<space><Left><Esc>
+noremap <Left> <Nop>
+noremap <Right> <Nop>
 
 " Undo changes since last save
 nmap U :edit!<CR>
 
 " Clear search using enter
-" noremap <CR> :noh<CR>
 noremap <CR> :noh<CR>:echo ''<CR>
 
 " Move lines
@@ -80,13 +71,18 @@ nmap <leader>j :wincmd j<CR>
 nmap <leader>h :wincmd h<CR>
 nmap <leader>l :wincmd l<CR>
 
+" Resize splits
+noremap \ :vertical resize +5<CR>
+noremap \| :vertical resize -5<CR>
+noremap <leader><BS> :resize -5<CR>
+noremap <BS> :resize +5<CR>
+
 " Close buffer
 " nnoremap <C-w> :b#<bar>bd#<CR>
 " nnoremap <leader>w :b#<bar>bd#<CR>
 nnoremap <leader>w :bd<CR>
 " nnoremap <leader>w :bp<bar>sp<bar>bn<bar>bd<CR>
 " tnoremap <leader>w :bd!<CR>
-
 
 " Comment toggle
 " nnoremap <S-N> :Commentary<CR>
@@ -95,12 +91,6 @@ nnoremap <C-N> :Commentary<CR>
 vnoremap <C-N> :Commentary<CR>
 nnoremap <C-_> :Commentary<CR>
 vnoremap <C-_> :Commentary<CR>
-
-" " Sneak
-" nmap f <Plug>Sneak_s
-" nmap F <Plug>Sneak_S
-" xmap f <Plug>Sneak_s
-" xmap F <Plug>Sneak_S
 
 " Delete around block
 nmap dao va{Vd
@@ -113,6 +103,11 @@ map <Tab> %
 
 " Coc Rest-client request
 noremap <Leader><CR> :CocCommand rest-client.request<CR>
+
+" Terminal
+" autocmd TermOpen * startinsert
+vnoremap <leader>t :split<CR>:terminal<CR>:resize 15<CR>a
+nnoremap <leader>t :split<CR>:terminal<CR>:resize 15<CR>a
 
 " Explore files
 command! -bang -nargs=* Rg call fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
@@ -132,10 +127,7 @@ map <leader>m :lua require("harpoon.mark").add_file()<CR>
 map <leader>a :lua require("harpoon.ui").nav_prev()<CR>
 map <leader>d :lua require("harpoon.ui").nav_next()<CR>
 
-" set rtp+=/usr/local/opt/FZF
-
 " Git commands
-" nnoremap <leader>gs :Git status<CR>
 nnoremap <leader>gs :!git fetch && git status<CR>
 nnoremap <leader>gp :Git pull<CR>
 nnoremap <leader>gf :Git diff %<CR>
@@ -156,10 +148,10 @@ let g:fzf_preview_window = ['right:40%:hidden', 'ctrl-/']
 let $FZF_DEFAULT_OPTS = '--margin=0'
 
 " Coc extensions
+  " \ 'coc-html',
 let g:coc_global_extensions = [
   \ 'coc-tsserver',
   \ 'coc-json',
-  \ 'coc-html',
   \ 'coc-css',
   \ 'coc-phpls',
   \ 'coc-blade',
@@ -182,7 +174,6 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'lewis6991/gitsigns.nvim'
   " Plug 'mhinz/vim-signify'
   Plug 'ap/vim-buftabline'
-  Plug 'ojroques/nvim-hardline'
   Plug 'itchyny/lightline.vim'
   Plug 'echasnovski/mini.nvim', { 'branch': 'stable' }
   Plug 'lukas-reineke/indent-blankline.nvim'
@@ -204,11 +195,8 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'nvim-lua/plenary.nvim'
   Plug 'nvim-telescope/telescope.nvim'
   Plug 'ThePrimeagen/harpoon'
-  " Plug 'antoinemadec/coc-fzf'
-  " Plug 'gfanto/fzf-lsp.nvim'
 
   " Code navigation
-  " Plug 'justinmk/vim-sneak'
   Plug 'ggandor/lightspeed.nvim'
 
   " Code helpers & refactoring
@@ -242,7 +230,6 @@ call plug#end()
 set termguicolors
 set background=dark
 " colorscheme ayu
-" colorscheme gruvbox8_hard
 " colorscheme zenwritten
 " colorscheme tokyobones
 " colorscheme neobones
@@ -250,12 +237,9 @@ colorscheme rosebones "3
 " colorscheme iceberg "2
 " colorscheme embark "1
 
-" " Light theme este?
+" " Light theme este? si este: sacar el render de spaces (punto)
 " let g:aquarium_style="light"
 " colorscheme aquarium
-
-let g:zenbones = #{ solid_line_nr: v:true, darken_comments: 45 }
-let g:zenbones_compat = 0
 
 " set background=light
 " colorscheme PaperColor
@@ -263,6 +247,12 @@ let g:zenbones_compat = 0
 " colorscheme inspired-github "1
 " colorscheme zenwritten
 " " colorscheme zenbones
+
+let g:zenbones = #{ solid_line_nr: v:true, darken_comments: 45 }
+let g:zenbones_compat = 0
+
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1 = "inc"
 
 let g:nvim_tree_git_hl = 1
 " let g:nvim_tree_highlight_opened_files = 1
@@ -307,23 +297,17 @@ let g:lightline = {
     \             [ 'gitbranch', 'gitstatus', 'readonly' ],
     \             [ 'filename', 'modified' ]
     \           ],
-    \   'right': [ [ 'cwd' ],
-    \              [],
-    \              [ 'lineinfo', 'fileformat', 'filetype' ]
-    \            ],
+    \   'right': [ [ 'cwd' ], [], [ 'lineinfo', 'fileformat', 'filetype' ] ],
     \ },
     \ 'inactive': {
     \   'left': [ [ 'mode', 'paste' ],
     \             [ 'gitbranch', 'gitstatus', 'readonly' ],
     \             [ 'filename', 'modified' ]
     \           ],
-    \   'right': [ [ 'cwd' ],
-    \              [],
-    \              [ 'lineinfo', 'fileformat', 'filetype' ]
-    \            ],
+    \   'right': [ [ 'cwd' ], [], [ 'lineinfo', 'fileformat', 'filetype' ] ],
     \ },
     \ 'component': {
-    \   'filename': '%{expand("%")}%<',
+    \   'filename': '%<%{expand("%")}',
     \   'lineinfo': '%3l:%-2v',
     \   'cwd': '%{fnamemodify(getcwd(), ":t")}',
     \   'gitstatus': '%{get(b:,"gitsigns_status","")}',
@@ -343,13 +327,11 @@ require('telescope').load_extension('harpoon')
 -- local mini_indentscope = require('mini.indentscope')
 -- mini_indentscope.setup({ draw = { animation = mini_indentscope.gen_animation('none') } })
 -- require('mini.indentscope').setup {}
-
-require('mini.trailspace').setup {}
 -- require('mini.surround').setup {}
+require('mini.trailspace').setup {}
 
 vim.opt.list = true
 vim.opt.listchars:append("space:⋅")
--- vim.opt.listchars:append("space: ")
 -- vim.opt.listchars:append("eol:↴")
 
 require('indent_blankline').setup {
@@ -374,24 +356,6 @@ require('nvim-tree').setup {
   },
 }
 
--- require('hardline').setup {
---   theme = 'codeschool_light',
---   sections = {
---     {class = 'mode', item = require('hardline.parts.mode').get_item},
---     {class = 'high', item = require('hardline.parts.git').get_item, hide = 100}, -- custom @ /parts/git.lua
---     '%<',
---     {class = 'low', item = require('hardline.parts.filename').get_item},
---     '%>',
---     {class = 'med', item = '%='},
---     {class = 'high', item = vim.bo.fileformat},
---     {class = 'error', item = require('hardline.parts.lsp').get_error},
---     {class = 'warning', item = require('hardline.parts.lsp').get_warning},
---     {class = 'low', item = require('hardline.parts.line').get_item}, -- custom @ /parts/line.lua
---     {class = 'high', item = require('hardline.parts.filetype').get_item, hide = 60},
---     {class = 'med', item = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")},
---   }
--- }
-
 require('auto-session').setup {
   log_level = 'error',
   auto_session_suppress_dirs = {'~/', '~/Projects'},
@@ -413,7 +377,6 @@ require'nvim-treesitter.configs'.setup {
     },
   },
 }
-
 EOF
 
 " --- Vim-Closetag
@@ -435,7 +398,6 @@ let g:closetag_regions = {
 let g:closetag_shortcut = '>'
 
 " Emmet (,, same as to set , as leader)
-" imap ,, <C-y>,
 let g:user_emmet_leader_key=','
 let g:user_emmet_install_global = 0
 autocmd FileType html,css,jsx,tsx,vue,php,blade,php.css.html EmmetInstall
@@ -451,11 +413,11 @@ inoremap <silent><expr> <TAB>
       \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-" Trigger emmet with tab or enter - TODO (combinar con el anterior)
-function! s:zen_html_tab()
-  return "\,,"
-endfunction
-" autocmd FileType html imap <buffer><expr><tab> <sid>zen_html_tab()
+" " Trigger emmet with tab or enter - TODO (combinar esto con el anterior)
+" function! s:zen_html_tab()
+"   return "\,,"
+" endfunction
+" " autocmd FileType html imap <buffer><expr><tab> <sid>zen_html_tab()
 " autocmd FileType html imap <buffer><expr><CR> <sid>zen_html_tab()
 
 function! s:check_back_space() abort
@@ -470,6 +432,17 @@ inoremap <silent><expr> <c-space> coc#refresh()
 " format on enter, <cr> could be remapped by other vim plugin
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
 			      \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
 
 " GoTo code navigation
 nmap <silent> gd <Plug>(coc-definition)
@@ -502,36 +475,11 @@ augroup mygroun
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
 
-" Map function and class text objects
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
-
 " VSCode Neovim undo & redo
 if exists('g:vscode')
   nnoremap <silent> u :<C-u>call VSCodeNotify('undo')<CR>
   nnoremap <silent> <C-r> :<C-u>call VSCodeNotify('redo')<CR>
 endif
-
-" " Set the title of the Terminal to the currently open file
-" function! SetTerminalTitle()
-"     let titleString = expand('%:t')
-"     if len(titleString) > 0
-"         let &titlestring = expand('%:t')
-"         " this is the format iTerm2 expects when setting the window title
-"         let args = "\033];".&titlestring."\007"
-"         let cmd = 'silent !echo -e "'.args.'"'
-"         execute cmd
-"         redraw!
-"     endif
-" endfunction
-" autocmd VimEnter * call SetTerminalTitle()
 
 augroup highlight_yank
   autocmd!
@@ -543,15 +491,12 @@ function! s:duplicate_file()
 endfunction
 command! Duplicate execute s:duplicate_file()
 
-map <Up> <nop>
-map <Down> <Nop>
 noremap <ScrollWheelUp> <Nop>
 noremap <ScrollWheelDown> <Nop>
 
-autocmd TermOpen * startinsert
 autocmd BufNewFile,BufRead .aliases set syntax=bash
+autocmd BufNewFile,BufRead *CSS.html set filetype=css
 
-" autocmd VimEnter * silent! cd %:p:h
 " autocmd VimEnter * :RestoreSession<CR>:echo ''<CR>
 
 autocmd VimEnter * :RestoreSession<CR>
