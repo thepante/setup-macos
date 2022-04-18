@@ -11,6 +11,7 @@ set sw=2
 set laststatus=2
 set cmdheight=2
 set ignorecase
+set smartcase
 set noshowmode
 set nowrap
 set cursorline
@@ -18,13 +19,10 @@ set hidden
 set splitbelow
 set scrolloff=2
 set noswapfile
-" set undodir=~/.vim/undodir
-" set undofile
 set tabstop=4
 set expandtab
 set updatetime=300
 set signcolumn=yes
-" set iskeyword+="-"
 syntax enable
 lang en_US.UTF-8
 
@@ -80,13 +78,12 @@ noremap <BS> :resize +5<CR>
 " Close buffer
 " nnoremap <C-w> :b#<bar>bd#<CR>
 " nnoremap <leader>w :b#<bar>bd#<CR>
-nnoremap <leader>w :bd<CR>
+" nnoremap <leader>w :bd<CR>
+nnoremap <leader>w :call CloseBuffer()<CR>
 " nnoremap <leader>w :bp<bar>sp<bar>bn<bar>bd<CR>
 " tnoremap <leader>w :bd!<CR>
 
 " Comment toggle
-" nnoremap <S-N> :Commentary<CR>
-" vnoremap <S-N> :Commentary<CR>
 nnoremap <C-N> :Commentary<CR>
 vnoremap <C-N> :Commentary<CR>
 nnoremap <C-_> :Commentary<CR>
@@ -105,9 +102,8 @@ map <Tab> %
 noremap <Leader><CR> :CocCommand rest-client.request<CR>
 
 " Terminal
-" autocmd TermOpen * startinsert
-vnoremap <leader>t :split<CR>:terminal<CR>:resize 15<CR>a
-nnoremap <leader>t :split<CR>:terminal<CR>:resize 15<CR>a
+autocmd TermOpen * startinsert
+nnoremap <leader>t :call ToggleTerminal()<CR>
 
 " Explore files
 command! -bang -nargs=* Rg call fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
@@ -115,6 +111,7 @@ map <C-Q> :NvimTreeToggle<CR>
 map <C-e> :FZF ~/<CR>
 map <C-T> :exe ":FZF " . expand("%:h")<CR>
 map <C-p> :ProjectFiles<CR>
+map <C-s> :Telescope buffers theme=dropdown<CR>
 " map <C-P> :Telescope find_files<CR>
 map <C-o> :CocList symbols<CR>
 map <C-l> :BLines<CR>
@@ -133,6 +130,12 @@ nnoremap <leader>gp :Git pull<CR>
 nnoremap <leader>gf :Git diff %<CR>
 nnoremap <leader>gd :Gdiffsplit<CR>
 
+nnoremap <leader>b :Gitsigns prev_hunk<CR>zz
+nnoremap <leader>n :Gitsigns next_hunk<CR>zz
+map <leader>sh :Gitsigns stage_hunk<CR>
+map <leader>su :Gitsigns undo_stage_hunk<CR>
+map <leader>sp :Gitsigns preview_hunk<CR>
+
 hi DiffAdd gui=NONE guifg=green guibg=black
 
 " Paste remplace inside string - without yank
@@ -143,6 +146,22 @@ nnoremap ccv vi'pgvy
 "imap <S-.> >
 
 " FZF window & preview
+let g:fzf_colors = {
+  \ 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Highlight'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Highlight'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'query':   ['fg', 'Highlight'],
+  \ 'prompt':  ['fg', 'Comment'],
+  \ 'pointer': ['fg', 'Highlight'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'],
+  \ }
 let g:fzf_layout = { 'down': '~30%' }
 let g:fzf_preview_window = ['right:40%:hidden', 'ctrl-/']
 let $FZF_DEFAULT_OPTS = '--margin=0'
@@ -177,6 +196,7 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'itchyny/lightline.vim'
   Plug 'echasnovski/mini.nvim', { 'branch': 'stable' }
   Plug 'lukas-reineke/indent-blankline.nvim'
+  Plug 'psliwka/vim-smoothie'
 
   " Tools
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -247,6 +267,8 @@ colorscheme rosebones "3
 " colorscheme inspired-github "1
 " colorscheme zenwritten
 " " colorscheme zenbones
+
+let g:smoothie_enabled = 0
 
 let g:zenbones = #{ solid_line_nr: v:true, darken_comments: 45 }
 let g:zenbones_compat = 0
@@ -321,7 +343,7 @@ let g:lightline = {
 
 lua <<EOF
 require('gitsigns').setup()
-require('telescope').setup { defaults = { preview = false } }
+require('telescope').setup { defaults = { preview = false, file_ignore_patterns = { '.git' } }, pickers = { find_files = { hidden = true } } }
 require('telescope').load_extension('harpoon')
 
 -- local mini_indentscope = require('mini.indentscope')
@@ -491,13 +513,36 @@ function! s:duplicate_file()
 endfunction
 command! Duplicate execute s:duplicate_file()
 
+function! CloseBuffer()
+  if getbufvar(bufnr('%'), '&buftype', 'not found') == 'terminal'
+    execute 'bd!'
+  else
+    execute 'bd'
+  endif
+endfunction
+
+function! ToggleTerminal()
+  let bufType = getbufvar(bufnr('%'), '&buftype', 'not found')
+  
+  if bufType == 'terminal'
+    execute 'bd!'
+  else
+    execute 'split term://zsh'
+    execute 'resize 20'
+    execute 'set nonu'
+    execute 'set nornu'
+
+    silent au BufLeave <buffer> stopinsert!
+    silent au BufWinEnter,WinEnter <buffer> startinsert!
+    startinsert!
+  endif
+endfunction
+
 noremap <ScrollWheelUp> <Nop>
 noremap <ScrollWheelDown> <Nop>
 
 autocmd BufNewFile,BufRead .aliases set syntax=bash
 autocmd BufNewFile,BufRead *CSS.html set filetype=css
-
-" autocmd VimEnter * :RestoreSession<CR>:echo ''<CR>
 
 autocmd VimEnter * :RestoreSession<CR>
 autocmd VimLeave * :SaveSession<CR>

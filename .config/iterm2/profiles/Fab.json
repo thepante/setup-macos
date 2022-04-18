@@ -402,6 +402,12 @@
       "Action" : 10,
       "Text" : "[23;2~"
     },
+    "0x62-0x100000-0xb" : {
+      "Version" : 1,
+      "Action" : 38,
+      "Text" : "\\<C-s>",
+      "Label" : ""
+    },
     "0xf70f-0x40000-0x0" : {
       "Action" : 10,
       "Text" : "[24;5~"
