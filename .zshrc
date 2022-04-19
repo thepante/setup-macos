@@ -36,6 +36,7 @@ setopt histfindnodups
 setopt HIST_FIND_NO_DUPS
 
 source ~/.aliases
+source ~/.aliases-priv
 
 # ZSH_HIGHLIGHT_STYLES[suffix-alias]=fg=002
 # ZSH_HIGHLIGHT_STYLES[precommand]=fg=002

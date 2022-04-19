@@ -45,8 +45,8 @@ noremap <Down> <Nop>
 noremap <Left> <Nop>
 noremap <Right> <Nop>
 
-" Undo changes since last save
-nmap U :edit!<CR>
+" " Undo changes since last save
+" nmap U :edit!<CR>
 
 " Clear search using enter
 noremap <CR> :noh<CR>:echo ''<CR>
@@ -191,7 +191,6 @@ call plug#begin('~/.local/share/nvim/plugged')
   " Interface
   Plug 'rktjmp/lush.nvim'
   Plug 'lewis6991/gitsigns.nvim'
-  " Plug 'mhinz/vim-signify'
   Plug 'ap/vim-buftabline'
   Plug 'itchyny/lightline.vim'
   Plug 'echasnovski/mini.nvim', { 'branch': 'stable' }
@@ -267,8 +266,6 @@ colorscheme rosebones "3
 " colorscheme inspired-github "1
 " colorscheme zenwritten
 " " colorscheme zenbones
-
-let g:smoothie_enabled = 0
 
 let g:zenbones = #{ solid_line_nr: v:true, darken_comments: 45 }
 let g:zenbones_compat = 0
@@ -420,7 +417,8 @@ let g:closetag_regions = {
 let g:closetag_shortcut = '>'
 
 " Emmet (,, same as to set , as leader)
-let g:user_emmet_leader_key=','
+imap ,, <C-y>,
+" let g:user_emmet_leader_key=','
 let g:user_emmet_install_global = 0
 autocmd FileType html,css,jsx,tsx,vue,php,blade,php.css.html EmmetInstall
 
@@ -508,11 +506,6 @@ augroup highlight_yank
   au TextYankPost * silent! lua vim.highlight.on_yank({higroup="IncSearch", timeout=100})
 augroup END
 
-function! s:duplicate_file()
-  execute 'saveas' expand('%:p') . "-copy_" . localtime()
-endfunction
-command! Duplicate execute s:duplicate_file()
-
 function! CloseBuffer()
   if getbufvar(bufnr('%'), '&buftype', 'not found') == 'terminal'
     execute 'bd!'
@@ -538,11 +531,27 @@ function! ToggleTerminal()
   endif
 endfunction
 
+let g:smoothie_enabled = 0
+function! ToggleSmoothie()
+  if g:smoothie_enabled
+    let g:smoothie_enabled = 0
+  else
+    let g:smoothie_enabled = 1
+  endif
+endfunction
+
 noremap <ScrollWheelUp> <Nop>
 noremap <ScrollWheelDown> <Nop>
 
-autocmd BufNewFile,BufRead .aliases set syntax=bash
+command! Smoothie call ToggleSmoothie()
+command! Duplicate execute 'saveas' expand('%:p') . "-copy_" . localtime()
+command! Finder :!open %:h
+command! Code :!code .
+
+autocmd BufNewFile,BufRead .aliases* set syntax=bash
+autocmd BufNewFile,BufRead *.html set filetype=html
 autocmd BufNewFile,BufRead *CSS.html set filetype=css
+autocmd BufNewFile,BufRead *.blade.php set syntax=blade
 
 autocmd VimEnter * :RestoreSession<CR>
 autocmd VimLeave * :SaveSession<CR>
