@@ -1,3 +1,4 @@
+set sw=2
 set mouse=a
 set number
 set numberwidth=1
@@ -7,7 +8,6 @@ set showcmd
 set ruler
 set encoding=utf-8
 set showmatch
-set sw=2
 set laststatus=2
 set cmdheight=2
 set ignorecase
@@ -23,6 +23,7 @@ set tabstop=4
 set expandtab
 set updatetime=300
 set signcolumn=yes
+set nocompatible
 syntax enable
 lang en_US.UTF-8
 
@@ -39,16 +40,15 @@ let mapleader=" "
 nmap <leader>r <Plug>(coc-rename)
 nmap <leader>R #Ncgn
 
-" Disable arrow keys
+" Disable arrow keys & scroll
 noremap <Up> <Nop>
 noremap <Down> <Nop>
 noremap <Left> <Nop>
 noremap <Right> <Nop>
+noremap <ScrollWheelUp> <Nop>
+noremap <ScrollWheelDown> <Nop>
 
-" " Undo changes since last save
-" nmap U :edit!<CR>
-
-" Clear search using enter
+" Clear highlight using enter
 noremap <CR> :noh<CR>:echo ''<CR>
 
 " Move lines
@@ -76,10 +76,10 @@ noremap <leader><BS> :resize -5<CR>
 noremap <BS> :resize +5<CR>
 
 " Close buffer
+nnoremap <leader>w :call CloseBuffer()<CR>
 " nnoremap <C-w> :b#<bar>bd#<CR>
 " nnoremap <leader>w :b#<bar>bd#<CR>
 " nnoremap <leader>w :bd<CR>
-nnoremap <leader>w :call CloseBuffer()<CR>
 " nnoremap <leader>w :bp<bar>sp<bar>bn<bar>bd<CR>
 " tnoremap <leader>w :bd!<CR>
 
@@ -89,10 +89,8 @@ vnoremap <C-N> :Commentary<CR>
 nnoremap <C-_> :Commentary<CR>
 vnoremap <C-_> :Commentary<CR>
 
-" Delete around block
+" Delete around block / delete including comments on top of it
 nmap dao va{Vd
-
-" Delete around block, including comments on top of it
 nmap dab va{o{oVd
 
 " Tab to go matching pair
@@ -102,7 +100,6 @@ map <Tab> %
 noremap <Leader><CR> :CocCommand rest-client.request<CR>
 
 " Terminal
-autocmd TermOpen * startinsert
 nnoremap <leader>t :call ToggleTerminal()<CR>
 
 " Explore files
@@ -117,7 +114,7 @@ map <C-o> :CocList symbols<CR>
 map <C-l> :BLines<CR>
 map <C-Y> :Rg<CR>
 
-" Navigation with Harpoon
+" Files navigation with Harpoon
 " map <leader>p :lua require("harpoon.ui").toggle_quick_menu()<CR>
 map <leader>p :Telescope harpoon marks theme=dropdown<CR>
 map <leader>m :lua require("harpoon.mark").add_file()<CR>
@@ -142,9 +139,6 @@ hi DiffAdd gui=NONE guifg=green guibg=black
 nnoremap cv vi"pgvy
 nnoremap ccv vi'pgvy
 
-"imap <S-,> <
-"imap <S-.> >
-
 " FZF window & preview
 let g:fzf_colors = {
   \ 'fg':      ['fg', 'Normal'],
@@ -167,10 +161,11 @@ let g:fzf_preview_window = ['right:40%:hidden', 'ctrl-/']
 let $FZF_DEFAULT_OPTS = '--margin=0'
 
 " Coc extensions
-  " \ 'coc-html',
+" let g:coc_default_semantic_highlight_groups = 1
 let g:coc_global_extensions = [
   \ 'coc-tsserver',
   \ 'coc-json',
+  \ 'coc-html',
   \ 'coc-css',
   \ 'coc-phpls',
   \ 'coc-blade',
@@ -180,56 +175,50 @@ let g:coc_global_extensions = [
   \ 'coc-restclient'
   \ ]
 
-function! s:find_git_root()
-  return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
-endfunction
-command! ProjectFiles execute 'Files' s:find_git_root()
-
-set nocompatible
+let g:user_emmet_install_global = 0
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1 = "inc"
 
 call plug#begin('~/.local/share/nvim/plugged')
+  " Plugs requeriments
+  Plug 'nvim-lua/plenary.nvim'
+
   " Interface
   Plug 'rktjmp/lush.nvim'
-  Plug 'lewis6991/gitsigns.nvim'
   Plug 'ap/vim-buftabline'
   Plug 'itchyny/lightline.vim'
-  Plug 'echasnovski/mini.nvim', { 'branch': 'stable' }
+  Plug 'lewis6991/gitsigns.nvim'
   Plug 'lukas-reineke/indent-blankline.nvim'
+  Plug 'echasnovski/mini.nvim', { 'branch': 'stable' }
   Plug 'psliwka/vim-smoothie'
 
   " Tools
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'editorconfig/editorconfig-vim'
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-commentary'
   Plug 'suy/vim-context-commentstring'
 
-  " Sessions
-  Plug 'rmagatti/auto-session'
-
-  " Files navigation
+  " Files & code navigation
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'kyazdani42/nvim-tree.lua'
-  Plug 'nvim-lua/plenary.nvim'
   Plug 'nvim-telescope/telescope.nvim'
   Plug 'ThePrimeagen/harpoon'
-
-  " Code navigation
   Plug 'ggandor/lightspeed.nvim'
 
   " Code helpers & refactoring
+  Plug 'AndrewRadev/splitjoin.vim'
   Plug 'tpope/vim-surround'
   Plug 'alvan/vim-closetag'
   Plug 'mattn/emmet-vim'
-  Plug 'AndrewRadev/splitjoin.vim'
-  Plug 'michaeljsmith/vim-indent-object'
 
   " Syntax highlight & text objects
-  Plug 'yuezk/vim-js'
-  Plug 'sheerun/vim-polyglot'
   Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+  Plug 'michaeljsmith/vim-indent-object'
+  Plug 'sheerun/vim-polyglot'
+  Plug 'yuezk/vim-js'
 
   " Themes
   Plug 'Shatur/neovim-ayu'
@@ -237,13 +226,13 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'mvpopuk/inspired-github.vim'
   Plug 'lifepillar/vim-gruvbox8'
   Plug 'embark-theme/vim', { 'as': 'embark', 'branch': 'main' }
-
-  Plug 'NLKNguyen/papercolor-theme'
   Plug 'cocopon/iceberg.vim'
   Plug 'rhysd/vim-color-spring-night'
   Plug 'frenzyexists/aquarium-vim', { 'branch': 'develop' }
-
   Plug 'mcchrish/zenbones.nvim'
+
+  " Sessions
+  Plug 'rmagatti/auto-session'
 call plug#end()
 
 set termguicolors
@@ -269,9 +258,6 @@ colorscheme rosebones "3
 
 let g:zenbones = #{ solid_line_nr: v:true, darken_comments: 45 }
 let g:zenbones_compat = 0
-
-let g:html_indent_script1 = "inc"
-let g:html_indent_style1 = "inc"
 
 let g:nvim_tree_git_hl = 1
 " let g:nvim_tree_highlight_opened_files = 1
@@ -416,12 +402,10 @@ let g:closetag_regions = {
 
 let g:closetag_shortcut = '>'
 
-" Emmet (,, same as to set , as leader)
+" Emmet
 imap ,, <C-y>,
 " let g:user_emmet_leader_key=','
-let g:user_emmet_install_global = 0
-autocmd FileType html,css,jsx,tsx,vue,php,blade,php.css.html EmmetInstall
-
+" let g:user_emmet_install_global = 0
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
@@ -483,9 +467,6 @@ function! s:show_documentation()
   endif
 endfunction
 
-" Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
 augroup mygroun
   autocmd!
   " Setup formatexpr specified filetype(s).
@@ -500,11 +481,6 @@ if exists('g:vscode')
   nnoremap <silent> u :<C-u>call VSCodeNotify('undo')<CR>
   nnoremap <silent> <C-r> :<C-u>call VSCodeNotify('redo')<CR>
 endif
-
-augroup highlight_yank
-  autocmd!
-  au TextYankPost * silent! lua vim.highlight.on_yank({higroup="IncSearch", timeout=100})
-augroup END
 
 function! CloseBuffer()
   if getbufvar(bufnr('%'), '&buftype', 'not found') == 'terminal'
@@ -540,10 +516,8 @@ function! ToggleSmoothie()
   endif
 endfunction
 
-noremap <ScrollWheelUp> <Nop>
-noremap <ScrollWheelDown> <Nop>
-
 command! Smoothie call ToggleSmoothie()
+command! ProjectFiles execute 'Files' system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
 command! Duplicate execute 'saveas' expand('%:p') . "-copy_" . localtime()
 command! Finder :!open %:h
 command! Code :!code .
@@ -552,6 +526,12 @@ autocmd BufNewFile,BufRead .aliases* set syntax=bash
 autocmd BufNewFile,BufRead *.html set filetype=html
 autocmd BufNewFile,BufRead *CSS.html set filetype=css
 autocmd BufNewFile,BufRead *.blade.php set syntax=blade
+
+autocmd FileType html,css,jsx,tsx,vue,php,blade,php.css.html EmmetInstall
+" autocmd FileType html,blade,php,css,less,scss setlocal iskeyword+=-.
+autocmd TextYankPost * silent! lua vim.highlight.on_yank({ higroup="IncSearch", timeout=100})
+autocmd CursorHold * silent call CocActionAsync('highlight')
+autocmd TermOpen * startinsert
 
 autocmd VimEnter * :RestoreSession<CR>
 autocmd VimLeave * :SaveSession<CR>

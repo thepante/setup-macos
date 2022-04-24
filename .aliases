@@ -26,11 +26,11 @@ alias awspante='ssh -i "~/.ssh/****" ****.amazonaws.com'
 # mogrify - convertir imgs
 function conv(){
   args=("$@")
-    dest=converted
+    dest=converted-$(date +"%H%M%S")
     limit=500 #limit size en KB
     width= #width para -resize
     target= #especificar input
-    [[ ! -d "$dest" ]] && mkdir "$dest" 
+    [[ ! -d "$dest" ]] && mkdir "$dest"
     for ((i=0; i < $#; i++)) {
       if [[ ${args[$i]} = "-limit" ]] then
         limit=${args[$i+1]}
