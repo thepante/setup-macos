@@ -22,13 +22,15 @@ set noswapfile
 set tabstop=4
 set expandtab
 set updatetime=300
+" set redrawtime=300
 set signcolumn=yes
 set nocompatible
-syntax enable
+" syntax enable
+syntax sync fromstart
 lang en_US.UTF-8
 
 " escape insert mode
-inoremap kj <esc>
+inoremap kj <Esc>
 cnoremap kj <C-c>
 tnoremap kj <C-\><C-n>
 
@@ -129,11 +131,9 @@ nnoremap <leader>gd :Gdiffsplit<CR>
 
 nnoremap <leader>b :Gitsigns prev_hunk<CR>zz
 nnoremap <leader>n :Gitsigns next_hunk<CR>zz
-map <leader>sh :Gitsigns stage_hunk<CR>
-map <leader>su :Gitsigns undo_stage_hunk<CR>
-map <leader>sp :Gitsigns preview_hunk<CR>
-
-hi DiffAdd gui=NONE guifg=green guibg=black
+nnoremap <leader>sh :Gitsigns stage_hunk<CR>
+nnoremap <leader>su :Gitsigns undo_stage_hunk<CR>
+nnoremap <leader>sp :Gitsigns preview_hunk<CR>
 
 " Paste remplace inside string - without yank
 nnoremap cv vi"pgvy
@@ -161,7 +161,7 @@ let g:fzf_preview_window = ['right:40%:hidden', 'ctrl-/']
 let $FZF_DEFAULT_OPTS = '--margin=0'
 
 " Coc extensions
-" let g:coc_default_semantic_highlight_groups = 1
+let g:coc_default_semantic_highlight_groups = 1
 let g:coc_global_extensions = [
   \ 'coc-tsserver',
   \ 'coc-json',
@@ -169,11 +169,11 @@ let g:coc_global_extensions = [
   \ 'coc-css',
   \ 'coc-phpls',
   \ 'coc-blade',
-  \ 'coc-vetur',
   \ 'coc-pairs',
-  \ 'coc-pyright',
-  \ 'coc-restclient'
   \ ]
+  " \ 'coc-vetur',
+  " \ 'coc-pyright',
+  " \ 'coc-restclient'
 
 let g:user_emmet_install_global = 0
 let g:html_indent_script1 = "inc"
@@ -184,13 +184,11 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'nvim-lua/plenary.nvim'
 
   " Interface
-  Plug 'rktjmp/lush.nvim'
+  " Plug 'rktjmp/lush.nvim'
   Plug 'ap/vim-buftabline'
   Plug 'itchyny/lightline.vim'
   Plug 'lewis6991/gitsigns.nvim'
   Plug 'lukas-reineke/indent-blankline.nvim'
-  Plug 'echasnovski/mini.nvim', { 'branch': 'stable' }
-  Plug 'psliwka/vim-smoothie'
 
   " Tools
   Plug 'editorconfig/editorconfig-vim'
@@ -208,27 +206,23 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'ggandor/lightspeed.nvim'
 
   " Code helpers & refactoring
+  Plug 'mattn/emmet-vim'
   Plug 'AndrewRadev/splitjoin.vim'
   Plug 'tpope/vim-surround'
   Plug 'alvan/vim-closetag'
-  Plug 'mattn/emmet-vim'
 
   " Syntax highlight & text objects
+  Plug 'sheerun/vim-polyglot'
   Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
   Plug 'michaeljsmith/vim-indent-object'
-  Plug 'sheerun/vim-polyglot'
-  Plug 'yuezk/vim-js'
+  " Plug 'yuezk/vim-js'
 
   " Themes
   Plug 'Shatur/neovim-ayu'
-  Plug 'projekt0n/github-nvim-theme'
-  Plug 'mvpopuk/inspired-github.vim'
   Plug 'lifepillar/vim-gruvbox8'
   Plug 'embark-theme/vim', { 'as': 'embark', 'branch': 'main' }
   Plug 'cocopon/iceberg.vim'
-  Plug 'rhysd/vim-color-spring-night'
-  Plug 'frenzyexists/aquarium-vim', { 'branch': 'develop' }
   Plug 'mcchrish/zenbones.nvim'
 
   " Sessions
@@ -329,12 +323,6 @@ require('gitsigns').setup()
 require('telescope').setup { defaults = { preview = false, file_ignore_patterns = { '.git' } }, pickers = { find_files = { hidden = true } } }
 require('telescope').load_extension('harpoon')
 
--- local mini_indentscope = require('mini.indentscope')
--- mini_indentscope.setup({ draw = { animation = mini_indentscope.gen_animation('none') } })
--- require('mini.indentscope').setup {}
--- require('mini.surround').setup {}
-require('mini.trailspace').setup {}
-
 vim.opt.list = true
 vim.opt.listchars:append("space:⋅")
 -- vim.opt.listchars:append("eol:↴")
@@ -364,11 +352,12 @@ require('nvim-tree').setup {
 require('auto-session').setup {
   log_level = 'error',
   auto_session_suppress_dirs = {'~/', '~/Projects'},
-  post_restore_cmds = { "noh" },
+  -- post_restore_cmds = { "e" },
 }
 
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "javascript", "typescript", "php", "html", "json" },
+  ensure_installed = { "vim", "javascript", "typescript", "php", "html", "json" },
+  -- highlight = { enable = true },
   sync_install = true,
   textobjects = {
     select = {
@@ -404,8 +393,6 @@ let g:closetag_shortcut = '>'
 
 " Emmet
 imap ,, <C-y>,
-" let g:user_emmet_leader_key=','
-" let g:user_emmet_install_global = 0
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
@@ -492,7 +479,6 @@ endfunction
 
 function! ToggleTerminal()
   let bufType = getbufvar(bufnr('%'), '&buftype', 'not found')
-  
   if bufType == 'terminal'
     execute 'bd!'
   else
@@ -500,7 +486,6 @@ function! ToggleTerminal()
     execute 'resize 20'
     execute 'set nonu'
     execute 'set nornu'
-
     silent au BufLeave <buffer> stopinsert!
     silent au BufWinEnter,WinEnter <buffer> startinsert!
     startinsert!
@@ -516,14 +501,10 @@ function! ToggleSmoothie()
   endif
 endfunction
 
-command! Smoothie call ToggleSmoothie()
-command! ProjectFiles execute 'Files' system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
-command! Duplicate execute 'saveas' expand('%:p') . "-copy_" . localtime()
+command! Duplicate execute 'saveas' expand('%:r')."-copy_".localtime().'.'.expand('%:e')
 command! Finder :!open %:h
-command! Code :!code .
 
 autocmd BufNewFile,BufRead .aliases* set syntax=bash
-autocmd BufNewFile,BufRead *.html set filetype=html
 autocmd BufNewFile,BufRead *CSS.html set filetype=css
 autocmd BufNewFile,BufRead *.blade.php set syntax=blade
 
