@@ -45,7 +45,7 @@ function conv(){
 
 # workaround nvim relativo ya que me volví loco queriendo hacer que nvim establezca cwd a la carpeta por args
 function nvim(){
-  bin=/usr/local/bin/nvim
+  bin=/opt/homebrew/opt/neovim/bin/nvim
   if [ ! -z "$1" ]; then
     if [[ -d $1 ]]; then
       cd "$1" && echo -ne "\e]1;${PWD##*/}\a"; $bin; cd -;
@@ -61,4 +61,18 @@ function nvim(){
 function pull(){
   cd "$1" && git pull && cd ..;
 }
+
+function f(){
+  code $(fzf);
+}
+
+fzf-open-code() {
+  local output
+  output=$(fzf --height 40% --reverse </dev/tty) && code ${(q-)output}
+  zle reset-prompt
+}
+
+zle -N fzf-open-code
+bindkey '^o' fzf-open-code
+
 
