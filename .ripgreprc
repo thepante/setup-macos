@@ -1,0 +1,17 @@
+--follow
+--smart-case
+--hidden
+
+--glob=!*/node_modules
+--glob=!*.git
+--glob=!*/tmp
+--glob=!.DS_store
+--glob=!**/*.png
+--glob=!**/*.jpg
+--glob=!*/dist
+--glob=!*/docs
+--glob=!*.min.*
+
+--max-columns=150
+--max-columns-preview
+
