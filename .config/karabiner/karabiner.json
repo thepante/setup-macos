@@ -76,7 +76,10 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "osascript -e 'set inputVolume to input volume of (get volume settings)' -e 'if inputVolume = 0 then' -e 'set inputVolume to 100' -e 'else' -e 'set inputVolume to 0' -e 'end if' -e 'set volume input volume inputVolume'"
+                                      "key_code": "period",
+                                      "modifiers": [ 
+                                        "left_control"
+                                      ]
                                     }
                                 ],
                                 "type": "basic"
@@ -718,11 +721,11 @@
             "simple_modifications": [
                 {
                     "from": {
-                        "key_code": "right_command"
+                        "key_code": "page_down"
                     },
                     "to": [
                         {
-                            "key_code": "left_control"
+                            "consumer_key_code": "volume_decrement"
                         }
                     ]
                 },
@@ -738,11 +741,11 @@
                 },
                 {
                     "from": {
-                        "key_code": "page_down"
+                        "key_code": "right_command"
                     },
                     "to": [
                         {
-                            "consumer_key_code": "volume_decrement"
+                            "key_code": "left_control"
                         }
                     ]
                 }
