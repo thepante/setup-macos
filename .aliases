@@ -1,3 +1,4 @@
+alias cat='bat'
 alias ls='ls -G'
 alias -g grep='grep --color=auto'
 alias cp='cp -iv'
@@ -5,7 +6,10 @@ alias mv='mv -iv'
 alias cht='~/.cht-search.sh'
 
 alias hosts='sudo nvim /etc/hosts'
-alias vhosts='nvim /usr/local/etc/httpd/extra/httpd-vhosts.conf'
+# alias vhosts='nvim /usr/local/etc/httpd/extra/httpd-vhosts.conf'
+alias vhosts='nvim /opt/homebrew/etc/httpd/extra/httpd-vhosts.conf'
+
+alias proc-cartillas='~/procesar_cartillas.sh'
 
 # folders
 alias projects='cd ~/Projects'
