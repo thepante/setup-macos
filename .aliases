@@ -17,9 +17,8 @@ alias pj='cd ~/Projects'
 alias dl='cd ~/Downloads'
 alias cn='cd ~/Documents/Canillita'
 
-alias adonis='ssh fabian@****'
-alias perseo='ssh -L 33306:0.0.0.0:3306 fabian@****'
-alias awspante='ssh -i "~/.ssh/****" ****.amazonaws.com'
+alias mp3='yt-dlp --extract-audio --audio-format mp3'
+alias download='yt-dlp'
 
 # falta fix - mejor usar una fn
 # alias co='fd -HLI -t f . -E node_modules -E .git -E *cache | code $(fzf)'

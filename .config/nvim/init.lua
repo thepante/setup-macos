@@ -21,7 +21,7 @@ set.wrap = false
 set.cursorline = true
 set.hidden = true
 set.splitbelow = true
-set.scrolloff = 2
+set.scrolloff = 4
 set.swapfile = false
 set.tabstop = 4
 set.termguicolors = true
@@ -51,8 +51,23 @@ vim.g.html_indent_script1 = 'inc'
 vim.g.html_indent_style1 = 'inc'
 vim.g.user_emmet_install_global = 0
 vim.g.user_emmet_leader_key = ','
+vim.g.user_emmet_splitjointag_key = ',s'
+vim.g.user_emmet_removetag_key = ',r'
+
 vim.g.user_emmet_settings = {
   indent_blockement = 1,
+  php = {
+    extends = 'html',
+    filters = 'html,c',
+  },
+  css = {
+    filters = 'hc',
+  },
+  javascript = {
+    snippets = {
+      fn = 'function ${cursor}() {\n\t\n}',
+    },
+  },
 }
 
 -- Autoclose tags
@@ -200,7 +215,7 @@ require('packer').startup(function(use)
   -- Status line
   use 'beauwilliams/statusline.lua'
 
-  -- Theme
+  -- Themes
   use { 'embark-theme/vim', as = 'embark' }
   use 'rebelot/kanagawa.nvim'
 
@@ -263,7 +278,7 @@ require('nvim-treesitter.configs').setup({
   context_commentstring = {
     enable = true
   },
-}) 
+})
 
 require('nvim_comment').setup({
   comment_empty = false,
@@ -322,10 +337,13 @@ cmp.setup({
     end,
   },
   mapping = cmp.mapping.preset.insert({
-    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.abort(),
+    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+    ['<C-e>'] = cmp.mapping({
+      i = cmp.mapping.abort(),
+      c = cmp.mapping.close(),
+    }),
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
   }),
   sources = cmp.config.sources({
@@ -333,6 +351,7 @@ cmp.setup({
     { name = 'fugitive' },
     { name = 'path' },
     { name = 'luasnip' },
+    { name = 'vsnip' },
     { name = 'buffer', keyword_length = 4 },
   }),
   -- experimental = {
@@ -364,6 +383,8 @@ cmp.setup.cmdline(':', {
   }),
 })
 
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 -- LSP Config Mappings
 kmap('n', '<leader>e', vim.diagnostic.open_float, opts)
@@ -377,47 +398,54 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   local bufopts = { noremap=true, silent=true, buffer=bufnr }
+  kmap('n', 'gr', vim.lsp.buf.references, bufopts)
   kmap('n', 'gD', vim.lsp.buf.declaration, bufopts)
   kmap('n', 'gd', vim.lsp.buf.definition, bufopts)
-  kmap('n', 'K', vim.lsp.buf.hover, bufopts)
-  kmap('n', 'gh', vim.lsp.buf.hover, bufopts)
   kmap('n', 'gi', vim.lsp.buf.implementation, bufopts)
+  kmap('n', 'gt', vim.lsp.buf.type_definition, bufopts)
+  kmap('n', 'gh', vim.lsp.buf.hover, bufopts)
+  kmap('n', 'K', vim.lsp.buf.hover, bufopts)
   kmap('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
+
   kmap('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, bufopts)
   kmap('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
   kmap('n', '<leader>wl', function()
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, bufopts)
-  kmap('n', '<leader>D', vim.lsp.buf.type_definition, bufopts)
-  kmap('n', '<leader>r', vim.lsp.buf.rename, bufopts)
   kmap('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
+  kmap('n', '<leader>r', vim.lsp.buf.rename, bufopts)
   kmap('n', '<leader>f', vim.lsp.buf.formatting, bufopts)
   kmap('v', '<leader>f', ':lua vim.lsp.buf.range_formatting()<CR>', bufopts)
-  kmap('n', 'gr', vim.lsp.buf.references, bufopts)
+
+  kmap('n', '<leader>dk', vim.diagnostic.goto_prev, bufopts)
+  kmap('n', '<leader>dj', vim.diagnostic.goto_next, bufopts)
+  kmap('n', '<leader>dl', '<cmd>Telescope diagnostics<CR>', bufopts)
+  kmap('n', '<C-o>', '<cmd>Telescope lsp_document_symbols<CR>', bufopts)
+  kmap('n', '\\', '<cmd>Telescope current_buffer_fuzzy_find<CR>', bufopts)
 end
 
-require('lspconfig')['tsserver'].setup{
-    on_attach = on_attach,
+require'lspconfig'.tsserver.setup{
+  capabilities = capabilities,
+  on_attach = on_attach,
 }
 
-require('lspconfig')['rust_analyzer'].setup{
-    on_attach = on_attach,
+require'lspconfig'.rust_analyzer.setup{
+  capabilities = capabilities,
+  on_attach = on_attach,
 }
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 require'lspconfig'.html.setup {
   capabilities = capabilities,
-  filetype = { 'html' },
+  filetype = { 'html', 'php', 'blade', 'svelte' },
   init_options = {
     configurationSection = { 'html', 'css', 'javascript' },
     embeddedLanguages = {
       css = true,
-      javascript = true
+      javascript = true,
     },
-    provideFormatter = true
+    provideFormatter = true,
   },
+  on_attach = on_attach,
 }
 
 require'lspconfig'.cssls.setup {
@@ -473,6 +501,8 @@ cmp.setup({
 
 
 vim.g.CommandTPreferredImplementation = 'lua'
+vim.g.CommandTAlwaysShowDotFiles = 1
+vim.g.CommandTScanDotDirectories = 1
 
 require('wincent.commandt').setup({
   -- position = 'bottom',
@@ -503,6 +533,7 @@ vim.api.nvim_create_autocmd("CursorHold", {
   group = "lsp_document_highlight",
   desc = "Document Highlight",
 })
+
 vim.api.nvim_create_autocmd("CursorMoved", {
   callback = vim.lsp.buf.clear_references,
   buffer = bufnr,
