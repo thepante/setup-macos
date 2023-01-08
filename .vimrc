@@ -21,16 +21,21 @@ set scrolloff=2
 set noswapfile
 set tabstop=4
 set expandtab
+set autoindent
+set cindent
+set smartindent
 set updatetime=300
 " set redrawtime=300
 set signcolumn=yes
 set nocompatible
 " syntax enable
 syntax sync fromstart
+" set rtp+=/opt/homebrew/opt/fzf
 lang en_US.UTF-8
 
 " escape insert mode
-inoremap kj <Esc>
+inoremap kj <C-c>
+vnoremap kj <Esc>
 cnoremap kj <C-c>
 tnoremap kj <C-\><C-n>
 
@@ -86,8 +91,8 @@ nnoremap <leader>w :call CloseBuffer()<CR>
 " tnoremap <leader>w :bd!<CR>
 
 " Comment toggle
-nnoremap <C-N> :Commentary<CR>
-vnoremap <C-N> :Commentary<CR>
+nnoremap <C-X> :Commentary<CR>
+vnoremap <C-x> :Commentary<CR>
 nnoremap <C-_> :Commentary<CR>
 vnoremap <C-_> :Commentary<CR>
 
@@ -97,6 +102,10 @@ nmap dab va{o{oVd
 
 " Tab to go matching pair
 map <Tab> %
+
+" Mejor n
+map <n> nzz
+map <N> Nzz
 
 " Coc Rest-client request
 noremap <Leader><CR> :CocCommand rest-client.request<CR>
@@ -170,6 +179,7 @@ let g:coc_global_extensions = [
   \ 'coc-phpls',
   \ 'coc-blade',
   \ 'coc-pairs',
+  \ 'coc-rust-analyzer',
   \ ]
   " \ 'coc-vetur',
   " \ 'coc-pyright',
@@ -193,9 +203,11 @@ call plug#begin('~/.local/share/nvim/plugged')
   " Tools
   Plug 'editorconfig/editorconfig-vim'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  " Plug 'antoinemadec/coc-fzf'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-commentary'
   Plug 'suy/vim-context-commentstring'
+  Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 
   " Files & code navigation
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -204,6 +216,7 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'nvim-telescope/telescope.nvim'
   Plug 'ThePrimeagen/harpoon'
   Plug 'ggandor/lightspeed.nvim'
+  Plug 'wincent/command-t'
 
   " Code helpers & refactoring
   Plug 'mattn/emmet-vim'
@@ -230,67 +243,33 @@ call plug#begin('~/.local/share/nvim/plugged')
 call plug#end()
 
 set termguicolors
+
 set background=dark
-" colorscheme ayu
+" colorscheme ayu-mirage
 " colorscheme zenwritten
 " colorscheme tokyobones
 " colorscheme neobones
-colorscheme rosebones "3
+" colorscheme rosebones "3
 " colorscheme iceberg "2
-" colorscheme embark "1
+colorscheme embark "1
 
 " " Light theme este? si este: sacar el render de spaces (punto)
 " let g:aquarium_style="light"
 " colorscheme aquarium
 
+let g:zenbones = #{ solid_line_nr: v:true, darken_comments: 100 }
+let g:zenbones_compat = 1
+
 " set background=light
-" colorscheme PaperColor
-" colorscheme github_light "2
-" colorscheme inspired-github "1
-" colorscheme zenwritten
-" " colorscheme zenbones
+" " colorscheme PaperColor
+" " colorscheme github_light "2
+" " colorscheme inspired-github "1
+" " colorscheme zenwritten
+" colorscheme zenbones
 
-let g:zenbones = #{ solid_line_nr: v:true, darken_comments: 45 }
-let g:zenbones_compat = 0
-
-let g:nvim_tree_git_hl = 1
-" let g:nvim_tree_highlight_opened_files = 1
-
-let g:nvim_tree_show_icons = {
-    \ 'git': 1,
-    \ 'files': 0,
-    \ 'folders': 1,
-    \ 'folder_arrows': 1,
-    \ }
-
-" highlight NvimTreeFolderIcon guibg=blue
-let g:nvim_tree_icons = {
-    \ 'default': "",
-    \ 'symlink': "",
-    \ 'git': {
-    \   'unstaged': "",
-    \   'staged': "﫠",
-    \   'unmerged': "",
-    \   'renamed': "➜",
-    \   'untracked': "",
-    \   'deleted': "x",
-    \   'ignored': ""
-    \   },
-    \ 'folder': {
-    \   'arrow_open': "",
-    \   'arrow_closed': "",
-    \   'default': "",
-    \   'open': "",
-    \   'empty': "",
-    \   'empty_open': "",
-    \   'symlink': "+",
-    \   'symlink_open': "-",
-    \   }
-    \ }
-
-
+    " \ 'colorscheme': 'zenbones',
 let g:lightline = {
-    \ 'colorscheme': 'rosebones',
+    \ 'colorscheme': 'embark',
     \ 'active': {
     \   'left': [ [ 'mode', 'paste' ],
     \             [ 'gitbranch', 'gitstatus', 'readonly' ],
@@ -318,14 +297,16 @@ let g:lightline = {
     \ },
   \ }
 
+let g:CommandTPreferredImplementation='lua'
+
 lua <<EOF
+require('wincent.commandt').setup()
 require('gitsigns').setup()
 require('telescope').setup { defaults = { preview = false, file_ignore_patterns = { '.git' } }, pickers = { find_files = { hidden = true } } }
 require('telescope').load_extension('harpoon')
 
 vim.opt.list = true
 vim.opt.listchars:append("space:⋅")
--- vim.opt.listchars:append("eol:↴")
 
 require('indent_blankline').setup {
   show_trailing_blankline_indent = false,
@@ -345,6 +326,40 @@ require('nvim-tree').setup {
   actions = {
     open_file = {
       quit_on_open = true,
+    },
+  },
+  renderer = {
+    highlight_git = true,
+    icons = {
+      show = {
+        git = true,
+        file = true,
+        folder = true,
+        folder_arrow = true,
+      },
+      glyphs = {
+        default = '',
+        symlink = '',
+        git = {
+          unstaged = '',
+          staged = '﫠',
+          unmerged = '',
+          renamed = '➜',
+          untracked = '',
+          deleted = 'x',
+          ignored = ''
+        },
+        folder = {
+          arrow_open = '',
+          arrow_closed = '',
+          default = '',
+          open = '',
+          empty = '',
+          empty_open = '',
+          symlink = '+',
+          symlink_open = '-',
+        }
+      },
     },
   },
 }
@@ -371,6 +386,15 @@ require'nvim-treesitter.configs'.setup {
     },
   },
 }
+
+local function smart_dd()
+  if vim.api.nvim_get_current_line():match("^%s*$") then
+    return "\"_dd"
+  else
+    return "dd"
+  end
+end
+vim.keymap.set( "n", "dd", smart_dd, { noremap = true, expr = true } )
 EOF
 
 " --- Vim-Closetag
@@ -393,36 +417,36 @@ let g:closetag_shortcut = '>'
 
 " Emmet
 imap ,, <C-y>,
+"inoremap <expr> <cr> pumvisible() ? coc#_select_confirm()<C-y>, : "\<cr>"
+"inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()<C-y>, : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
 
 " Use tab for trigger completion with characters ahead and navigate.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+"function! CheckBackspace() abort
+"  let col = col('.') - 1
+"  return !col || getline('.')[col - 1]  =~# '\s'
+"endfunction
+"inoremap <silent><expr> <Tab>
+      "\ coc#pum#visible() ? coc#pum#next(1) :
+      "\ CheckBackspace() ? "\<Tab>" :
+      "\ coc#refresh()
 
-" " Trigger emmet with tab or enter - TODO (combinar esto con el anterior)
-" function! s:zen_html_tab()
-"   return "\,,"
-" endfunction
-" " autocmd FileType html imap <buffer><expr><tab> <sid>zen_html_tab()
-" autocmd FileType html imap <buffer><expr><CR> <sid>zen_html_tab()
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+inoremap <expr> <Tab> pumvisible() ? coc#_select_confirm() : "\<Tab>"
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+"inoremap <expr> <cr> coc#pum#visible() ? coc#_select_confirm() : "\<CR>"
+"inoremap <silent><expr> <CR> coc#pum#visible() ? coc#_select_confirm() : "\<C-y>"
+"inoremap <silent><expr> <cr> coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 " Use <c-space> to trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
 
 " Make <CR> auto-select the first completion item and notify coc.nvim to
 " format on enter, <cr> could be remapped by other vim plugin
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-			      \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+" inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+" 			      \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 " Map function and class text objects
 " NOTE: Requires 'textDocument.documentSymbol' support from the language server.
@@ -454,19 +478,27 @@ function! s:show_documentation()
   endif
 endfunction
 
-augroup mygroun
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  " autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  autocmd FileType * setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder.
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
+" " Remap <C-f> and <C-b> for scroll float windows/popups.
+" nnoremap <nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+" nnoremap <nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+" inoremap <nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+" inoremap <nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+
+" augroup mygroun
+"   autocmd!
+"   " Setup formatexpr specified filetype(s).
+"   " autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+"   autocmd FileType * setl formatexpr=CocAction('formatSelected')
+"   " Update signature help on jump placeholder.
+"   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+" augroup end
 
 " VSCode Neovim undo & redo
 if exists('g:vscode')
   nnoremap <silent> u :<C-u>call VSCodeNotify('undo')<CR>
   nnoremap <silent> <C-r> :<C-u>call VSCodeNotify('redo')<CR>
+  xnoremap <C-j> <Cmd>call VSCodeCallVisual('editor.action.moveLinesDownAction',1)<CR>
+  xnoremap <C-k> <Cmd>call VSCodeCallVisual('editor.action.moveLinesUpAction',1)<CR>
 endif
 
 function! CloseBuffer()
@@ -492,14 +524,10 @@ function! ToggleTerminal()
   endif
 endfunction
 
-let g:smoothie_enabled = 0
-function! ToggleSmoothie()
-  if g:smoothie_enabled
-    let g:smoothie_enabled = 0
-  else
-    let g:smoothie_enabled = 1
-  endif
+function! s:find_git_root()
+  return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
 endfunction
+command! ProjectFiles execute 'Files' s:find_git_root()
 
 command! Duplicate execute 'saveas' expand('%:r')."-copy_".localtime().'.'.expand('%:e')
 command! Finder :!open %:h
@@ -509,6 +537,10 @@ autocmd BufNewFile,BufRead *CSS.html set filetype=css
 autocmd BufNewFile,BufRead *.blade.php set syntax=blade
 
 autocmd FileType html,css,jsx,tsx,vue,php,blade,php.css.html EmmetInstall
+"autocmd FileType html,css,jsx,tsx,vue,php,blade,php.css.html EmmetInstall
+
+au FileType html imap <buffer><expr><cr> emmet#expandAbbr(0,"")<CR><Right>
+
 " autocmd FileType html,blade,php,css,less,scss setlocal iskeyword+=-.
 autocmd TextYankPost * silent! lua vim.highlight.on_yank({ higroup="IncSearch", timeout=100})
 autocmd CursorHold * silent call CocActionAsync('highlight')

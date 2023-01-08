@@ -82,7 +82,7 @@ vim.cmd([[
   syntax on
   " colorscheme embark
   colorscheme kanagawa
-  " colorscheme catppuccin
+  " colorscheme spaceduck
 
   autocmd BufNewFile,BufRead .aliases* set syntax=bash
   autocmd BufNewFile,BufRead *CSS.html set filetype=css
@@ -141,10 +141,11 @@ map('', '<N>', 'Nzz', opts)
 
 -- Files navigation with Harpoon
 -- map <leader>p :lua require("harpoon.ui").toggle_quick_menu()<CR>
-map('', '<leader>p', ':Telescope harpoon marks theme=dropdown<CR>', opts)
-map('', '<leader>m', ':lua require("harpoon.mark").add_file()<CR>', opts)
-map('', '<leader>a', ':lua require("harpoon.ui").add_prev()<CR>', opts)
-map('', '<leader>d', ':lua require("harpoon.ui").add_next()<CR>', opts)
+--
+-- map('', '<leader>p', ':Telescope harpoon marks theme=dropdown<CR>', opts)
+-- map('', '<leader>m', ':lua require("harpoon.mark").add_file()<CR>', opts)
+-- map('', '<leader>a', ':lua require("harpoon.ui").add_prev()<CR>', opts)
+-- map('', '<leader>d', ':lua require("harpoon.ui").add_next()<CR>', opts)
 
 -- Move lines
 map('n', '<C-j>', ':m .+1<CR>==', opts)
@@ -169,6 +170,7 @@ require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
   use 'dstein64/vim-startuptime'
   use 'lewis6991/impatient.nvim'
+  use 'nvim-lua/plenary.nvim'
 
   -- Completion
   use 'hrsh7th/nvim-cmp'
@@ -187,6 +189,9 @@ require('packer').startup(function(use)
   -- Formatting
   use 'gpanders/editorconfig.nvim'
   use 'jose-elias-alvarez/null-ls.nvim'
+
+  -- Syntax highlight
+  use 'sheerun/vim-polyglot'
 
   -- Language server
   use 'neovim/nvim-lspconfig'
@@ -218,16 +223,7 @@ require('packer').startup(function(use)
   -- Themes
   use { 'embark-theme/vim', as = 'embark' }
   use 'rebelot/kanagawa.nvim'
-
-  -- use {
-  --     "catppuccin/nvim",
-  --     as = "catppuccin",
-  --     config = function()
-  --         vim.g.catppuccin_flavour = "macchiato" -- latte, frappe, macchiato, mocha
-  --         require("catppuccin").setup()
-  --         vim.api.nvim_command "colorscheme catppuccin"
-  --     end
-  -- }
+  use 'pineapplegiant/spaceduck'
 
   use { 'glacambre/firenvim', run = function() vim.fn['firenvim#install'](0) end }
 end)
@@ -347,8 +343,8 @@ cmp.setup({
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
   }),
   sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
     { name = 'fugitive' },
+    { name = 'nvim_lsp' },
     { name = 'path' },
     { name = 'luasnip' },
     { name = 'vsnip' },
@@ -368,11 +364,6 @@ cmp.setup.filetype('gitcommit', {
     { name = 'buffer' },
   }),
 })
-
--- cmp.setup.cmdline('/', {
---   mapping = cmp.mapping.preset.cmdline(),
---   sources = { { name = 'buffer' } },
--- })
 
 cmp.setup.cmdline(':', {
   mapping = cmp.mapping.preset.cmdline(),
@@ -541,4 +532,178 @@ vim.api.nvim_create_autocmd("CursorMoved", {
   desc = "Clear All the References",
 })
 
+
+local modes = {
+  ["n"] = "N",
+  ["no"] = "N",
+  ["v"] = "V",
+  ["V"] = "VL",
+  [""] = "VB",
+  ["s"] = "S",
+  ["S"] = "SL",
+  [""] = "SB",
+  ["i"] = "I",
+  ["ic"] = "I",
+  ["R"] = "R",
+  ["Rv"] = "VR",
+  ["c"] = "C",
+  ["cv"] = "VE",
+  ["ce"] = "EX",
+  ["r"] = "P",
+  ["rm"] = "M",
+  ["r?"] = "CO",
+  ["!"] = "SH",
+  ["t"] = "T",
+}
+
+local function mode()
+  local current_mode = vim.api.nvim_get_mode().mode
+  -- return string.format(" %s ", modes[current_mode]):upper()
+  return string.format(" %s ", modes[current_mode]):upper()
+end
+
+local function update_mode_colors()
+  local current_mode = vim.api.nvim_get_mode().mode
+  local mode_color = "%#StatusLineAccent#"
+  if current_mode == "n" then
+      mode_color = "%#StatuslineAccent#"
+  elseif current_mode == "i" or current_mode == "ic" then
+      mode_color = "%#StatuslineInsertAccent#"
+  elseif current_mode == "v" or current_mode == "V" or current_mode == "" then
+      mode_color = "%#StatuslineVisualAccent#"
+  elseif current_mode == "R" then
+      mode_color = "%#StatuslineReplaceAccent#"
+  elseif current_mode == "c" then
+      mode_color = "%#StatuslineCmdLineAccent#"
+  elseif current_mode == "t" then
+      mode_color = "%#StatuslineTerminalAccent#"
+  end
+  return mode_color
+end
+
+local function filepath()
+  local fpath = vim.fn.fnamemodify(vim.fn.expand "%", ":~:.:h")
+  if fpath == "" or fpath == "." then
+      return " "
+  end
+
+  return string.format(" %%<%s/", fpath)
+end
+
+local function filename()
+  local fname = vim.fn.expand "%:t"
+  if fname == "" then
+      return ""
+  end
+  return fname .. " "
+end
+
+local function lsp()
+  local count = {}
+  local levels = {
+    errors = "Error",
+    warnings = "Warn",
+    info = "Info",
+    hints = "Hint",
+  }
+
+  for k, level in pairs(levels) do
+    count[k] = vim.tbl_count(vim.diagnostic.get(0, { severity = level }))
+  end
+
+  local errors = ""
+  local warnings = ""
+  local hints = ""
+  local info = ""
+
+  if count["errors"] ~= 0 then
+    errors = " %#LspDiagnosticsSignError# " .. count["errors"]
+  end
+  if count["warnings"] ~= 0 then
+    warnings = " %#LspDiagnosticsSignWarning# " .. count["warnings"]
+  end
+  if count["hints"] ~= 0 then
+    hints = " %#LspDiagnosticsSignHint# " .. count["hints"]
+  end
+  if count["info"] ~= 0 then
+    info = " %#LspDiagnosticsSignInformation# " .. count["info"]
+  end
+
+  return errors .. warnings .. hints .. info .. "%#Normal#"
+end
+
+local function filetype()
+  return string.format(" %s ", vim.bo.filetype):upper()
+end
+
+local function lineinfo()
+  if vim.bo.filetype == "alpha" then
+    return ""
+  end
+  return " %P %l:%c "
+end
+
+Statusline = {}
+
+Statusline.active = function()
+  return table.concat {
+    "%#Statusline#",
+    update_mode_colors(),
+    mode(),
+    "%#Normal# ",
+    filepath(),
+    filename(),
+    "%#Normal#",
+    lsp(),
+    "%=%#StatusLineExtra#",
+    filetype(),
+    lineinfo(),
+  }
+end
+
+function Statusline.inactive()
+  return " %F"
+end
+
+function Statusline.short()
+  return "%#StatusLineNC#   NvimTree"
+end
+
+vim.api.nvim_exec([[
+  augroup Statusline
+  au!
+  au WinEnter,BufEnter * setlocal statusline=%!v:lua.Statusline.active()
+  au WinLeave,BufLeave * setlocal statusline=%!v:lua.Statusline.inactive()
+  au WinEnter,BufEnter,FileType NvimTree setlocal statusline=%!v:lua.Statusline.short()
+  augroup END
+]], false)
+
+local vcs = function()
+  local git_info = vim.b.gitsigns_status_dict
+  if not git_info or git_info.head == "" then
+    return ""
+  end
+  local added = git_info.added and ("%#GitSignsAdd#+" .. git_info.added .. " ") or ""
+  local changed = git_info.changed and ("%#GitSignsChange#~" .. git_info.changed .. " ") or ""
+  local removed = git_info.removed and ("%#GitSignsDelete#-" .. git_info.removed .. " ") or ""
+  if git_info.added == 0 then
+    added = ""
+  end
+  if git_info.changed == 0 then
+    changed = ""
+  end
+  if git_info.removed == 0 then
+    removed = ""
+  end
+  return table.concat {
+     " ",
+     added,
+     changed,
+     removed,
+     " ",
+     "%#GitSignsAdd# ",
+     git_info.head,
+     " %#Normal#",
+  }
+end
 
