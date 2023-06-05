@@ -38,8 +38,7 @@ set.completeopt = 'noinsert,menuone,noselect'
 set.inccommand = 'split'
 set.background = 'dark'
 
-vim.o.wildignore = '*~,*.o,*.a,*/*.min.*,*/*.jpg,*/*.png,*/dist,*/docs,*/node_modules/,*/tmp,*/target/debug,*/target/CACHED*,*/.git,.DS_Store'
-
+vim.o.wildignore = '*~,*.o,*.a,*/*.min.*,*/*.jpg,*/*.jpeg,*/*.gif,*/*.png,*/*.pdf,*/dist,*/docs,*/node_modules/,*/tmp,*/target/debug,*/target/CACHED*,*/.git,.DS_Store'
 
 local map = vim.api.nvim_set_keymap
 local kmap = vim.keymap.set
@@ -77,13 +76,18 @@ vim.g.closetag_xhtml_filenames = '*.xml,*.xhtml,*.jsx,*.js,*.tsx,*.php'
 vim.g.closetag_filetypes = 'html,xhtml,jsx,js,tsx,php'
 vim.g.closetag_xhtml_filetypes = 'html,xhtml,jsx,js,tsx,php'
 
+vim.g.CommandTPreferredImplementation = 'lua'
+vim.g.CommandTScanDotDirectories = 1
+
+
 vim.cmd([[
   filetype plugin indent on
   syntax on
-  " colorscheme embark
-  colorscheme kanagawa
+  colorscheme embark
+  " colorscheme kanagawa
   " colorscheme spaceduck
 
+  highlight Normal ctermbg=NONE guibg=NONE
   autocmd BufNewFile,BufRead .aliases* set syntax=bash
   autocmd BufNewFile,BufRead *CSS.html set filetype=css
   autocmd BufNewFile,BufRead *.blade.php set syntax=blade
@@ -113,6 +117,8 @@ map('n', '<ScrollWheelDown>', '<Nop>', opts)
 -- Move between buffers
 map('n', '<C-a>', ':bprev<CR>', opts)
 map('n', '<C-d>', ':bnext<CR>', opts)
+map('n', 'Å', ':bprev<CR>', opts)
+map('n', 'Î', ':bnext<CR>', opts)
 
 -- Move between splits
 map('n', '<leader>k', ':wincmd k<CR>', opts)
@@ -121,13 +127,23 @@ map('n', '<leader>h', ':wincmd h<CR>', opts)
 map('n', '<leader>l', ':wincmd l<CR>', opts)
 
 -- Close buffer
--- map('n', '<leader>w', ':call CloseBuffer()<CR>', opts)
+function close_buffer()
+  local buftype = vim.api.nvim_buf_get_option(0, 'buftype')
+  if buftype == 'terminal' then
+    vim.cmd('bd!')
+  else
+    vim.cmd('bd')
+  end
+end
+map('n', '<leader>w', ':lua close_buffer()<CR>', opts)
 
 -- Comment toggle
-map('n', '<C-X>', ':CommentToggle<CR>', opts)
-map('v', '<C-X>', ':CommentToggle<CR>', opts)
+map('n', '<C-/>', ':CommentToggle<CR>', opts)
+map('v', '<C-/>', ':CommentToggle<CR>', opts)
 map('n', '<C-_>', ':CommentToggle<CR>', opts)
 map('v', '<C-_>', ':CommentToggle<CR>', opts)
+map('n', '÷', ':CommentToggle<CR>', opts)
+map('v', '÷', ':CommentToggle<CR>', opts)
 
 -- Tab to go matching pair
 map('', '<tab>', '%', opts)
@@ -155,9 +171,16 @@ map('i', '<C-k>', '<Esc>:m .-2<CR>==gi', opts)
 map('v', '<C-j>', ":m '>+1<CR>gv=gv", opts)
 map('v', '<C-k>', ":m '<-2<CR>gv=gv", opts)
 
+map('n', '<Down>', ':m .+1<CR>==', opts)
+map('n', '<Up>', ':m .-2<CR>==', opts)
+map('i', '<Down>', '<Esc>:m .+1<CR>==gi', opts)
+map('i', '<Up>', '<Esc>:m .-2<CR>==gi', opts)
+map('v', '<Down>', ":m '>+1<CR>gv=gv", opts)
+map('v', '<Up>', ":m '<-2<CR>gv=gv", opts)
+
 -- File navigation
 map('', '<C-p>', ':CommandTRipgrep<CR>', opts)
-map('', '<C-l>', ':CommandTBuffer<CR>', opts)
+map('', '¬', ':CommandTBuffer<CR>', opts)
 
 
 -- Paste/replace inside string - without yank
@@ -207,7 +230,7 @@ require('packer').startup(function(use)
   use 'windwp/nvim-autopairs'
   use 'alvan/vim-closetag'
   use 'mattn/emmet-vim'
-
+  
   -- Git
   use 'tpope/vim-fugitive'
   use 'lewis6991/gitsigns.nvim'
@@ -257,25 +280,6 @@ require('gitsigns').setup({
   }
 })
 
-require('nvim-treesitter.configs').setup({
-  ensure_installed = { "vim", "javascript", "typescript", "php", "html", "json" },
-  sync_install = true,
-  textobjects = {
-    select = {
-      enable = true,
-      keymaps = {
-        ["af"] = "@function.outer",
-        ["if"] = "@function.inner",
-        ["ac"] = "@class.outer",
-        ["ic"] = "@class.inner",
-      },
-    },
-  },
-  context_commentstring = {
-    enable = true
-  },
-})
-
 require('nvim_comment').setup({
   comment_empty = false,
   comment_empty_trim_whitespace = false,
@@ -309,6 +313,8 @@ require('nvim-treesitter.configs').setup({
   },
   highlight = { enable = true },
   indent = { enable = false },
+  auto_install = true,
+  sync_install = true,
   autotag = {
     enable = true,
     filetypes = {
@@ -321,6 +327,20 @@ require('nvim-treesitter.configs').setup({
       'vue',
       'xml',
     },
+  },
+  textobjects = {
+    select = {
+      enable = true,
+      keymaps = {
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["ac"] = "@class.outer",
+        ["ic"] = "@class.inner",
+      },
+    },
+  },
+  context_commentstring = {
+    enable = true
   },
 })
 
@@ -405,13 +425,13 @@ local on_attach = function(client, bufnr)
   end, bufopts)
   kmap('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
   kmap('n', '<leader>r', vim.lsp.buf.rename, bufopts)
-  kmap('n', '<leader>f', vim.lsp.buf.formatting, bufopts)
+  -- kmap('n', '<leader>f', vim.lsp.buf.formatting, bufopts)
   kmap('v', '<leader>f', ':lua vim.lsp.buf.range_formatting()<CR>', bufopts)
 
   kmap('n', '<leader>dk', vim.diagnostic.goto_prev, bufopts)
   kmap('n', '<leader>dj', vim.diagnostic.goto_next, bufopts)
   kmap('n', '<leader>dl', '<cmd>Telescope diagnostics<CR>', bufopts)
-  kmap('n', '<C-o>', '<cmd>Telescope lsp_document_symbols<CR>', bufopts)
+  kmap('n', 'ø', '<cmd>Telescope lsp_document_symbols<CR>', bufopts)
   kmap('n', '\\', '<cmd>Telescope current_buffer_fuzzy_find<CR>', bufopts)
 end
 
@@ -489,19 +509,13 @@ cmp.setup({
 })
 
 
-
-
-vim.g.CommandTPreferredImplementation = 'lua'
-vim.g.CommandTAlwaysShowDotFiles = 1
-vim.g.CommandTScanDotDirectories = 1
-
 require('wincent.commandt').setup({
-  -- position = 'bottom',
-  scanners = {
-    git = {
-      untracked = false,
+    always_show_dot_files = true,
+    scanners = {
+      git = {
+        untracked = false,
+      }
     }
-  }
 })
 
 
@@ -513,11 +527,18 @@ local function smart_dd()
     return "dd"
   end
 end
+
 vim.keymap.set('n', 'dd', smart_dd, { noremap = true, expr = true })
 
+vim.api.nvim_create_augroup("lsp_document_highlight", {
+  clear = true
+})
 
-vim.api.nvim_create_augroup("lsp_document_highlight", { clear = true })
-vim.api.nvim_clear_autocmds { buffer = bufnr, group = "lsp_document_highlight" }
+vim.api.nvim_clear_autocmds {
+  buffer = bufnr,
+  group = "lsp_document_highlight"
+}
+
 vim.api.nvim_create_autocmd("CursorHold", {
   callback = vim.lsp.buf.document_highlight,
   buffer = bufnr,
@@ -677,6 +698,8 @@ vim.api.nvim_exec([[
   au WinEnter,BufEnter,FileType NvimTree setlocal statusline=%!v:lua.Statusline.short()
   augroup END
 ]], false)
+
+
 
 local vcs = function()
   local git_info = vim.b.gitsigns_status_dict
