@@ -2,16 +2,21 @@
 --smart-case
 --hidden
 
---glob=!*/node_modules
---glob=!*.git
---glob=!*/tmp
---glob=!.DS_store
---glob=!**/*.png
---glob=!**/*.jpg
+--glob=!**/node_modules
+--glob=!**/.git
+--glob=!**/.cache
+--glob=!**/.cargo
+--glob=!**/tmp
+--glob=!*/.DS_store
+--glob=!*/go/pkg
+--glob=!*/*.png
+--glob=!*/*.jpg
 --glob=!*/dist
 --glob=!*/docs
---glob=!*.min.*
+--glob=!*/*.min.*
 
 --max-columns=150
 --max-columns-preview
+--max-depth=5
+--max-count=100
 

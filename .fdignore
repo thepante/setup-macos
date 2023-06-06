@@ -1,0 +1,6 @@
+/Library/Caches
+**/node_modules
+**/cache/
+**/go/pkg/
+.DS_Store
+.git

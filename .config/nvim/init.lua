@@ -21,7 +21,7 @@ set.wrap = false
 set.cursorline = true
 set.hidden = true
 set.splitbelow = true
-set.scrolloff = 4
+set.scrolloff = 2
 set.swapfile = false
 set.tabstop = 4
 set.termguicolors = true
@@ -111,8 +111,8 @@ map('n', '<Up>', '<Nop>', opts)
 map('n', '<Down>', '<Nop>', opts)
 map('n', '<Left>', '<Nop>', opts)
 map('n', '<Right>', '<Nop>', opts)
-map('n', '<ScrollWheelUp>', '<Nop>', opts)
-map('n', '<ScrollWheelDown>', '<Nop>', opts)
+map('n', '<ScrollWheelUp>', '<C-y>', opts)
+map('n', '<ScrollWheelDown>', '<C-e>', opts)
 
 -- Move between buffers
 map('n', '<C-a>', ':bprev<CR>', opts)
@@ -202,12 +202,12 @@ require('packer').startup(function(use)
   use 'hrsh7th/cmp-cmdline'
   use 'hrsh7th/cmp-nvim-lsp'
 
-  use 'hrsh7th/vim-vsnip'
-  use 'hrsh7th/vim-vsnip-integ'
+  -- use 'hrsh7th/vim-vsnip'
+  -- use 'hrsh7th/vim-vsnip-integ'
 
   -- Snippets ! TODO revisar esto, cuál estoy usando? lol
   use 'L3MON4D3/LuaSnip'
-  use 'saadparwaiz1/cmp_luasnip'
+  -- use 'saadparwaiz1/cmp_luasnip'
 
   -- Formatting
   use 'gpanders/editorconfig.nvim'
@@ -234,6 +234,7 @@ require('packer').startup(function(use)
   -- Git
   use 'tpope/vim-fugitive'
   use 'lewis6991/gitsigns.nvim'
+  use 'sindrets/diffview.nvim'
 
   -- File navigation
   use 'nvim-telescope/telescope.nvim'
@@ -364,10 +365,10 @@ cmp.setup({
   }),
   sources = cmp.config.sources({
     { name = 'fugitive' },
-    { name = 'nvim_lsp' },
+    -- { name = 'nvim_lsp' },
     { name = 'path' },
     { name = 'luasnip' },
-    { name = 'vsnip' },
+    -- { name = 'vsnip' },
     { name = 'buffer', keyword_length = 4 },
   }),
   -- experimental = {
