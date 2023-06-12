@@ -32,6 +32,8 @@ set.smarttab = true
 set.updatetime = 250
 set.signcolumn = 'yes:1'
 set.title = true
+set.ttyfast = true
+set.lazyredraw = true
 -- set.syntaxenable = true
 
 set.completeopt = 'noinsert,menuone,noselect'
@@ -94,7 +96,7 @@ vim.cmd([[
 
   autocmd TermOpen * startinsert
   " autocmd CursorHold * silent call CocActionAsync('highlight')
-  autocmd TextYankPost * silent! lua vim.highlight.on_yank({ higroup="IncSearch", timeout=50})
+  autocmd TextYankPost * silent! lua vim.highlight.on_yank({ higroup="IncSearch", timeout=50 })
   autocmd FileType html,css,svelte,jsx,tsx,vue,php,blade,php.css.html EmmetInstall
 ]])
 
@@ -152,8 +154,8 @@ map('', '<tab>', '%', opts)
 map('n', '<leader>R', '#Ncgn', opts)
 
 -- Mejor n
-map('', '<n>', 'nzz', opts)
-map('', '<N>', 'Nzz', opts)
+map('', 'n', 'nzz', opts)
+map('', 'N', 'Nzz', opts)
 
 -- Files navigation with Harpoon
 -- map <leader>p :lua require("harpoon.ui").toggle_quick_menu()<CR>
@@ -179,14 +181,27 @@ map('v', '<Down>', ":m '>+1<CR>gv=gv", opts)
 map('v', '<Up>', ":m '<-2<CR>gv=gv", opts)
 
 -- File navigation
+-- map('', '<C-p>', ':CommandTRipgrep<CR>', opts)
 map('', '<C-p>', ':CommandTRipgrep<CR>', opts)
-map('', '¬', ':CommandTBuffer<CR>', opts)
+map('', 'Ò', ':CommandTBuffer<CR>', opts)
 
 
 -- Paste/replace inside string - without yank
 map('n', 'cvs', 'vi"pgvy', opts)
 map('n', 'cvv', "vi'pgvy", opts)
 
+-- Git commands
+map('n', '<leader>gs', ':!git fetch && git status<CR>', opts)
+map('n', '<leader>gp', ':Git pull<CR>', opts)
+map('n', '<leader>gf', ':Git diff %<CR>', opts)
+map('n', '<leader>gd', ':Gdiffsplit<CR>', opts)
+
+map('n', '<leader>p', ':Gitsigns prev_hunk<CR>zz', opts)
+map('n', '<leader>n', ':Gitsigns next_hunk<CR>zz', opts)
+map('n', '<leader>sh', ':Gitsigns stage_hunk<CR>', opts)
+map('v', '<leader>sh', ':Gitsigns stage_hunk<CR>', opts)
+map('n', '<leader>su', ':Gitsigns undo_stage_hunk<CR>', opts)
+map('n', '<leader>sp', ':Gitsigns preview_hunk<CR>', opts)
 
 -- Plugins
 require('packer').startup(function(use)
@@ -196,18 +211,21 @@ require('packer').startup(function(use)
   use 'nvim-lua/plenary.nvim'
 
   -- Completion
-  use 'hrsh7th/nvim-cmp'
   use 'hrsh7th/cmp-buffer'
   use 'hrsh7th/cmp-path'
   use 'hrsh7th/cmp-cmdline'
   use 'hrsh7th/cmp-nvim-lsp'
+  use 'hrsh7th/nvim-cmp'
+  use { 'codota/tabnine-nvim', run = "./dl_binaries.sh" }
 
   -- use 'hrsh7th/vim-vsnip'
   -- use 'hrsh7th/vim-vsnip-integ'
 
   -- Snippets ! TODO revisar esto, cuál estoy usando? lol
   use 'L3MON4D3/LuaSnip'
-  -- use 'saadparwaiz1/cmp_luasnip'
+  use 'saadparwaiz1/cmp_luasnip'
+
+  use 'onsails/lspkind.nvim'
 
   -- Formatting
   use 'gpanders/editorconfig.nvim'
@@ -230,6 +248,9 @@ require('packer').startup(function(use)
   use 'windwp/nvim-autopairs'
   use 'alvan/vim-closetag'
   use 'mattn/emmet-vim'
+
+  use 'kana/vim-textobj-user'
+  use 'Julian/vim-textobj-variable-segment'
   
   -- Git
   use 'tpope/vim-fugitive'
@@ -248,6 +269,8 @@ require('packer').startup(function(use)
   use { 'embark-theme/vim', as = 'embark' }
   use 'rebelot/kanagawa.nvim'
   use 'pineapplegiant/spaceduck'
+
+  use { 'echasnovski/mini.nvim', branch = 'stable' }
 
   use { 'glacambre/firenvim', run = function() vim.fn['firenvim#install'](0) end }
 end)
@@ -345,12 +368,17 @@ require('nvim-treesitter.configs').setup({
   },
 })
 
+local lspkind = require('lspkind')
+local luasnip = require("luasnip")
 local cmp = require('cmp')
 
 cmp.setup({
+  -- completion = {
+  --   completeopt = "menu,menuone,noinsert,noselect",
+  -- },
   snippet = {
     expand = function(args)
-      require('luasnip').lsp_expand(args.body)
+      luasnip.lsp_expand(args.body)
     end,
   },
   mapping = cmp.mapping.preset.insert({
@@ -364,34 +392,122 @@ cmp.setup({
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
   }),
   sources = cmp.config.sources({
+    { name = 'luasnip', priority = 10, keyword_length = 2 },
+    { name = 'nvim_lsp', priority = 9 },
     { name = 'fugitive' },
-    -- { name = 'nvim_lsp' },
-    { name = 'path' },
-    { name = 'luasnip' },
-    -- { name = 'vsnip' },
-    { name = 'buffer', keyword_length = 4 },
-  }),
-  -- experimental = {
-  --   views = {
-  --     entries = '',
-  --   },
-  -- },
-})
-
-cmp.setup.filetype('gitcommit', {
-  sources = cmp.config.sources({
-    { name = 'cmp_git' },
+    { name = 'path', keyword_length = 3 },
   }, {
-    { name = 'buffer' },
+    { name = 'buffer', keyword_length = 3 },
   }),
+  experimental = {
+    ghost_text = false,
+  },
+  formatting = {
+    fields = { "abbr", "kind", "menu" },
+    format = function(entry, vim_item)
+        local kind = lspkind.cmp_format({
+            mode = "symbol_text",
+            maxwidth = 50,
+            menu = { omni = "omni" },
+        })(entry, vim_item)
+
+        local strings = vim.split(kind.kind, "%s", { trimempty = true })
+
+        local source = ({
+            nvim_lsp = 'LSP',
+            nvim_lua = 'Nvim Lua',
+            cmp_git = 'Git',
+            luasnip = 'Snippet',
+            fugitive = 'Fugitive',
+            buffer = 'Buffer',
+        })[entry.source.name]
+
+        kind.kind = " "..(strings[1] or "")
+        kind.menu = source and " ["..(source).."]" or ""
+
+        vim_item.dup = 0
+        return kind
+    end,
+    -- format = function(entry, vim_item)
+    --   vim_item.menu = ({
+    --     nvim_lsp = '[LSP]',
+    --     luasnip = '[Snippet]',
+    --     nvim_lua = '[Nvim Lua]',
+    --     fugitive = '[Fugitive]',
+    --     buffer = '[Buffer]',
+    --   })[entry.source.name]
+    --   return vim_item
+    -- end
+  },
+  performance = {
+    max_view_entries = 14,
+  },
+  window = {
+    completion = cmp.config.window.bordered(),
+    documentation = cmp.config.window.bordered({ winhighlight = "" }),
+  },
+  mapping = {
+    ["<C-Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        local entry = cmp.get_selected_entry()
+        if not entry then
+          cmp.select_next_item({
+            behavior = cmp.SelectBehavior.Select
+          })
+          vim.api.nvim_input('<space>')
+        end
+        cmp.confirm()
+      elseif luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+    ["<S-Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+    ['<C-y>'] = cmp.config.disable,
+    ['<C-e>'] = cmp.mapping({
+      i = cmp.mapping.abort(),
+      c = cmp.mapping.close(),
+    }),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+  },
 })
 
 cmp.setup.cmdline(':', {
   mapping = cmp.mapping.preset.cmdline(),
   sources = cmp.config.sources({
+    { name = 'cmdline', keyword_length = 2 },
     { name = 'path' },
+  }),
+})
+
+cmp.setup.cmdline({ '/', '?' }, {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'buffer' },
+  })
+})
+
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
+
+cmp.setup.filetype('gitcommit', {
+  sources = cmp.config.sources({
+    { name = 'cmp_git' },
+    { name = 'git' },
   }, {
-    { name = 'cmdline' },
+    { name = 'buffer' },
   }),
 })
 
@@ -432,8 +548,9 @@ local on_attach = function(client, bufnr)
   kmap('n', '<leader>dk', vim.diagnostic.goto_prev, bufopts)
   kmap('n', '<leader>dj', vim.diagnostic.goto_next, bufopts)
   kmap('n', '<leader>dl', '<cmd>Telescope diagnostics<CR>', bufopts)
-  kmap('n', 'ø', '<cmd>Telescope lsp_document_symbols<CR>', bufopts)
-  kmap('n', '\\', '<cmd>Telescope current_buffer_fuzzy_find<CR>', bufopts)
+  kmap('n', 'Ø', '<cmd>Telescope lsp_document_symbols<CR>', bufopts)
+  kmap('n', '<S-B>', '<cmd>Telescope current_buffer_fuzzy_find<CR>', bufopts)
+  kmap('n', '<S-F>', '<cmd>Telescope live_grep<CR>', bufopts)
 end
 
 require'lspconfig'.tsserver.setup{
@@ -442,6 +559,11 @@ require'lspconfig'.tsserver.setup{
 }
 
 require'lspconfig'.rust_analyzer.setup{
+  capabilities = capabilities,
+  on_attach = on_attach,
+}
+
+require'lspconfig'.intelephense.setup{
   capabilities = capabilities,
   on_attach = on_attach,
 }
@@ -462,53 +584,8 @@ require'lspconfig'.html.setup {
 
 require'lspconfig'.cssls.setup {
   capabilities = capabilities,
+  on_attach = on_attach,
 }
-
-
-local has_words_before = function()
-  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
-end
-
-local luasnip = require("luasnip")
-
-cmp.setup({
-  mapping = {
-    ["<Tab>"] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        local entry = cmp.get_selected_entry()
-        if not entry then
-          cmp.select_next_item({behavior = cmp.SelectBehavior.Select})
-          vim.api.nvim_input('<space>')
-        end
-        cmp.confirm()
-      elseif luasnip.expand_or_jumpable() then
-        luasnip.expand_or_jump()
-      else
-        fallback()
-      end
-    end, { "i", "s" }),
-    ["<S-Tab>"] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end, { "i", "s" }),
-    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-    ['<C-y>'] = cmp.config.disable,
-    ['<C-e>'] = cmp.mapping({
-      i = cmp.mapping.abort(),
-      c = cmp.mapping.close(),
-    }),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }),
-  },
-})
-
 
 require('wincent.commandt').setup({
     always_show_dot_files = true,
@@ -519,6 +596,11 @@ require('wincent.commandt').setup({
     }
 })
 
+
+local has_words_before = function()
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
 
 -- Smart line delete
 local function smart_dd()
@@ -580,8 +662,7 @@ local modes = {
 
 local function mode()
   local current_mode = vim.api.nvim_get_mode().mode
-  -- return string.format(" %s ", modes[current_mode]):upper()
-  return string.format(" %s ", modes[current_mode]):upper()
+  return string.format("%s", modes[current_mode]):upper()
 end
 
 local function update_mode_colors()
