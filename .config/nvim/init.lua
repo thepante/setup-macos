@@ -1,8 +1,8 @@
-require('impatient')
+vim.loader.enable()
 
 local set = vim.opt
 
-set.shiftwidth = 2
+set.textwidth = 130
 set.numberwidth = 1
 set.mouse = 'a'
 set.number = true
@@ -10,10 +10,11 @@ set.clipboard = 'unnamedplus'
 set.shortmess = "I"
 set.showcmd = true
 set.ruler = true
+set.backspace = 'indent,eol,start'
 set.encoding = 'utf-8'
 set.showmatch = true
 set.laststatus = 2
-set.cmdheight = 2
+set.cmdheight = 1
 set.ignorecase = true
 set.smartcase = true
 set.showmode = false
@@ -23,10 +24,12 @@ set.hidden = true
 set.splitbelow = true
 set.scrolloff = 2
 set.swapfile = false
-set.tabstop = 4
 set.termguicolors = true
+set.tabstop = 4
+set.shiftwidth = 4
 set.expandtab = true
 set.autoindent = true
+set.smartindent = true
 set.cindent = true
 set.smarttab = true
 set.updatetime = 250
@@ -34,7 +37,10 @@ set.signcolumn = 'yes:1'
 set.title = true
 set.ttyfast = true
 set.lazyredraw = true
--- set.syntaxenable = true
+set.syntax = 'on'
+set.foldmethod = 'expr'
+set.foldexpr = 'nvim_treesitter#foldexpr()'
+set.foldenable = false
 
 set.completeopt = 'noinsert,menuone,noselect'
 set.inccommand = 'split'
@@ -106,7 +112,9 @@ map('i', 'kj', '<C-c>', opts)
 -- map('v', 'kj', '<C-c>', opts)
 map('c', 'kj', '<C-c>', opts)
 map('t', 'kj', '<C-\\><C-n>', opts)
-map('n', '<cr>', ':noh<cr>', { silent = true })
+map('n', '<cr>', ':noh<cr>/kj', { silent = true })
+map('n', '<Esc>', '<Esc>:noh<cr>/kj', { silent = true })
+map('n', '<leader>y', 'ggVGy<C-o>', opts)
 
 -- Disable arrow keys & scroll
 map('n', '<Up>', '<Nop>', opts)
@@ -153,7 +161,8 @@ map('', '<tab>', '%', opts)
 -- Rename a symbol without no language server
 map('n', '<leader>R', '#Ncgn', opts)
 
--- Mejor n
+-- Better n and zz
+map('n', 'zz', 'zz6<C-e>', opts)
 map('', 'n', 'nzz', opts)
 map('', 'N', 'Nzz', opts)
 
@@ -168,23 +177,23 @@ map('', 'N', 'Nzz', opts)
 -- Move lines
 map('n', '<C-j>', ':m .+1<CR>==', opts)
 map('n', '<C-k>', ':m .-2<CR>==', opts)
-map('i', '<C-j>', '<Esc>:m .+1<CR>==gi', opts)
-map('i', '<C-k>', '<Esc>:m .-2<CR>==gi', opts)
 map('v', '<C-j>', ":m '>+1<CR>gv=gv", opts)
 map('v', '<C-k>', ":m '<-2<CR>gv=gv", opts)
 
 map('n', '<Down>', ':m .+1<CR>==', opts)
 map('n', '<Up>', ':m .-2<CR>==', opts)
-map('i', '<Down>', '<Esc>:m .+1<CR>==gi', opts)
-map('i', '<Up>', '<Esc>:m .-2<CR>==gi', opts)
 map('v', '<Down>', ":m '>+1<CR>gv=gv", opts)
 map('v', '<Up>', ":m '<-2<CR>gv=gv", opts)
 
 -- File navigation
 -- map('', '<C-p>', ':CommandTRipgrep<CR>', opts)
-map('', '<C-p>', ':CommandTRipgrep<CR>', opts)
+map('', '<C-p>', ':Telescope find_files<CR>', opts)
 map('', 'Ò', ':CommandTBuffer<CR>', opts)
-
+kmap('n', '<C-Semicolon>', '<cmd>Telescope current_buffer_fuzzy_find<CR>', bufopts)
+kmap('n', '<M-f>', '<cmd>Telescope live_grep<CR>', bufopts)
+-- kmap('n', 'Ø', '<cmd>Telescope lsp_document_symbols<CR>', bufopts)
+-- kmap('n', 'Ø', ":lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({}))<CR>", bufopts)
+kmap('n', 'Ø', '<cmd>Telescope lsp_document_symbols<CR>', bufopts)
 
 -- Paste/replace inside string - without yank
 map('n', 'cvs', 'vi"pgvy', opts)
@@ -207,7 +216,6 @@ map('n', '<leader>sp', ':Gitsigns preview_hunk<CR>', opts)
 require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
   use 'dstein64/vim-startuptime'
-  use 'lewis6991/impatient.nvim'
   use 'nvim-lua/plenary.nvim'
 
   -- Completion
@@ -233,6 +241,7 @@ require('packer').startup(function(use)
 
   -- Syntax highlight
   use 'sheerun/vim-polyglot'
+  use 'RRethy/vim-illuminate'
 
   -- Language server
   use 'neovim/nvim-lspconfig'
@@ -260,6 +269,7 @@ require('packer').startup(function(use)
   -- File navigation
   use 'nvim-telescope/telescope.nvim'
   use { 'wincent/command-t', run = 'cd lua/wincent/commandt/lib && make' }
+  use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
   use 'ggandor/leap.nvim'
 
   -- Status line
@@ -394,10 +404,12 @@ cmp.setup({
   sources = cmp.config.sources({
     { name = 'luasnip', priority = 10, keyword_length = 2 },
     { name = 'nvim_lsp', priority = 9 },
+    -- { name = 'null_ls', priority = 8 },
+    -- { name = 'nvim_lsp_signature_help' },
     { name = 'fugitive' },
-    { name = 'path', keyword_length = 3 },
+    { name = 'path', keyword_length = 2 },
   }, {
-    { name = 'buffer', keyword_length = 3 },
+    { name = 'buffer', keyword_length = 2 },
   }),
   experimental = {
     ghost_text = false,
@@ -529,7 +541,8 @@ local on_attach = function(client, bufnr)
   kmap('n', 'gr', vim.lsp.buf.references, bufopts)
   kmap('n', 'gD', vim.lsp.buf.declaration, bufopts)
   kmap('n', 'gd', vim.lsp.buf.definition, bufopts)
-  kmap('n', 'gi', vim.lsp.buf.implementation, bufopts)
+  -- kmap('n', 'gi', vim.lsp.buf.implementation, bufopts)
+  kmap('n', 'gi', '<cmd>Telescope lsp_references theme=cursor<CR>', bufopts)
   kmap('n', 'gt', vim.lsp.buf.type_definition, bufopts)
   kmap('n', 'gh', vim.lsp.buf.hover, bufopts)
   kmap('n', 'K', vim.lsp.buf.hover, bufopts)
@@ -552,6 +565,29 @@ local on_attach = function(client, bufnr)
   kmap('n', '<S-B>', '<cmd>Telescope current_buffer_fuzzy_find<CR>', bufopts)
   kmap('n', '<S-F>', '<cmd>Telescope live_grep<CR>', bufopts)
 end
+
+require'lspconfig'.lua_ls.setup{
+  settings = {
+    Lua = {
+      runtime = {
+        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+        version = 'LuaJIT',
+      },
+      diagnostics = {
+        -- Get the language server to recognize the `vim` global
+        globals = {'vim'},
+      },
+      workspace = {
+        -- Make the server aware of Neovim runtime files
+        library = vim.api.nvim_get_runtime_file("", true),
+      },
+      -- Do not send telemetry data containing a randomized but unique identifier
+      telemetry = {
+        enable = false,
+      },
+    },
+  },
+}
 
 require'lspconfig'.tsserver.setup{
   capabilities = capabilities,
@@ -811,4 +847,10 @@ local vcs = function()
      " %#Normal#",
   }
 end
+
+-- Move between splits
+map('n', '<leader>k', ':wincmd k<CR>', opts)
+map('n', '<leader>j', ':wincmd j<CR>', opts)
+map('n', '<leader>h', ':wincmd h<CR>', opts)
+map('n', '<leader>l', ':wincmd l<CR>', opts)
 
