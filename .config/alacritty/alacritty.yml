@@ -111,7 +111,7 @@ window:
   #   - OnlyRight
   #   - Both
   #   - None (default)
-  #option_as_alt: None
+  option_as_alt: OnlyLeft
 
 #scrolling:
   # Maximum number of lines in the scrollback buffer.
@@ -134,7 +134,7 @@ font:
     family: 'JetBrainsMono Nerd Font'
 
     # The `style` can be specified to pick a specific face.
-    style: Bold
+    style: SemiBold
 
   # Bold font face
   bold:
@@ -194,14 +194,15 @@ font:
   #builtin_box_drawing: true
 
 # If `true`, bold text is drawn using the bright color variants.
-draw_bold_text_with_bright_colors: false
+draw_bold_text_with_bright_colors: true
 
 # Colors (Tomorrow Night)
-#colors:
+colors:
   # Default colors
-  #primary:
-  #  background: '#1d1f21'
-  #  foreground: '#c5c8c6'
+  primary:
+    # background: '#1d1f21'
+    background: '#12151a'
+    # foreground: '#c5c8c6'
 
     # Bright and dim foreground colors
     #
@@ -221,6 +222,9 @@ draw_bold_text_with_bright_colors: false
   #cursor:
   #  text: CellBackground
   #  cursor: CellForeground
+  cursor:
+    text: '#ffffff'
+    cursor: '#ff7878'
 
   # Vi mode cursor colors
   #
@@ -423,7 +427,7 @@ cursor:
   #vi_mode_style: None
 
   # Cursor blinking interval in milliseconds.
-  blink_interval: 500
+  blink_interval: 350
 
   # Time after which cursor stops blinking, in seconds.
   #
@@ -778,17 +782,24 @@ key_bindings:
   - { key: L,     mods: Command, chars: "\xac"          } # cmd+o = buffers
   - { key: A,     mods: Command, chars: "\xc5"          } # prev buffer
   - { key: D,     mods: Command, chars: "\xce"          } # next buffer
-  - { key: J,     mods: Command, chars: "\x1b\x5b\x42"  } # move line down
-  - { key: K,     mods: Command, chars: "\x1b\x5b\x41"  } # move line up
+  # - { key: J,     mods: Command, chars: "\x1b\x5b\x42"  } # move line down
+  # - { key: K,     mods: Command, chars: "\x1b\x5b\x41"  } # move line up
 
   # tmux
   - { key: T,     mods: Command, chars: "\x01\x74"      } # new tmux window
   - { key: W,     mods: Command, chars: "\x18"          } # kill tmux window
   - { key: Slash, mods: Command, chars: "\xf7"          } # toggle comment: ÷ (option+/) 
   - { key: Backslash,     mods: Command, chars: "\xab"  } # show popup cmd+\
+  # - { key: "^[[1;2D", chars: "\x1b\x5b\x31\x3b\x32\x44"  } # 
+    
 
   # terminal
-  - { key: Back,  mods: Command, chars: "\x15"          } # cmd+backspace delete line backwards
+  - { key: Back,     mods: Command, chars: "\x15"         } # cmd+backspace delete line backwards
+  - { key: I,        mods: Control, chars: "\x1b[105;5u"  }
+  - { key: Apostrophe,              chars: "\x27"         }
+  - { key: Apostrophe, mods: Shift, chars: "\x22"         }
+  - { key: Grave,                   chars: "\x60"         }
+  - { key: Grave,      mods: Shift, chars: "\x7e"         }
 
   #- { key: Paste,                                       action: Paste          }
   #- { key: Copy,                                        action: Copy           }
@@ -901,6 +912,42 @@ key_bindings:
   #- { key: F,              mods: Command|Control,            action: ToggleFullscreen      }
   #- { key: F,              mods: Command, mode: ~Search,     action: SearchForward         }
   #- { key: B,              mods: Command, mode: ~Search,     action: SearchBackward        }
+
+  # scrollback
+  - { key: PageUp,   mods: Shift,         mode: ~Alt,        action: ReceiveChar }
+  - { key: PageDown, mods: Shift,         mode: ~Alt,        action: ReceiveChar }
+  - { key: Home,     mods: Shift,         mode: ~Alt,        action: ReceiveChar }
+  - { key: End,      mods: Shift,         mode: ~Alt,        action: ReceiveChar }
+  # - { key: K,        mods: Command,       mode: ~Vi|~Search, action: None }
+  # - { key: K,                             mode: Vi|~Search,  action: None }
+
+
+  # searching
+  - { key: F,        mods: Control|Shift, mode: ~Search,     action: ReceiveChar }
+  - { key: F,        mods: Command,       mode: ~Search,     action: ReceiveChar }
+  - { key: B,        mods: Control|Shift, mode: ~Search,     action: ReceiveChar }
+  - { key: B,        mods: Command,       mode: ~Search,     action: ReceiveChar }
+
+  # copy/paste
+  - { key: V,        mods: Control|Shift, mode: ~Vi,         action: ReceiveChar }
+  - { key: C,        mods: Control|Shift, mode: Vi|~Search,  action: ReceiveChar }
+  - { key: C,        mods: Command,       mode: Vi|~Search,  action: ReceiveChar }
+  - { key: Insert,   mods: Shift,                            action: ReceiveChar }
+
+  # - { key: F,        mods: Command,       chars: "\x1b\x66"         }
+    
+  # - { key: J,     mods: Command,    action: ReceiveChar  } # move line down
+  # - { key: K,     mods: Command,    action: ReceiveChar  } # move line up
+    
+  - { key: J,     mods: Command, chars: "\x1b\x5b\x42"  } # move line down
+  - { key: K,     mods: Command, chars: "\x1b\x5b\x41"  } # move line up
+
+    
+  - { key: Tab,     mods: Command, chars: "\x09"  } # move line down
+  # - { key: Tab,     mods: Command, chars: "\x1b\x5b\x42"  } # move line down
+    
+mouse_bindings:
+  - { mouse: Right,  action: ReceiveChar }
 
 #debug:
   # Display the time it takes to redraw each frame.
