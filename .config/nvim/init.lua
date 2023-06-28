@@ -150,9 +150,7 @@ vim.cmd([[
   " inoremap <silent><m-\> <Esc><Cmd>exe v:count1 . "ToggleTerm"<CR>
 
   " au FocusGained * echo 'foo'
-  nnoremap <Tab> %
-  vnoremap <Tab> %
-  xnoremap <Tab> %
+  " noremap <Tab> %
 ]])
 
 vim.api.nvim_set_hl(0, 'MiniIndentscopeSymbol', { fg = '#444444' }) -- #24262A
@@ -202,7 +200,7 @@ map('n', '÷', ':CommentToggle<CR>', opts)
 map('v', '÷', ':CommentToggle<CR>', opts)
 
 -- Tab to go matching pair
-map('n', '<Tab>', '%', opts)
+map('', '<Tab>', '%', opts)
 
 -- Rename a symbol without no language server
 map('n', '<leader>R', '#Ncgn', opts)
