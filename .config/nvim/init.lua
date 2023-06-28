@@ -436,15 +436,15 @@ require('better_escape').setup({
 
 require('telescope').setup({
   defaults = {
-    layout_strategy = 'vertical',
-    preview = false,
+    -- layout_strategy = 'vertical',
+    preview = true,
     flip_lines = true,
     sorting_strategy = 'ascending',
     grep_hidden = true,
     layout_config = {
       prompt_position = 'top',
       height = 20,
-      width = 100,
+      width = 120,
     },
     path_display = {
       truncate = 3,
@@ -649,7 +649,7 @@ cmp.setup({
     documentation = cmp.config.window.bordered({ winhighlight = "" }),
   },
   mapping = {
-    ["<C-n>"] = cmp.mapping(function(fallback)
+    ["<Down>"] = cmp.mapping(function(fallback) -- <C-j>
       if cmp.visible() then
         -- local entry = cmp.get_selected_entry()
         -- if not entry then
@@ -662,8 +662,8 @@ cmp.setup({
       else
         fallback()
       end
-    end, { "i", "s" }),
-    ["<C-p>"] = cmp.mapping(function(fallback)
+    end, { "i", "s", "c" }),
+    ["<Up>"] = cmp.mapping(function(fallback) -- <C-k>
       if cmp.visible() then
         cmp.select_prev_item()
       elseif luasnip.jumpable(-1) then
@@ -671,7 +671,7 @@ cmp.setup({
       else
         fallback()
       end
-    end, { "i", "s" }),
+    end, { "i", "s", "c" }),
     ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
     ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
     ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
@@ -1036,6 +1036,16 @@ local vcs = function()
      " %#Normal#",
   }
 end
+
+function open_on_vscode()
+  local pos = vim.api.nvim_win_get_cursor(0)
+  local file = vim.fn.expand('%:p')
+  local target = string.format("%s:%d:%d", file, pos[1], (pos[2]+1))
+  -- vim.api.nvim_echo({{target, 'Normal'}}, true, {})
+  os.execute(string.format("code . && code -g '%s'", target))
+end
+
+map('n', '<leader>c', ':lua open_on_vscode()<CR>', opts)
 
 -- Move between splits
 map('n', '<leader>k', ':wincmd k<CR>', opts)
