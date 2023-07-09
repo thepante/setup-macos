@@ -71,6 +71,9 @@ export FZF_DIRS_COMMAND='fd -HLI -t d . '$fzf_excluded
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 #[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+# pyenv
+PATH=$PATH:$(pyenv root)/shims
+
 # Tmux plugins
 export PATH=$HOME/.tmux/plugins/t-smart-tmux-session-manager/bin:$PATH
 export PATH=$HOME/.config/tmux/plugins/t-smart-tmux-session-manager/bin:$PATH
@@ -104,3 +107,7 @@ bindkey "^[[B" history-beginning-search-forward-end # "^[OB"
 
 eval "$(zoxide init zsh)"
 
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
