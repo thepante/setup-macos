@@ -134,7 +134,7 @@ font:
     family: 'JetBrainsMono Nerd Font'
 
     # The `style` can be specified to pick a specific face.
-    style: SemiBold
+    style: Regular
 
   # Bold font face
   bold:
@@ -201,7 +201,8 @@ colors:
   # Default colors
   primary:
     # background: '#1d1f21'
-    background: '#12151a'
+    # background: '#12151a'
+    background: '#0D1116'
     # foreground: '#c5c8c6'
 
     # Bright and dim foreground colors
@@ -775,7 +776,7 @@ hints:
 # If the same trigger is assigned to multiple actions, all of them are executed
 # in the order they were defined in.
 key_bindings:
- 
+
   # nvim
   - { key: P,     mods: Command, chars: "\x10"          } # cmd+p
   - { key: O,     mods: Command, chars: "\xf8"          } # cmd+l = symbols
@@ -788,10 +789,10 @@ key_bindings:
   # tmux
   - { key: T,     mods: Command, chars: "\x01\x74"      } # new tmux window
   - { key: W,     mods: Command, chars: "\x18"          } # kill tmux window
-  - { key: Slash, mods: Command, chars: "\xf7"          } # toggle comment: ÷ (option+/) 
+  - { key: Slash, mods: Command, chars: "\xf7"          } # toggle comment: ÷ (option+/)
   - { key: Backslash,     mods: Command, chars: "\xab"  } # show popup cmd+\
-  # - { key: "^[[1;2D", chars: "\x1b\x5b\x31\x3b\x32\x44"  } # 
-    
+  # - { key: "^[[1;2D", chars: "\x1b\x5b\x31\x3b\x32\x44"  } #
+
 
   # terminal
   - { key: Back,     mods: Command, chars: "\x15"         } # cmd+backspace delete line backwards
@@ -935,17 +936,17 @@ key_bindings:
   - { key: Insert,   mods: Shift,                            action: ReceiveChar }
 
   # - { key: F,        mods: Command,       chars: "\x1b\x66"         }
-    
+
   # - { key: J,     mods: Command,    action: ReceiveChar  } # move line down
   # - { key: K,     mods: Command,    action: ReceiveChar  } # move line up
-    
+
   - { key: J,     mods: Command, chars: "\x1b\x5b\x42"  } # move line down
   - { key: K,     mods: Command, chars: "\x1b\x5b\x41"  } # move line up
 
-    
+
   - { key: Tab,     mods: Command, chars: "\x09"  } # move line down
   # - { key: Tab,     mods: Command, chars: "\x1b\x5b\x42"  } # move line down
-    
+
 mouse_bindings:
   - { mouse: Right,  action: ReceiveChar }
 

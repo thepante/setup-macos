@@ -22,7 +22,7 @@ set.wrap = false
 set.cursorline = true
 set.hidden = true
 set.splitbelow = true
-set.scrolloff = 2
+set.scrolloff = 1
 set.swapfile = false
 set.termguicolors = true
 set.tabstop = 4
@@ -102,6 +102,10 @@ vim.g.CommandTScanDotDirectories = 1
 
 
 -- require('vscode').load()
+
+if vim.g.started_by_firenvim == true then
+  set.background = 'light'
+end
 
 vim.cmd([[
   filetype plugin indent on
@@ -278,7 +282,7 @@ require('packer').startup(function(use)
   use 'hrsh7th/nvim-cmp'
   use { 'codota/tabnine-nvim', run = "./dl_binaries.sh" }
 
-  use { 'lvimuser/lsp-inlayhints.nvim', tag = 'anticonceal' }
+  use { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' }
 
   use 'L3MON4D3/LuaSnip'
   use 'saadparwaiz1/cmp_luasnip'
@@ -442,7 +446,7 @@ require('telescope').setup({
     layout_config = {
       prompt_position = 'top',
       height = 20,
-      width = 120,
+      width = 500,
     },
     path_display = {
       truncate = 3,
@@ -722,7 +726,7 @@ kmap('n', '[d', vim.diagnostic.goto_prev, opts)
 kmap('n', ']d', vim.diagnostic.goto_next, opts)
 kmap('n', '<leader>q', vim.diagnostic.setloclist, opts)
 
-require('lsp-inlayhints').setup()
+-- require('lsp-inlayhints').setup()
 
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)

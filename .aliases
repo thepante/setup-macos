@@ -5,6 +5,7 @@ alias cp='cp -iv'
 alias mv='mv -iv'
 alias ht='http-server .'
 alias cht='~/.cht-search.sh'
+alias fs='fd --type f --hidden --exclude (.git|.DS_Store|node_modules) --print0 | fzf-tmux -p --read0 --print0 --exit-0 | xargs -r -0 nvim'
 
 alias hosts='sudo nvim /etc/hosts'
 # alias vhosts='nvim /usr/local/etc/httpd/extra/httpd-vhosts.conf'
