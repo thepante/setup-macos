@@ -41,6 +41,8 @@ set.syntax = 'on'
 set.foldmethod = 'expr'
 set.foldexpr = 'nvim_treesitter#foldexpr()'
 set.foldenable = false
+set.iskeyword:append({'$'})
+set.iskeyword:remove({'_'})
 
 set.completeopt = 'noinsert,menuone,noselect'
 set.inccommand = 'split'
@@ -254,7 +256,7 @@ map('n', 'cvs', 'vi"pgvy', opts)
 map('n', 'cvv', "vi'pgvy", opts)
 
 -- Git commands
-map('n', '<leader>gs', ':!git fetch && git status<CR>', opts)
+map('n', '<leader>gs', ':!git fetch && git status -sb<CR>', opts)
 map('n', '<leader>gp', ':Git pull<CR>', opts)
 map('n', '<leader>gf', ':Git diff %<CR>', opts)
 map('n', '<leader>gd', ':Gdiffsplit<CR>', opts)
@@ -269,7 +271,7 @@ map('n', '<leader>sp', ':Gitsigns preview_hunk<CR>', opts)
 -- Plugins
 require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
-  use 'dstein64/vim-startuptime'
+  -- use 'dstein64/vim-startuptime'
   use 'nvim-lua/plenary.nvim'
   use 'ThePrimeagen/harpoon'
 
@@ -312,9 +314,12 @@ require('packer').startup(function(use)
 
   -- Code tools & refactoring
   use 'nvim-treesitter/nvim-treesitter'
+  use 'nvim-treesitter/nvim-treesitter-context'
   use 'nvim-treesitter/nvim-treesitter-textobjects'
   use 'JoosepAlviste/nvim-ts-context-commentstring'
   use 'windwp/nvim-ts-autotag'
+
+  use 'karb94/neoscroll.nvim'
 
   -- use {
   --   'Wansmer/treesj',
@@ -368,7 +373,7 @@ require('packer').startup(function(use)
   use "max397574/better-escape.nvim"
   use { 'echasnovski/mini.nvim', branch = 'stable' }
   use { "utilyre/sentiment.nvim", tag = "*" }
-  use { 'folke/todo-comments.nvim', event = "BufReadPost" }
+  -- use { 'folke/todo-comments.nvim', event = "BufReadPost" }
 
   use {
     "zbirenbaum/neodim",
@@ -396,6 +401,16 @@ require('packer').startup(function(use)
 end)
 
 require('ufo').setup()
+
+require('neoscroll').setup({
+    mappings = {'<C-u>', '<C-d>', '<C-y>', '<C-e>', 'zt', 'zz', 'zb'},
+})
+
+require('neoscroll.config').set_mappings({
+    zt = {'zt', {'150'}},
+    zz = {'zz', {'150'}},
+    zb = {'zb', {'150'}},
+})
 
 -- require("neodim").setup({
 --   alpha = 0.5

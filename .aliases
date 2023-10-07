@@ -22,6 +22,8 @@ alias ld='echo $(cd ~/Downloads && echo $(pwd)/$(ls -t | head -n1))'
 
 alias mp3='yt-dlp --extract-audio --audio-format mp3'
 alias download='yt-dlp'
+alias mp3='yt-dlp --no-mtime --extract-audio --audio-format mp3 -P ~/Downloads -o "%(title)s.%(ext)s"'
+alias download='yt-dlp --no-mtime -P ~/Downloads -o "%(title)s.%(ext)s"'
 
 # falta fix - mejor usar una fn
 # alias co='fd -HLI -t f . -E node_modules -E .git -E *cache | code $(fzf)'

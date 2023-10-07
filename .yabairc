@@ -54,12 +54,15 @@ yabai -m rule --add app="^Activity Monitor" sticky=off layer=above manage=off
 yabai -m rule --add app="^System Settings" sticky=on layer=above manage=off
 yabai -m rule --add app="^Preferences$" sticky=on layer=above manage=off
 yabai -m rule --add app="^Settings$" sticky=on layer=above manage=off
-yabai -m rule --add app="^Finder$" sticky=on layer=above manage=off
+yabai -m rule --add app="^Finder$" sticky=off layer=above manage=off
 yabai -m rule --add app="^FortiClient$" sticky=on layer=above manage=off
 yabai -m rule --add app="^Opening$" sticky=on layer=above manage=off
 yabai -m rule --add app="^Download$" sticky=on layer=above manage=off
 yabai -m rule --add app="IINA" sticky=on layer=above manage=off
 yabai -m rule --add app="^Microsoft Remote Desktop$" sticky=on layer=above manage=off
+yabai -m rule --add app="^Raycast$" sticky=on layer=above manage=off
+yabai -m rule --add app="^Firefox$" title="^Opening .*$" manage=off
+yabai -m rule --add app="^System Information$" manage=off
 
 # focus window after active space or display changes
 yabai -m signal --add event=space_changed action="yabai -m window --focus \$(yabai -m query --windows --space | jq .[0].id)"
