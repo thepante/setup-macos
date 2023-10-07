@@ -18,6 +18,7 @@ alias projects='cd ~/Projects'
 alias pj='cd ~/Projects'
 alias dl='cd ~/Downloads'
 alias cn='cd ~/Documents/Canillita'
+alias ld='echo $(cd ~/Downloads && echo $(pwd)/$(ls -t | head -n1))'
 
 alias mp3='yt-dlp --extract-audio --audio-format mp3'
 alias download='yt-dlp'
@@ -64,11 +65,12 @@ function nvim(){
 
 # git pull sin cd
 function pull(){
-  cd "$1" && git pull && cd ..;
+  cd "$1" && git p && cd ..;
 }
 
-function f(){
-  code $(fzf);
+function cld(){
+  cp $(echo $(cd ~/Downloads && echo $(pwd)/$(ls -t | head -n1))) $1
+}
 }
 
 fzf-open-code() {
