@@ -19,6 +19,8 @@ alias pj='cd ~/Projects'
 alias dl='cd ~/Downloads'
 alias cn='cd ~/Documents/Canillita'
 alias ld='echo $(cd ~/Downloads && echo $(pwd)/$(ls -t | head -n1))'
+alias rt='trash'
+alias rtl='ls -tlha ~/.Trash | head -10'
 
 alias mp3='yt-dlp --extract-audio --audio-format mp3'
 alias download='yt-dlp'
@@ -73,6 +75,9 @@ function pull(){
 function cld(){
   cp $(echo $(cd ~/Downloads && echo $(pwd)/$(ls -t | head -n1))) $1
 }
+
+function rld(){
+  trash -v $(echo $(cd ~/Downloads && echo $(pwd)/$(ls -t | head -n1)))
 }
 
 fzf-open-code() {
