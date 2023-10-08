@@ -481,17 +481,25 @@ require('telescope').setup({
       n = { ['kj'] = 'close' },
     },
   },
+  pickers = {
+    buffers = {
+      sort_mru = true,
+      ignore_current_buffer = true,
+    },
+  },
   extensions = {
     file_browser = {
       hidden = true,
-      respect_gitignore = true,
+      grouped = true,
       prompt_path = true,
+      follow_symlinks = true,
+      respect_gitignore = true,
     },
   },
   theme = require('telescope.themes').get_dropdown(),
 })
 require('telescope').load_extension('fzf')
-require("telescope").load_extension "file_browser"
+require('telescope').load_extension('file_browser')
 
 require('mini.pairs').setup()
 -- require('mini.splitjoin').setup()
@@ -550,6 +558,7 @@ require('nvim_comment').setup({
 
 require('nvim-treesitter.configs').setup({
   ensure_installed = {
+    'astro',
     'bash',
     'c',
     'css',
@@ -579,6 +588,7 @@ require('nvim-treesitter.configs').setup({
   autotag = {
     enable = true,
     filetypes = {
+      'astro',
       'html',
       'javascript',
       'javascriptreact',
@@ -1035,6 +1045,7 @@ end
 function Statusline.short()
   return "%#StatusLineNC#   NvimTree"
 end
+
 vim.api.nvim_exec([[
   augroup Statusline
   au!
@@ -1043,6 +1054,7 @@ vim.api.nvim_exec([[
   au WinEnter,BufEnter,FileType NvimTree setlocal statusline=%!v:lua.Statusline.short()
   augroup END
 ]], false)
+
 local vcs = function()
   local git_info = vim.b.gitsigns_status_dict
   if not git_info or git_info.head == "" then
