@@ -133,7 +133,7 @@ vim.cmd([[
   " autocmd BufNewFile,BufRead *.php set syn=php
   autocmd BufNewFile,BufRead *.blade.php set ft=html
   " autocmd BufNewFile,BufRead *.blade.php set syn=html
-  autocmd FileType php setlocal iskeyword-=$
+  " autocmd FileType php setlocal iskeyword-=$
 
   autocmd TermOpen * startinsert
   " autocmd CursorHold * silent call CocActionAsync('highlight')
@@ -157,6 +157,8 @@ vim.cmd([[
 
   " au FocusGained * echo 'foo'
   " noremap <Tab> %
+  command Commits Flog
+  command Cmits Flog
 ]])
 
 vim.api.nvim_set_hl(0, 'MiniIndentscopeSymbol', { fg = '#444444' }) -- #24262A
@@ -243,8 +245,9 @@ map('v', '<Up>', ":m '<-2<CR>gv=gv", opts)
 -- map('', '<C-p>', ':CommandTRipgrep<CR>', opts)
 -- map('', 'Ò', ':CommandTBuffer<CR>', opts)
 map('', '<C-p>', ':Telescope find_files<CR>', opts)
+map('', '<M-e>', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts)
 map('', '¬', ':Telescope buffers<CR>', opts)
-kmap('n', '<leader>b', '<cmd>Telescope current_buffer_fuzzy_find <CR>', opts)
+kmap('n', '<leader>b', '<cmd>Telescope current_buffer_fuzzy_find<CR>', opts)
 kmap('n', '<leader>f', '<cmd>Telescope live_grep<CR>', opts)
 -- kmap('n', 'Ø', '<cmd>Telescope lsp_document_symbols<CR>', opts)
 -- kmap('n', 'Ø', ":lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({}))<CR>", opts)
@@ -350,6 +353,7 @@ require('packer').startup(function(use)
 
   -- Git
   use 'tpope/vim-fugitive'
+  use 'rbong/vim-flog'
   use 'lewis6991/gitsigns.nvim'
   use 'sindrets/diffview.nvim'
 
@@ -359,16 +363,21 @@ require('packer').startup(function(use)
   use 'ggandor/leap.nvim'
   -- use 'unblevable/quick-scope'
 
+  use {
+    "nvim-telescope/telescope-file-browser.nvim",
+    requires = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
+  }
+
   -- Status line
   use 'beauwilliams/statusline.lua'
 
   -- Themes
-  -- use { 'embark-theme/vim', as = 'embark' }
+  use { 'embark-theme/vim', as = 'embark' }
   use { "catppuccin/nvim", as = "catppuccin" }
   -- use 'rebelot/kanagawa.nvim'
-  use 'Mofiqul/vscode.nvim'
+  -- use 'Mofiqul/vscode.nvim'
   use 'sainnhe/gruvbox-material'
-  use 'sainnhe/everforest'
+  -- use 'sainnhe/everforest'
 
   use "max397574/better-escape.nvim"
   use { 'echasnovski/mini.nvim', branch = 'stable' }
@@ -454,7 +463,9 @@ require('better_escape').setup({
 require('telescope').setup({
   defaults = {
     -- layout_strategy = 'vertical',
-    preview = true,
+    preview = {
+      treesitter = false,
+    },
     flip_lines = true,
     sorting_strategy = 'ascending',
     grep_hidden = true,
@@ -470,9 +481,17 @@ require('telescope').setup({
       n = { ['kj'] = 'close' },
     },
   },
+  extensions = {
+    file_browser = {
+      hidden = true,
+      respect_gitignore = true,
+      prompt_path = true,
+    },
+  },
   theme = require('telescope.themes').get_dropdown(),
 })
 require('telescope').load_extension('fzf')
+require("telescope").load_extension "file_browser"
 
 require('mini.pairs').setup()
 -- require('mini.splitjoin').setup()
@@ -1054,7 +1073,7 @@ local vcs = function()
   }
 end
 
-function open_on_vscode()
+local function open_on_vscode()
   local pos = vim.api.nvim_win_get_cursor(0)
   local file = vim.fn.expand('%:p')
   local target = string.format("%s:%d:%d", file, pos[1], (pos[2]+1))

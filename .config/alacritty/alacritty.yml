@@ -779,6 +779,7 @@ key_bindings:
 
   # nvim
   - { key: P,     mods: Command, chars: "\x10"          } # cmd+p
+  - { key: P,     mods: Command|Shift, chars: "\x1b\x65"} # cmd+P
   - { key: O,     mods: Command, chars: "\xf8"          } # cmd+l = symbols
   - { key: L,     mods: Command, chars: "\xac"          } # cmd+o = buffers
   - { key: A,     mods: Command, chars: "\xc5"          } # prev buffer
