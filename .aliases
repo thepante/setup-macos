@@ -26,8 +26,6 @@ alias xlz='7zz x $(lf)'
 alias rt='trash'
 alias rtl='ls -tlha ~/.Trash | head -10'
 
-alias pl1='mpv --no-video --shuffle https://www.youtube.com/playlist?list=PLeR-QsZYlgdFKXjIv9DBAlN8n0hBiNiyg'
-alias pl2='mpv --no-video --shuffle https://www.youtube.com/playlist?list=PLeR-QsZYlgdH6s6wYnI0DO4-MjuRoy8Qe'
 alias mp3='yt-dlp --no-mtime --extract-audio --audio-format mp3 -P ~/Downloads -o "%(title)s.%(ext)s"'
 alias download='yt-dlp --no-mtime -P ~/Downloads -o "%(title)s.%(ext)s"'
 
