@@ -157,8 +157,8 @@ vim.cmd([[
 
   " au FocusGained * echo 'foo'
   " noremap <Tab> %
-  command Commits Flog
-  command Cmits Flog
+  command! Commits Flog
+  command! Cmits Flog
 ]])
 
 vim.api.nvim_set_hl(0, 'MiniIndentscopeSymbol', { fg = '#444444' }) -- #24262A
@@ -253,6 +253,9 @@ kmap('n', '<leader>f', '<cmd>Telescope live_grep<CR>', opts)
 -- kmap('n', 'Ø', ":lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({}))<CR>", opts)
 kmap('n', 'ø', '<cmd>Telescope lsp_document_symbols<CR>', opts)
 
+kmap('v', '<leader><CR>', ':Gen<CR>')
+kmap('n', '<leader><CR>', ':Gen<CR>')
+
 
 -- Paste/replace inside string - without yank
 map('n', 'cvs', 'vi"pgvy', opts)
@@ -294,6 +297,9 @@ require('packer').startup(function(use)
 
   use 'onsails/lspkind.nvim'
 
+  -- LLM
+  use 'David-Kunz/gen.nvim'
+
   -- Formatting
   -- use 'gpanders/editorconfig.nvim'
   use 'jose-elias-alvarez/null-ls.nvim'
@@ -321,6 +327,7 @@ require('packer').startup(function(use)
   use 'nvim-treesitter/nvim-treesitter-textobjects'
   use 'JoosepAlviste/nvim-ts-context-commentstring'
   use 'windwp/nvim-ts-autotag'
+  use 'wuelnerdotexe/vim-astro'
 
   use 'karb94/neoscroll.nvim'
 
@@ -360,6 +367,7 @@ require('packer').startup(function(use)
   -- File navigation
   use 'nvim-telescope/telescope.nvim'
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+  use 'nvim-telescope/telescope-ui-select.nvim'
   use 'ggandor/leap.nvim'
   -- use 'unblevable/quick-scope'
 
@@ -479,6 +487,7 @@ require('telescope').setup({
     },
     mappings = {
       n = { ['kj'] = 'close' },
+      i = { ['¬'] = 'move_selection_next' },
     },
   },
   pickers = {
@@ -500,6 +509,7 @@ require('telescope').setup({
 })
 require('telescope').load_extension('fzf')
 require('telescope').load_extension('file_browser')
+require('telescope').load_extension('ui-select')
 
 require('mini.pairs').setup()
 -- require('mini.splitjoin').setup()
