@@ -41,8 +41,8 @@ set.syntax = 'on'
 set.foldmethod = 'expr'
 set.foldexpr = 'nvim_treesitter#foldexpr()'
 set.foldenable = false
-set.iskeyword:append({'$'})
-set.iskeyword:remove({'_'})
+set.iskeyword:remove({'$'})
+-- set.iskeyword:remove({'_'})
 
 set.completeopt = 'noinsert,menuone,noselect'
 set.inccommand = 'split'
