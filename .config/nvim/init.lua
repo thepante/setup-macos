@@ -845,6 +845,16 @@ require'lspconfig'.tsserver.setup{
   on_attach = on_attach,
 }
 
+require'lspconfig'.bashls.setup{
+  capabilities = capabilities,
+  on_attach = on_attach,
+}
+
+require'lspconfig'.pylsp.setup{
+  capabilities = capabilities,
+  on_attach = on_attach,
+}
+
 require'lspconfig'.rust_analyzer.setup{
   capabilities = capabilities,
   on_attach = on_attach,
