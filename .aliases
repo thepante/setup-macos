@@ -1,12 +1,26 @@
-alias ..='cd ../'
+smartcd() {
+  local d=""
+  local n=1
+  for ((i=1; i<=n; i++)); do
+    d+="../"
+  done
+  d="${d}${*}"
+#$(fsyntax "$d")
+#cd "$d" || return
+  eval "cd $d"
+}
+
+alias ..="smartcd"
 alias cat='bat'
 alias ls='ls -G'
 alias -g grep='grep --color=auto'
 alias cp='cp -iv'
 alias mv='mv -iv'
 alias ht='http-server .'
+alias gw='git worktree'
 alias cht='~/.cht-search.sh'
 alias fs='fd --type f --hidden --exclude (.git|.DS_Store|node_modules) --print0 | fzf-tmux -p --read0 --print0 --exit-0 | xargs -r -0 nvim'
+alias eza='eza -la --git'
 
 alias hosts='sudo nvim /etc/hosts'
 # alias vhosts='nvim /usr/local/etc/httpd/extra/httpd-vhosts.conf'
@@ -91,5 +105,4 @@ fzf-open-code() {
 
 zle -N fzf-open-code
 bindkey '^o' fzf-open-code
-
 

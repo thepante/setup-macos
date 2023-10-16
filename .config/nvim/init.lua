@@ -274,6 +274,9 @@ map('v', '<leader>sh', ':Gitsigns stage_hunk<CR>', opts)
 map('n', '<leader>su', ':Gitsigns undo_stage_hunk<CR>', opts)
 map('n', '<leader>sp', ':Gitsigns preview_hunk<CR>', opts)
 
+kmap({'o', 'x'}, 'is', "<cmd>lua require('various-textobjs').subword(true)<CR>")
+kmap({'o', 'x'}, 'as', "<cmd>lua require('various-textobjs').subword(false)<CR>")
+
 -- Plugins
 require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
@@ -325,6 +328,7 @@ require('packer').startup(function(use)
   use 'nvim-treesitter/nvim-treesitter'
   use 'nvim-treesitter/nvim-treesitter-context'
   use 'nvim-treesitter/nvim-treesitter-textobjects'
+  use 'chrisgrieser/nvim-various-textobjs'
   use 'JoosepAlviste/nvim-ts-context-commentstring'
   use 'windwp/nvim-ts-autotag'
   use 'wuelnerdotexe/vim-astro'
@@ -416,6 +420,10 @@ require('packer').startup(function(use)
 
   use { 'glacambre/firenvim', run = function() vim.fn['firenvim#install'](0) end }
 end)
+
+require('various-textobjs').setup({
+	useDefaultKeymaps = true,
+})
 
 require('ufo').setup()
 
