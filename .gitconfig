@@ -1,3 +1,62 @@
 
 [core]
 	excludesfile = /Users/fabian/.gitignore_global
+	; pager = delta
+    pager   = less
+
+[pager]
+    diff    = LESS=c delta
+    show    = LESS=c delta
+    log     = LESS=c delta
+    reflog  = LESS=c delta
+    status  = LESS=c delta
+
+[interactive]
+	diffFilter = delta --diff-so-fancy
+
+[delta]
+	features = decorations
+	navigate = true
+	light = false
+
+[delta "decorations"]
+	line-numbers = true
+    file-style = omit
+	commit-style = raw
+    commit-decoration-style = blue ol
+    hunk-header-decoration-style = "#3E4E5D" ul
+    hunk-header-file-style = blue
+    hunk-header-line-number-style = "orange"
+    hunk-header-style = file line-number syntax
+
+[merge]
+	conflictstyle = diff3
+
+[diff]
+	colorMoved = default
+
+[alias]
+	graph = "!f(){ git log --oneline --abbrev-commit --graph --decorate; }; f"
+	p = "!f(){ git fetch && git stash && git pull && git stash pop; }; f"
+	rs= "!f(){ git fetch && git status -sb; }; f"
+	s = "status -sb"
+	u = "remote -v update"
+	l = "log -10"
+	rl= "log --pretty=format:\"%C(yellow)%h%Creset %s %C(blue)[%aN]%Creset %Cgreen(%cr)%Creset\" --date=short HEAD..origin"
+
+[format]
+	pretty = %C(yellow)%h%Creset %s %C(blue)[%aN]%Creset %Cgreen(%cr)%Creset
+
+[color]
+ 	ui = true
+ 	diff = true
+ 	status = true
+ 	branch = true
+ 	interactive = true
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+

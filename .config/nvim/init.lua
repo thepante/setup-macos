@@ -22,6 +22,7 @@ set.wrap = false
 set.cursorline = true
 set.hidden = true
 set.splitbelow = true
+set.splitright = true
 set.scrolloff = 1
 set.swapfile = false
 set.termguicolors = true
@@ -42,7 +43,6 @@ set.foldmethod = 'expr'
 set.foldexpr = 'nvim_treesitter#foldexpr()'
 set.foldenable = false
 set.iskeyword:remove({'$'})
--- set.iskeyword:remove({'_'})
 
 set.completeopt = 'noinsert,menuone,noselect'
 set.inccommand = 'split'
@@ -280,7 +280,7 @@ kmap({'o', 'x'}, 'as', "<cmd>lua require('various-textobjs').subword(false)<CR>"
 -- Plugins
 require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
-  -- use 'dstein64/vim-startuptime'
+  use 'dstein64/vim-startuptime'
   use 'nvim-lua/plenary.nvim'
   use 'ThePrimeagen/harpoon'
 
@@ -291,7 +291,8 @@ require('packer').startup(function(use)
   use 'hrsh7th/cmp-nvim-lsp'
   use 'hrsh7th/cmp-nvim-lsp-signature-help'
   use 'hrsh7th/nvim-cmp'
-  use { 'codota/tabnine-nvim', run = "./dl_binaries.sh" }
+  -- use { 'codota/tabnine-nvim', run = "./dl_binaries.sh" }
+  use 'Exafunction/codeium.vim'
 
   use { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' }
 
@@ -372,13 +373,13 @@ require('packer').startup(function(use)
   use 'nvim-telescope/telescope.nvim'
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
   use 'nvim-telescope/telescope-ui-select.nvim'
-  use 'ggandor/leap.nvim'
-  -- use 'unblevable/quick-scope'
-
   use {
     "nvim-telescope/telescope-file-browser.nvim",
     requires = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
   }
+
+  use 'ggandor/leap.nvim'
+  -- use 'unblevable/quick-scope'
 
   -- Status line
   use 'beauwilliams/statusline.lua'
@@ -413,6 +414,7 @@ require('packer').startup(function(use)
   }
 
   use { 'j-hui/fidget.nvim', event = "LspAttach", tag = 'legacy' }
+  use 'LunarVim/bigfile.nvim'
 
   use {"akinsho/toggleterm.nvim", tag = '*', config = function()
     require("toggleterm").setup()
@@ -530,15 +532,20 @@ require('mini.indentscope').setup({
   }
 })
 
-require('tabnine').setup({
-    disable_auto_comment = true,
-    accept_keymap = "<Tab>",
-    dismiss_keymap = "<C-]>",
-    debounce_ms = 800,
-    suggestion_color = { gui = "#808080", cterm = 244 },
-    exclude_filetypes = { "TelescopePrompt" },
-    log_file_path = nil, -- absolute path to Tabnine log file
-})
+-- require('tabnine').setup({
+--     disable_auto_comment = true,
+--     accept_keymap = "<Tab>",
+--     dismiss_keymap = "<C-]>",
+--     debounce_ms = 800,
+--     suggestion_color = { gui = "#808080", cterm = 244 },
+--     exclude_filetypes = { "TelescopePrompt" },
+--     log_file_path = nil, -- absolute path to Tabnine log file
+-- })
+
+vim.g.codeium_enable = true
+vim.g.codeium_filetypes = {
+  TelescopePrompt = false,
+}
 
 require('nvim-surround').setup()
 require('leap').set_default_keymaps()
@@ -631,15 +638,15 @@ require('nvim-treesitter.configs').setup({
   context_commentstring = {
     enable = true
   },
-  -- incremental_selection = {
-  --   enable = true,
-  --   keymaps = {
-  --     init_selection = "<CR>",
-  --     node_incremental = "<CR>",
-  --     scope_incremental = "<S-CR>",
-  --     node_decremental = "<BS>",
-  --   },
-  -- },
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "<Right>",
+      node_incremental = "<Right>",
+      scope_incremental = "<S-CR>",
+      node_decremental = "<Left>",
+    },
+  },
 })
 
 local lspkind = require('lspkind')
@@ -1070,16 +1077,12 @@ end
 function Statusline.inactive()
   return " %F"
 end
-function Statusline.short()
-  return "%#StatusLineNC#   NvimTree"
-end
-
 vim.api.nvim_exec([[
   augroup Statusline
   au!
   au WinEnter,BufEnter * setlocal statusline=%!v:lua.Statusline.active()
   au WinLeave,BufLeave * setlocal statusline=%!v:lua.Statusline.inactive()
-  au WinEnter,BufEnter,FileType NvimTree setlocal statusline=%!v:lua.Statusline.short()
+  " au WinEnter,BufEnter,FileType NvimTree setlocal statusline=%!v:lua.Statusline.short()
   augroup END
 ]], false)
 
@@ -1113,7 +1116,7 @@ local vcs = function()
   }
 end
 
-local function open_on_vscode()
+local function open_in_vscode()
   local pos = vim.api.nvim_win_get_cursor(0)
   local file = vim.fn.expand('%:p')
   local target = string.format("%s:%d:%d", file, pos[1], (pos[2]+1))
@@ -1121,7 +1124,7 @@ local function open_on_vscode()
   os.execute(string.format("code . && code -g '%s'", target))
 end
 
-map('n', '<leader>c', ':lua open_on_vscode()<CR>', opts)
+map('n', '<leader>c', ':lua open_in_vscode()<CR>', opts)
 
 -- Move between splits
 map('n', '<leader>k', ':wincmd k<CR>', opts)
