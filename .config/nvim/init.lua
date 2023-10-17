@@ -607,7 +607,7 @@ require('nvim-treesitter.configs').setup({
     'yaml',
   },
   highlight = { enable = true },
-  indent = { enable = false },
+  indent = { enable = true },
   auto_install = true,
   sync_install = true,
   autotag = {

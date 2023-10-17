@@ -7,9 +7,7 @@
 [pager]
     diff    = LESS=c delta
     show    = LESS=c delta
-    log     = LESS=c delta
     reflog  = LESS=c delta
-    status  = LESS=c delta
 
 [interactive]
 	diffFilter = delta --diff-so-fancy

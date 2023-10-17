@@ -55,6 +55,7 @@ export VISUAL=nvim
 export EDITOR=nvim
 export LANG="UTF-8"
 export LC_ALL=en_US.UTF-8
+export DELTA_PAGER="less $LESS"
 
 # ZSH_HIGHLIGHT_STYLES[suffix-alias]=fg=002
 # ZSH_HIGHLIGHT_STYLES[precommand]=fg=002
