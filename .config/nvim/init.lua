@@ -61,6 +61,9 @@ vim.o.wildignore = [[
 *.zip,*.tar.gz,*.tar.bz2,*.rar,*.tar.xz,*.kgb
 *.swp,.lock,**/.DS_Store,._*
 */tmp/*,*.so,*.swp,*.zip,**/node_modules/**,**/target/**,**.terraform/**"
+*/vendor/**/debug/**
+*/vendor/**.git**
+*/vendor/**.(md|json|yml).*
 ]]
 
 local map = vim.api.nvim_set_keymap
@@ -122,18 +125,21 @@ vim.cmd([[
   " colorscheme everforest
   " colorscheme vscode
 
+  " highlights
   " highlight IlluminatedWordRead guibg=#525252
+  hi TreesitterContext guibg=#07090d guifg=#504944
+  hi TreesitterContextBottom gui=underline guifg=#504944
   hi Normal ctermbg=NONE guibg=NONE
+  hi NormalFloat guibg=#1c2e42
   hi EndOfBuffer guibg=NONE ctermbg=NONE
   " autocmd VimEnter * hi Normal ctermbg=NONE guibg=NONE
   autocmd ColorScheme * hi Normal ctermbg=NONE guibg=NONE
   autocmd BufNewFile,BufRead .aliases* set syntax=bash
   autocmd BufNewFile,BufRead *CSS.html set filetype=css
+  autocmd BufNewFile,BufRead *.blade.php set ft=html
   " autocmd BufNewFile,BufRead *.blade.php set syntax=blade
   " autocmd BufNewFile,BufRead *.php set syn=php
-  autocmd BufNewFile,BufRead *.blade.php set ft=html
   " autocmd BufNewFile,BufRead *.blade.php set syn=html
-  " autocmd FileType php setlocal iskeyword-=$
 
   autocmd TermOpen * startinsert
   " autocmd CursorHold * silent call CocActionAsync('highlight')
@@ -225,10 +231,11 @@ map('n', '<C-x>', '<C-x>', opts)
 -- Files navigation with Harpoon
 -- map <leader>p :lua require("harpoon.ui").toggle_quick_menu()<CR>, opts)
 
-map('n', '<leader><Tab>', ':Telescope harpoon marks theme=dropdown<CR>', opts)
+map('n', '<leader>e', ':Telescope harpoon marks theme=dropdown<CR>', opts)
 map('n', '<leader>m', ':lua require("harpoon.mark").add_file()<CR>', opts)
-map('n', '<leader>a', ':lua require("harpoon.ui").add_prev()<CR>', opts)
-map('n', '<leader>d', ':lua require("harpoon.ui").add_next()<CR>', opts)
+map('n', '<leader>u', ':lua require("harpoon.mark").remove_file()<CR>', opts)
+map('n', '<leader>[', ':lua require("harpoon.ui").nav_prev()<CR>', opts)
+map('n', '<leader>]', ':lua require("harpoon.ui").nav_next()<CR>', opts)
 
 -- Move lines
 map('n', '<C-j>', ':m .+1<CR>==', opts)
@@ -273,6 +280,8 @@ map('n', '<leader>sh', ':Gitsigns stage_hunk<CR>', opts)
 map('v', '<leader>sh', ':Gitsigns stage_hunk<CR>', opts)
 map('n', '<leader>su', ':Gitsigns undo_stage_hunk<CR>', opts)
 map('n', '<leader>sp', ':Gitsigns preview_hunk<CR>', opts)
+map('n', '<leader>v', ':Gitsigns blame_line<CR>', opts)
+map('v', '<leader>v', ':Gitsigns blame_line<CR>', opts)
 
 kmap({'o', 'x'}, 'is', "<cmd>lua require('various-textobjs').subword(true)<CR>")
 kmap({'o', 'x'}, 'as', "<cmd>lua require('various-textobjs').subword(false)<CR>")
@@ -291,7 +300,6 @@ require('packer').startup(function(use)
   use 'hrsh7th/cmp-nvim-lsp'
   use 'hrsh7th/cmp-nvim-lsp-signature-help'
   use 'hrsh7th/nvim-cmp'
-  -- use { 'codota/tabnine-nvim', run = "./dl_binaries.sh" }
   use 'Exafunction/codeium.vim'
 
   use { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' }
@@ -305,8 +313,7 @@ require('packer').startup(function(use)
   use 'David-Kunz/gen.nvim'
 
   -- Formatting
-  -- use 'gpanders/editorconfig.nvim'
-  use 'jose-elias-alvarez/null-ls.nvim'
+  use 'nvimtools/none-ls.nvim'
 
   -- Syntax highlight
   use 'sheerun/vim-polyglot'
@@ -490,14 +497,34 @@ require('telescope').setup({
     layout_config = {
       prompt_position = 'top',
       height = 20,
-      width = 500,
+      width = 200,
     },
     path_display = {
       truncate = 3,
     },
     mappings = {
-      n = { ['kj'] = 'close' },
-      i = { ['¬'] = 'move_selection_next' },
+      n = {
+        ['kj'] = 'close',
+        ['<C-p>'] = 'cycle_history_prev',
+        ['<C-n>'] = 'cycle_history_next',
+        ['<M-e>'] = { '<cmd>Telescope file_browser path=%:p:h select_buffer=true<CR>', type = 'command' },
+      },
+      i = {
+        ['¬'] = 'move_selection_next',
+        ['<C-p>'] = 'cycle_history_prev',
+        ['<C-n>'] = 'cycle_history_next',
+        ['<M-e>'] = { '<cmd>Telescope file_browser path=%:p:h select_buffer=true<CR>', type = 'command' },
+      },
+    },
+    file_ignore_patterns = {
+        "^node_modules/",
+        "^.git/",
+        ".git.*",
+        '^vendor/.*%.md',
+        '^vendor/.*%.json',
+        '^vendor/.*%.xml',
+        '^vendor/.*%.yml',
+        '^vendor/.*LICENSE',
     },
   },
   pickers = {
@@ -532,16 +559,6 @@ require('mini.indentscope').setup({
   }
 })
 
--- require('tabnine').setup({
---     disable_auto_comment = true,
---     accept_keymap = "<Tab>",
---     dismiss_keymap = "<C-]>",
---     debounce_ms = 800,
---     suggestion_color = { gui = "#808080", cterm = 244 },
---     exclude_filetypes = { "TelescopePrompt" },
---     log_file_path = nil, -- absolute path to Tabnine log file
--- })
-
 vim.g.codeium_enable = true
 vim.g.codeium_filetypes = {
   TelescopePrompt = false,
@@ -551,7 +568,7 @@ require('nvim-surround').setup()
 require('leap').set_default_keymaps()
 
 require('nvim-autopairs').setup({
-  disable_filetype = { "TelescopePrompt" }
+  disable_filetype = { 'TelescopePrompt' }
 })
 
 require('gitsigns').setup({
@@ -627,16 +644,55 @@ require('nvim-treesitter.configs').setup({
   textobjects = {
     select = {
       enable = true,
+      lookahead = true,
       keymaps = {
-        ["af"] = "@function.outer",
-        ["if"] = "@function.inner",
+        ["av"] = "@assignment.outer",
+        ["iv"] = "@assignment.inner",
+        ["vl"] = "@assignment.lhs",
+        ["vr"] = "@assignment.rhs",
+
+        -- works for javascript/typescript files (custom capture I created in after/queries/ecma/textobjects.scm)
+        ["=a"] = "@property.outer",
+        ["=i"] = "@property.inner",
+        ["=l"] = "@property.lhs",
+        ["=r"] = "@property.rhs",
+
+        ["aa"] = "@parameter.outer",
+        ["ia"] = "@parameter.inner",
+
+        ["ai"] = "@conditional.outer",
+        ["ii"] = "@conditional.inner",
+
+        ["al"] = "@loop.outer",
+        ["il"] = "@loop.inner",
+
+        ["af"] = "@call.outer",
+        ["if"] = "@call.inner",
+
+        ["ad"] = "@function.outer",
+        ["id"] = "@function.inner",
+
         ["ac"] = "@class.outer",
         ["ic"] = "@class.inner",
       },
     },
+    swap = {
+        enable = true,
+        swap_next = {
+            ["<leader>ma"] = "@parameter.inner", -- swap parameters/argument with next
+            ["<leader>m:"] = "@property.outer", -- swap object property with next
+            ["<leader>mm"] = "@function.outer", -- swap function with next
+        },
+        swap_previous = {
+            ["<leader>,a"] = "@parameter.inner", -- swap parameters/argument with prev
+            ["<leader>,:"] = "@property.outer", -- swap object property with prev
+            ["<leader>,m"] = "@function.outer", -- swap function with previous
+        },
+    },
   },
   context_commentstring = {
-    enable = true
+    enable = true,
+    max_lines = 3,
   },
   incremental_selection = {
     enable = true,
@@ -790,7 +846,7 @@ capabilities.textDocument.foldingRange = {
 }
 
 -- LSP Config Mappings
-kmap('n', '<leader>e', vim.diagnostic.open_float, opts)
+kmap('n', '<leader>dd', vim.diagnostic.open_float, opts)
 kmap('n', '[d', vim.diagnostic.goto_prev, opts)
 kmap('n', ']d', vim.diagnostic.goto_next, opts)
 kmap('n', '<leader>q', vim.diagnostic.setloclist, opts)
@@ -836,7 +892,6 @@ require'lspconfig'.lua_ls.setup{
   settings = {
     Lua = {
       runtime = {
-        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
         version = 'LuaJIT',
       },
       diagnostics = {
@@ -847,7 +902,6 @@ require'lspconfig'.lua_ls.setup{
         -- Make the server aware of Neovim runtime files
         -- library = vim.api.nvim_get_runtime_file("", true),
       },
-      -- Do not send telemetry data containing a randomized but unique identifier
       telemetry = {
         enable = false,
       },
@@ -899,7 +953,7 @@ require'lspconfig'.cssls.setup {
   on_attach = on_attach,
 }
 
-local null_ls = require("null-ls")
+local null_ls = require('null-ls')
 null_ls.setup({
     sources = {
         null_ls.builtins.formatting.stylua,
@@ -936,7 +990,6 @@ local function smart_dd()
     return "dd"
   end
 end
-
 vim.keymap.set('n', 'dd', smart_dd, { noremap = true, expr = true })
 
 -- vim.api.nvim_create_augroup("lsp_document_highlight", {

@@ -10,7 +10,7 @@ smartcd() {
   eval "cd $d"
 }
 
-alias ..="smartcd"
+alias ..='smartcd'
 alias cat='bat'
 alias ls='ls -G'
 alias -g grep='grep --color=auto'
