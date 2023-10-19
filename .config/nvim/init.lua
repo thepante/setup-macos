@@ -102,10 +102,6 @@ vim.g.closetag_xhtml_filenames = '*.xml,*.xhtml,*.jsx,*.js,*.tsx,*.php'
 vim.g.closetag_filetypes = 'html,xhtml,jsx,js,tsx,php'
 vim.g.closetag_xhtml_filetypes = 'html,xhtml,jsx,js,tsx,php'
 
-vim.g.CommandTPreferredImplementation = 'lua'
-vim.g.CommandTScanDotDirectories = 1
-
-
 -- require('vscode').load()
 
 if vim.g.started_by_firenvim == true then
@@ -249,8 +245,6 @@ map('v', '<Down>', ":m '>+1<CR>gv=gv", opts)
 map('v', '<Up>', ":m '<-2<CR>gv=gv", opts)
 
 -- File navigation
--- map('', '<C-p>', ':CommandTRipgrep<CR>', opts)
--- map('', 'Ò', ':CommandTBuffer<CR>', opts)
 map('', '<C-p>', ':Telescope find_files<CR>', opts)
 map('', '<M-e>', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts)
 map('', '¬', ':Telescope buffers<CR>', opts)
@@ -301,12 +295,10 @@ require('packer').startup(function(use)
   use 'hrsh7th/cmp-nvim-lsp-signature-help'
   use 'hrsh7th/nvim-cmp'
   use 'Exafunction/codeium.vim'
-
-  use { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' }
+  -- use { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' }
 
   use 'L3MON4D3/LuaSnip'
   use 'saadparwaiz1/cmp_luasnip'
-
   use 'onsails/lspkind.nvim'
 
   -- LLM
@@ -401,7 +393,7 @@ require('packer').startup(function(use)
 
   use "max397574/better-escape.nvim"
   use { 'echasnovski/mini.nvim', branch = 'stable' }
-  use { "utilyre/sentiment.nvim", tag = "*" }
+  use { 'utilyre/sentiment.nvim', tag = '*' }
   -- use { 'folke/todo-comments.nvim', event = "BufReadPost" }
 
   use {
@@ -420,11 +412,11 @@ require('packer').startup(function(use)
     end,
   }
 
-  use { 'j-hui/fidget.nvim', event = "LspAttach", tag = 'legacy' }
+  use { 'j-hui/fidget.nvim', event = 'LspAttach', tag = 'legacy' }
   use 'LunarVim/bigfile.nvim'
 
-  use {"akinsho/toggleterm.nvim", tag = '*', config = function()
-    require("toggleterm").setup()
+  use {'akinsho/toggleterm.nvim', tag = '*', config = function()
+    require('toggleterm').setup()
   end}
 
   use { 'glacambre/firenvim', run = function() vim.fn['firenvim#install'](0) end }
@@ -487,23 +479,26 @@ require('better_escape').setup({
 
 require('telescope').setup({
   defaults = {
-    -- layout_strategy = 'vertical',
-    preview = {
-      treesitter = false,
-    },
+    -- layout_strategy = 'horizontal',
+    preview = false,
     flip_lines = true,
     sorting_strategy = 'ascending',
     grep_hidden = true,
+    results_title = '',
+    previewer = false,
     layout_config = {
       prompt_position = 'top',
-      height = 20,
-      width = 200,
+      height = 18,
+      width = 100,
+      preview_width = 50,
     },
     path_display = {
       truncate = 3,
     },
     mappings = {
       n = {
+        ['k'] = false,
+        ['j'] = false,
         ['kj'] = 'close',
         ['<C-p>'] = 'cycle_history_prev',
         ['<C-n>'] = 'cycle_history_next',
@@ -517,20 +512,30 @@ require('telescope').setup({
       },
     },
     file_ignore_patterns = {
-        "^node_modules/",
-        "^.git/",
-        ".git.*",
-        '^vendor/.*%.md',
-        '^vendor/.*%.json',
-        '^vendor/.*%.xml',
-        '^vendor/.*%.yml',
-        '^vendor/.*LICENSE',
+        -- '^vendor/.*%.md',
+        -- '^vendor/.*%.json',
+        -- '^vendor/.*%.xml',
+        -- '^vendor/.*%.yml',
+        -- '^vendor/.*LICENSE',
+      "^node_modules/","^.git/",".git.*",'^vendor/','%.7z','%.JPEG','%.JPG','%.MOV','%.RAF','%.burp','%.bz2',
+      '%.cache','%.class','%.dll','%.docx','%.dylib','%.epub','%.exe','%.flac','%.ico','%.ipynb','%.jar',
+      '%.jpeg','%.jpg','%.lock','%.mkv','%.mov','%.mp4','%.otf','%.pdb','%.pdf','%.png','%.rar','%.sqlite3',
+      '%.tar','%.tar.gz','%.ttf','%.webp','%.zip','.gradle/','.idea/','.settings/','.vale/','.vscode/',
+      '__pycache__/*','build/','gradle/','node_modules/','smalljre_*/*','target/',
     },
   },
   pickers = {
     buffers = {
       sort_mru = true,
       ignore_current_buffer = true,
+    },
+    current_buffer_fuzzy_find = {
+      preview = { treesitter = false, },
+      layout_config = { width = 150, },
+    },
+    live_grep = {
+      preview = { treesitter = false, },
+      layout_config = { width = 180, preview_width = 70, },
     },
   },
   extensions = {
@@ -851,16 +856,12 @@ kmap('n', '[d', vim.diagnostic.goto_prev, opts)
 kmap('n', ']d', vim.diagnostic.goto_next, opts)
 kmap('n', '<leader>q', vim.diagnostic.setloclist, opts)
 
--- require('lsp-inlayhints').setup()
 
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
 
 -- Enable completion triggered by <c-x><c-o>
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-  require('lsp-inlayhints').on_attach(client, bufnr)
-
-  -- vim.lsp.buf.inlay_hint(0, true)
 
   local bufopts = { noremap=true, silent=true, buffer=bufnr }
   kmap('n', 'gr', vim.lsp.buf.references, bufopts)
@@ -961,21 +962,6 @@ null_ls.setup({
         -- null_ls.builtins.completion.spell,
     },
 })
-
--- vim.api.nvim_create_augroup("LspAttach_inlayhints", {})
--- vim.api.nvim_create_autocmd("LspAttach", {
---   group = "LspAttach_inlayhints",
---   callback = function(args)
---     if not (args.data and args.data.client_id) then
---       return
---     end
---     local bufnr = args.buf
---     local client = vim.lsp.get_client_by_id(args.data.client_id)
---     require("lsp-inlayhints").on_attach(client, bufnr)
---   end,
--- })
-
-
 
 -- local has_words_before = function()
 --   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -1111,63 +1097,67 @@ local function lineinfo()
   end
   return " %P %l:%c "
 end
-Statusline = {}
-Statusline.active = function()
-  return table.concat {
-    "%#Statusline#",
-    update_mode_colors(),
-    mode(),
-    "%#Normal# ",
-    filepath(),
-    filename(),
-    "%#Normal#",
-    lsp(),
-    "%=%#StatusLineExtra#",
-    filetype(),
-    lineinfo(),
-  }
-end
-function Statusline.inactive()
-  return " %F"
-end
-vim.api.nvim_exec([[
+
+Statusline = {
+  tabline = false,
+  active = function()
+    return table.concat {
+      "%#Statusline#",
+      update_mode_colors(),
+      mode(),
+      "%#Normal# ",
+      filepath(),
+      filename(),
+      "%#Normal#",
+      lsp(),
+      "%=%#StatusLineExtra#",
+      filetype(),
+      lineinfo(),
+    }
+  end,
+  inactive = function()
+    return " %F"
+  end,
+}
+
+vim.cmd([[
   augroup Statusline
   au!
-  au WinEnter,BufEnter * setlocal statusline=%!v:lua.Statusline.active()
+  au WinEnter,BufEnter,BufRead * setlocal statusline=%!v:lua.Statusline.active()
   au WinLeave,BufLeave * setlocal statusline=%!v:lua.Statusline.inactive()
   " au WinEnter,BufEnter,FileType NvimTree setlocal statusline=%!v:lua.Statusline.short()
   augroup END
 ]], false)
 
-local vcs = function()
-  local git_info = vim.b.gitsigns_status_dict
-  if not git_info or git_info.head == "" then
-    return ""
-  end
-  local added = git_info.added and ("%#GitSignsAdd#+" .. git_info.added .. " ") or ""
-  local changed = git_info.changed and ("%#GitSignsChange#~" .. git_info.changed .. " ") or ""
-  local removed = git_info.removed and ("%#GitSignsDelete#-" .. git_info.removed .. " ") or ""
-  if git_info.added == 0 then
-    added = ""
-  end
-  if git_info.changed == 0 then
-    changed = ""
-  end
-  if git_info.removed == 0 then
-    removed = ""
-  end
-  return table.concat {
-     " ",
-     vcs,
-     added,
-     changed,
-     removed,
-     " ",
-     "%#GitSignsAdd# ",
-     git_info.head,
-     " %#Normal#",
-  }
-end
+-- local vcs = function()
+--   local git_info = vim.b.gitsigns_status_dict
+--   if not git_info or git_info.head == "" then
+--     return ""
+--   end
+--   local added = git_info.added and ("%#GitSignsAdd#+" .. git_info.added .. " ") or ""
+--   local changed = git_info.changed and ("%#GitSignsChange#~" .. git_info.changed .. " ") or ""
+--   local removed = git_info.removed and ("%#GitSignsDelete#-" .. git_info.removed .. " ") or ""
+--   if git_info.added == 0 then
+--     added = ""
+--   end
+--   if git_info.changed == 0 then
+--     changed = ""
+--   end
+--   if git_info.removed == 0 then
+--     removed = ""
+--   end
+--   return table.concat {
+--      " ",
+--      -- vcs,
+--      added,
+--      changed,
+--      removed,
+--      " ",
+--      -- "%#GitSignsAdd# ",
+--      -- git_info.head,
+--      " %#Normal#",
+--   }
+-- end
 
 local function open_in_vscode()
   local pos = vim.api.nvim_win_get_cursor(0)

@@ -5,8 +5,6 @@ smartcd() {
     d+="../"
   done
   d="${d}${*}"
-#$(fsyntax "$d")
-#cd "$d" || return
   eval "cd $d"
 }
 
@@ -23,8 +21,7 @@ alias fs='fd --type f --hidden --exclude (.git|.DS_Store|node_modules) --print0 
 alias eza='eza -la --git'
 
 alias hosts='sudo nvim /etc/hosts'
-# alias vhosts='nvim /usr/local/etc/httpd/extra/httpd-vhosts.conf'
-alias vhosts='nvim /opt/homebrew/etc/httpd/extra/httpd-vhosts.conf'
+alias vhosts='nvim /opt/homebrew/etc/httpd/extra/httpd-vhosts.conf' #'/usr/local/etc/httpd/extra/httpd-vhosts.conf'
 
 alias proc-cartillas='~/procesar_cartillas.sh'
 
@@ -43,11 +40,6 @@ alias rtl='ls -tlha ~/.Trash | head -10'
 
 alias mp3='yt-dlp --no-mtime --extract-audio --audio-format mp3 -P ~/Downloads -o "%(title)s.%(ext)s"'
 alias download='yt-dlp --no-mtime -P ~/Downloads -o "%(title)s.%(ext)s"'
-
-# falta fix - mejor usar una fn
-# alias co='fd -HLI -t f . -E node_modules -E .git -E *cache | code $(fzf)'
-
-# export FZF_DEFAULT_COMMAND='fd'
 
 
 # mogrify - convertir imgs
