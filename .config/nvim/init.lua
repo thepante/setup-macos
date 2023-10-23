@@ -169,7 +169,8 @@ map('n', '÷', ':CommentToggle<CR>', opts)
 map('v', '÷', ':CommentToggle<CR>', opts)
 
 -- Tab to go matching pair
-map('', '<Tab>', '%', opts)
+map('n', '<Tab>', '%', opts)
+map('v', '<Tab>', '%', opts)
 
 -- Rename a symbol without no language server
 map('n', '<leader>R', '#Ncgn', opts)
@@ -308,7 +309,7 @@ require('lazy').setup({
   'onsails/lspkind.nvim',
 
   -- LLM
-  'David-Kunz/gen.nvim',
+  -- 'David-Kunz/gen.nvim',
 
   -- Syntax highlight
   'sheerun/vim-polyglot',
@@ -457,12 +458,25 @@ require('lazy').setup({
   'max397574/better-escape.nvim',
   { 'echasnovski/mini.nvim', branch = 'stable' },
   { 'utilyre/sentiment.nvim', version = '*' },
-  { 'glacambre/firenvim', build = function() vim.fn['firenvim#install'](0) end },
+  {
+    'glacambre/firenvim',
+    lazy = not vim.g.started_by_firenvim,
+    build = function()
+      vim.fn['firenvim#install'](0)
+    end
+  },
   -- { 'j-hui/fidget.nvim', version = 'legacy' },
   'LunarVim/bigfile.nvim',
 })
 
+-- require("neodim").setup({
+--   alpha = 0.5
+-- })
+
 require('ufo').setup()
+require('mason').setup()
+require('nvim-surround').setup()
+require('leap').set_default_keymaps()
 
 require('neoscroll').setup({
   mappings = {'<C-u>', '<C-y>', '<C-e>', 'zt', 'zz', 'zb'},
@@ -546,17 +560,13 @@ require('telescope').setup({
       },
     },
     file_ignore_patterns = {
-        -- '^vendor/.*%.md',
-        -- '^vendor/.*%.json',
-        -- '^vendor/.*%.xml',
-        -- '^vendor/.*%.yml',
-        -- '^vendor/.*LICENSE',
       "^node_modules/","^.git/",".git.*",'^vendor/','%.7z','%.JPEG','%.JPG','%.MOV','%.RAF','%.burp','%.bz2',
       '%.cache','%.class','%.dll','%.docx','%.dylib','%.epub','%.exe','%.flac','%.ico','%.ipynb','%.jar',
       '%.jpeg','%.jpg','%.lock','%.mkv','%.mov','%.mp4','%.otf','%.pdb','%.pdf','%.png','%.rar','%.sqlite3',
       '%.tar','%.tar.gz','%.ttf','%.webp','%.zip','.gradle/','.idea/','.settings/','.vale/','.vscode/',
       '__pycache__/*','build/','gradle/','node_modules/','smalljre_*/*','target/',
     },
+    -- sorter = require('telescope.sorters').get_fzy_sorter(),
   },
   pickers = {
     buffers = {
@@ -900,7 +910,7 @@ kmap('n', '<leader>q', vim.diagnostic.setloclist, opts)
 local on_attach = function(client, bufnr)
   -- require('fidget').setup()
   -- Enable completion triggered by <c-x><c-o> ???
-  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+  -- vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   local bufopts = { noremap=true, silent=true, buffer=bufnr }
   kmap('n', 'gr', vim.lsp.buf.references, bufopts)
