@@ -1,14 +1,33 @@
+# smartcd() {
+#  local d=""
+#   local n=1
+#   for ((i=1; i<=n; i++)); do
+#     d+="../"
+#   done
+#   d="${d}${*}"
+#   eval "cd $d"
+# }
+
 smartcd() {
-  local d=""
-  local n=1
-  for ((i=1; i<=n; i++)); do
-    d+="../"
-  done
-  d="${d}${*}"
-  eval "cd $d"
+    local target=""
+    local num=1
+    local dir=""
+
+    if [[ $1 =~ ^[0-9]+$ ]]; then
+        num=$1
+        shift
+    fi
+
+    for ((i=1; i<=num; i++)); do
+        target+="../"
+    done
+
+    dir="${target}${*}"
+    cd "$dir" || return
 }
 
 alias ..='smartcd'
+alias c='clear'
 alias cat='bat'
 alias ls='ls -G'
 alias -g grep='grep --color=auto'

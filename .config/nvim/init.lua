@@ -171,6 +171,7 @@ map('v', '÷', ':CommentToggle<CR>', opts)
 -- Tab to go matching pair
 map('n', '<Tab>', '%', opts)
 map('v', '<Tab>', '%', opts)
+map('o', '<Tab>', '%', opts)
 
 -- Rename a symbol without no language server
 map('n', '<leader>R', '#Ncgn', opts)
@@ -214,9 +215,8 @@ kmap('n', '<leader>f', '<cmd>Telescope live_grep<CR>', opts)
 -- kmap('n', 'Ø', ":lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({}))<CR>", opts)
 kmap('n', 'ø', '<cmd>Telescope lsp_document_symbols<CR>', opts)
 
-kmap('v', '<leader><CR>', ':Gen<CR>')
-kmap('n', '<leader><CR>', ':Gen<CR>')
-
+-- kmap('v', '<leader><CR>', ':Gen<CR>')
+-- kmap('n', '<leader><CR>', ':Gen<CR>')
 
 -- Paste/replace inside string - without yank
 map('n', 'cvs', 'vi"pgvy', opts)
@@ -290,7 +290,7 @@ end
 
 -- Plugins
 require('lazy').setup({
-  'dstein64/vim-startuptime',
+  -- 'dstein64/vim-startuptime',
   'nvim-lua/plenary.nvim',
   'ThePrimeagen/harpoon',
 
@@ -301,12 +301,17 @@ require('lazy').setup({
   'hrsh7th/cmp-nvim-lsp',
   'hrsh7th/cmp-nvim-lsp-signature-help',
   'hrsh7th/nvim-cmp',
-  'Exafunction/codeium.vim',
-  -- use { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' }
-
   'L3MON4D3/LuaSnip',
   'saadparwaiz1/cmp_luasnip',
   'onsails/lspkind.nvim',
+  {
+    'Exafunction/codeium.vim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'hrsh7th/nvim-cmp',
+    },
+  },
+  -- use { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' }
 
   -- LLM
   -- 'David-Kunz/gen.nvim',
@@ -327,10 +332,10 @@ require('lazy').setup({
   {
     'neovim/nvim-lspconfig',
     dependencies = {
-        { 'williamboman/mason.nvim', build = ':MasonUpdate' },
-		{ 'williamboman/mason-lspconfig.nvim' },
-      },
+      { 'williamboman/mason.nvim', build = ':MasonUpdate' },
+      { 'williamboman/mason-lspconfig.nvim' },
     },
+  },
 
   -- Code tools & refactoring
   'nvim-treesitter/nvim-treesitter',
@@ -358,32 +363,12 @@ require('lazy').setup({
   -- }
 
   {
-    'abecodes/tabout.nvim',
-    -- wants = { 'nvim-treesitter' }, -- or require if not used so far
-    after = { 'codeium.vim' }, -- if a completion plugin is using tabs load it before
-    opts = {
-      tabkey = '<Tab>', -- an empty string to disable
-      backwards_tabkey = '<S-Tab>',
-      act_as_tab = true,
-      act_as_shift_tab = false,
-      default_tab = '<C-t>',
-      default_shift_tab = '<C-d>',
-      enable_backwards = true, -- well ...
-      completion = true,
-      tabouts = {
-        {open = "'", close = "'"},
-        {open = '"', close = '"'},
-        {open = '`', close = '`'},
-        {open = '(', close = ')'},
-        {open = '[', close = ']'},
-        {open = '{', close = '}'}
-      },
-      ignore_beginning = true,
-      exclude = {}
-    }
+    'kylechui/nvim-surround',
+    version = '*',
+    config = function ()
+      require('nvim-surround').setup()
+    end
   },
-
-  { 'kylechui/nvim-surround', version = '*' },
   {
     'mg979/vim-visual-multi',
     branch = 'master',
@@ -452,7 +437,23 @@ require('lazy').setup({
     end
   },
 
-  'ggandor/leap.nvim',
+  {
+    'folke/flash.nvim',
+    event = 'VeryLazy',
+    opts = {
+      modes = {
+        search = { enabled = false },
+      },
+    },
+    keys = {
+      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+    },
+  },
+
   'karb94/neoscroll.nvim',
   'beauwilliams/statusline.lua',
   'max397574/better-escape.nvim',
@@ -465,7 +466,11 @@ require('lazy').setup({
       vim.fn['firenvim#install'](0)
     end
   },
-  -- { 'j-hui/fidget.nvim', version = 'legacy' },
+  {
+    'yutkat/confirm-quit.nvim',
+    event = 'CmdlineEnter',
+    opts = {},
+  },
   'LunarVim/bigfile.nvim',
 })
 
@@ -475,8 +480,6 @@ require('lazy').setup({
 
 require('ufo').setup()
 require('mason').setup()
-require('nvim-surround').setup()
-require('leap').set_default_keymaps()
 
 require('neoscroll').setup({
   mappings = {'<C-u>', '<C-y>', '<C-e>', 'zt', 'zz', 'zb'},
@@ -488,12 +491,6 @@ require('neoscroll.config').set_mappings({
   zb = {'zb', {'120'}},
 })
 
--- require("neodim").setup({
---   alpha = 0.5
--- })
-
-require('mason').setup()
-
 require('mason-lspconfig').setup({
     automatic_installation = true,
 })
@@ -501,29 +498,7 @@ require('mason-lspconfig').setup({
 require('better_escape').setup({
     mapping = { 'kj' },
     clear_empty_lines = true,
-    -- keys = "<Esc>", -- keys used for escaping, if it is a function will use the result everytime
 })
-
--- require('tabout').setup({
---   tabkey = '<Tab>', -- an empty string to disable
---   backwards_tabkey = '<S-Tab>',
---   act_as_tab = true,
---   act_as_shift_tab = false,
---   default_tab = '<C-t>',
---   default_shift_tab = '<C-d>',
---   enable_backwards = true, -- well ...
---   completion = true,
---   tabouts = {
---     {open = "'", close = "'"},
---     {open = '"', close = '"'},
---     {open = '`', close = '`'},
---     {open = '(', close = ')'},
---     {open = '[', close = ']'},
---     {open = '{', close = '}'}
---   },
---   ignore_beginning = true,
---   exclude = {}
--- })
 
 require('telescope').setup({
   defaults = {
@@ -618,8 +593,7 @@ vim.g.codeium_filetypes = {
   TelescopePrompt = false,
 }
 
-require('nvim-surround').setup()
-require('leap').set_default_keymaps()
+-- kmap('i', '<C-e>', function () return vim.fn['codeium#Accept']() end, { expr = true, noremap = true })
 
 require('nvim-autopairs').setup({
   disable_filetype = { 'TelescopePrompt' }
@@ -908,7 +882,6 @@ kmap('n', '<leader>q', vim.diagnostic.setloclist, opts)
 
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
-  -- require('fidget').setup()
   -- Enable completion triggered by <c-x><c-o> ???
   -- vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
@@ -1042,10 +1015,10 @@ vim.keymap.set('n', 'dd', smart_dd, { noremap = true, expr = true })
 --   desc = "Clear All the References",
 -- })
 
-local statusline = require('statusline')
-statusline.tabline = false
+-- local statusline = require('statusline')
+-- statusline.tabline = false
 
-local function open_in_vscode()
+function open_in_vscode()
   local pos = vim.api.nvim_win_get_cursor(0)
   local file = vim.fn.expand('%:p')
   local target = string.format("%s:%d:%d", file, pos[1], (pos[2]+1))
