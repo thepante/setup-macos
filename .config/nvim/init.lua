@@ -78,6 +78,7 @@ vim.g.user_emmet_install_global = 0
 vim.g.user_emmet_leader_key = ','
 vim.g.user_emmet_splitjointag_key = ',s'
 vim.g.user_emmet_removetag_key = ',r'
+vim.g.neovide_cursor_vfx_mode = 'pixiedust'
 
 vim.g.user_emmet_settings = {
   indent_blockement = 1,
@@ -362,6 +363,38 @@ require('lazy').setup({
   --   end,
   -- }
 
+  -- {
+  --   'abecodes/tabout.nvim',
+  --   lazy = false,
+  --   config = function()
+  --     require('tabout').setup {
+  --       tabkey = '<Tab>', -- an empty string to disable
+  --       backwards_tabkey = '<S-Tab>',
+  --       act_as_tab = true,
+  --       act_as_shift_tab = false,
+  --       default_tab = '<C-t>',
+  --       default_shift_tab = '<C-d>',
+  --       enable_backwards = true, -- well ...
+  --       completion = true,
+  --       tabouts = {
+  --         {open = "'", close = "'"},
+  --         {open = '"', close = '"'},
+  --         {open = '`', close = '`'},
+  --         {open = '(', close = ')'},
+  --         {open = '[', close = ']'},
+  --         {open = '{', close = '}'}
+  --       },
+  --       ignore_beginning = true,
+  --       exclude = {}
+  --     }
+  --   end,
+  --   dependencies = {
+  --     'nvim-treesitter/nvim-treesitter',
+  --     'L3MON4D3/LuaSnip',
+  --     'hrsh7th/nvim-cmp',
+  --   },
+  -- },
+
   {
     'kylechui/nvim-surround',
     version = '*',
@@ -386,6 +419,17 @@ require('lazy').setup({
   'rbong/vim-flog',
   'lewis6991/gitsigns.nvim',
   'sindrets/diffview.nvim',
+
+  {
+    "NeogitOrg/neogit",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+      "sindrets/diffview.nvim",
+      "ibhagwan/fzf-lua",
+    },
+    config = true
+  },
 
   -- File navigation
   'nvim-telescope/telescope.nvim',
@@ -459,6 +503,14 @@ require('lazy').setup({
   'max397574/better-escape.nvim',
   { 'echasnovski/mini.nvim', branch = 'stable' },
   { 'utilyre/sentiment.nvim', version = '*' },
+  -- {
+  --   'vidocqh/auto-indent.nvim',
+  --   opts = {
+  --     indentexpr = function(lnum)
+  --       return require("nvim-treesitter.indent").get_indent(lnum)
+  --     end,
+  --   },
+  -- },
   {
     'glacambre/firenvim',
     lazy = not vim.g.started_by_firenvim,
@@ -471,6 +523,14 @@ require('lazy').setup({
     event = 'CmdlineEnter',
     opts = {},
   },
+  -- {
+  --   'j-hui/fidget.nvim',
+  --   version = 'legacy',
+  --   event = 'LspAttach',
+  --   config = function()
+  --     require('fidget').setup()
+  --   end
+  -- },
   'LunarVim/bigfile.nvim',
 })
 
@@ -1025,8 +1085,18 @@ function open_in_vscode()
   -- vim.api.nvim_echo({{target, 'Normal'}}, true, {})
   os.execute(string.format("code . && code -g '%s'", target))
 end
-
 map('n', '<leader>c', ':lua open_in_vscode()<CR>', opts)
+
+
+function open_in_finder()
+  os.execute(string.format("open '%s'", vim.fn.expand('%:h')))
+end
+map('n', '<leader>o', ':lua open_in_finder()<CR>', opts)
+
+function run_bun_run()
+  vim.cmd(string.format("!bun '%s'", vim.fn.expand('%:p')))
+end
+map('n', '<leader><CR>', ':lua run_bun_run()<CR>', opts)
 
 -- Move between splits
 map('n', '<leader>k', ':wincmd k<CR>', opts)
