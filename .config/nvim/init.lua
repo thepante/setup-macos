@@ -778,10 +778,6 @@ require('nvim-treesitter.configs').setup({
         },
     },
   },
-  context_commentstring = {
-    enable = true,
-    max_lines = 3,
-  },
   incremental_selection = {
     enable = true,
     keymaps = {
@@ -794,7 +790,7 @@ require('nvim-treesitter.configs').setup({
 })
 
 local lspkind = require('lspkind')
-local luasnip = require("luasnip")
+local luasnip = require('luasnip')
 local cmp = require('cmp')
 
 cmp.setup({
@@ -1097,6 +1093,8 @@ function run_bun_run()
   vim.cmd(string.format("!bun '%s'", vim.fn.expand('%:p')))
 end
 map('n', '<leader><CR>', ':lua run_bun_run()<CR>', opts)
+
+map('n', '<leader>g', ':Neogit<CR>', opts)
 
 -- Move between splits
 map('n', '<leader>k', ':wincmd k<CR>', opts)
