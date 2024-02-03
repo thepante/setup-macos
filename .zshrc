@@ -5,6 +5,9 @@ source /Users/fabian/.config/broot/launcher/bash/br
 autoload -U promptinit; promptinit
 prompt spaceship
 
+autoload -U select-word-style
+select-word-style bash
+
 HISTFILE=~/.zsh_history
 HISTSIZE=3000
 SAVEHIST=3000
@@ -87,10 +90,8 @@ source ~/.zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 source ~/.script-kill-apps.sh
 
-tmux-git-autofetch() {
-    ($TMUX_PLUGIN_MANAGER_PATH/tmux-git-autofetch/git-autofetch.tmux --current &)
-}
-add-zsh-hook chpwd tmux-git-autofetch
+tmux-window-name() {($TMUX_PLUGIN_MANAGER_PATH/tmux-window-name/scripts/rename_session_windows.py &)}
+add-zsh-hook chpwd tmux-window-name
 
 zoxide_to_ranger () {
     cd "$(eval zoxide query -i)" || exit

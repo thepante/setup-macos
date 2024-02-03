@@ -77,8 +77,7 @@ vim.g.html_indent_style1 = 'inc'
 vim.g.user_emmet_install_global = 0
 vim.g.user_emmet_leader_key = ','
 vim.g.user_emmet_splitjointag_key = ',s'
-vim.g.user_emmet_removetag_key = ',r'
-vim.g.neovide_cursor_vfx_mode = 'pixiedust'
+vim.g.user_emmet_removetag_key = ',x'
 
 vim.g.user_emmet_settings = {
   indent_blockement = 1,
@@ -120,12 +119,13 @@ vim.cmd([[
   nnoremap <silent><m-n> <Cmd>exe v:count1 . "ToggleTerm"<CR>
 
   " au FocusGained * echo 'foo'
-  " noremap <Tab> %
-  command! Commits Flog
-  command! Cmits Flog
+  noremap <Tab> %
+  command! Neo Neogit
 ]])
 
 -- map('n', '<C-i>', '<Cmd-i>', { noremap = true })
+
+map('n', '<Tab>', '%', opts)
 
 -- Escape insert
 -- map('i', 'kj', '<C-c>', opts)
@@ -174,7 +174,7 @@ map('n', '<Tab>', '%', opts)
 map('v', '<Tab>', '%', opts)
 map('o', '<Tab>', '%', opts)
 
--- Rename a symbol without no language server
+-- Rename a symbol without language server
 map('n', '<leader>R', '#Ncgn', opts)
 
 -- Better n and zz
@@ -277,7 +277,7 @@ local buf_options = function()
     autocmd ColorScheme * hi Normal ctermbg=NONE guibg=NONE
     autocmd BufNewFile,BufRead .aliases* set syntax=bash
     autocmd BufNewFile,BufRead *CSS.html set filetype=css
-    autocmd BufNewFile,BufRead *.blade.php set ft=html
+    autocmd BufNewFile,BufRead */src/**{components,pages}/*.js set ft=jsx
     " autocmd BufNewFile,BufRead *.blade.php set syntax=blade
     " autocmd BufNewFile,BufRead *.php set syn=php
     " autocmd BufNewFile,BufRead *.blade.php set syn=html
@@ -320,7 +320,7 @@ require('lazy').setup({
   -- Syntax highlight
   'sheerun/vim-polyglot',
   'RRethy/vim-illuminate',
-  'mtdl9/vim-log-highlighting',
+  -- 'mtdl9/vim-log-highlighting',
 
   {
     'kevinhwang91/nvim-ufo',
@@ -416,7 +416,7 @@ require('lazy').setup({
 
   -- Git
   'tpope/vim-fugitive',
-  'rbong/vim-flog',
+  -- 'rbong/vim-flog',
   'lewis6991/gitsigns.nvim',
   'sindrets/diffview.nvim',
 
@@ -426,7 +426,7 @@ require('lazy').setup({
       "nvim-lua/plenary.nvim",
       "nvim-telescope/telescope.nvim",
       "sindrets/diffview.nvim",
-      "ibhagwan/fzf-lua",
+      -- "ibhagwan/fzf-lua",
     },
     config = true
   },
@@ -440,7 +440,10 @@ require('lazy').setup({
   },
   {
     'nvim-telescope/telescope-file-browser.nvim',
-    dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' }
+    dependencies = {
+      'nvim-telescope/telescope.nvim',
+      'nvim-lua/plenary.nvim',
+    },
   },
 
   -- use 'unblevable/quick-scope'
@@ -686,10 +689,21 @@ require('nvim_comment').setup({
   end
 })
 
+local parser_config = require 'nvim-treesitter.parsers'.get_parser_configs()
+parser_config.blade = {
+  install_info = {
+    url = 'https://github.com/EmranMR/tree-sitter-blade',
+    files = {'src/parser.c'},
+    branch = 'main',
+  },
+  filetype = 'blade'
+}
+
 require('nvim-treesitter.configs').setup({
   ensure_installed = {
     'astro',
     'bash',
+    'blade',
     'c',
     'css',
     'html',
@@ -719,6 +733,7 @@ require('nvim-treesitter.configs').setup({
     enable = true,
     filetypes = {
       'astro',
+      'blade',
       'html',
       'javascript',
       'javascriptreact',
@@ -955,7 +970,7 @@ local on_attach = function(client, bufnr)
   kmap('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
   kmap('n', '<leader>r', vim.lsp.buf.rename, bufopts)
   -- kmap('n', '<leader>f', vim.lsp.buf.formatting, bufopts)
-  kmap('v', '<leader>f', ':lua vim.lsp.buf.range_formatting()<CR>', bufopts)
+  kmap('v', '<leader>f', ':lua vim.lsp.buf.format<CR>', bufopts)
 
   kmap('n', '<leader>dk', vim.diagnostic.goto_prev, bufopts)
   kmap('n', '<leader>dj', vim.diagnostic.goto_next, bufopts)
@@ -1031,7 +1046,7 @@ local null_ls = require('null-ls')
 null_ls.setup({
     sources = {
         null_ls.builtins.formatting.stylua,
-        null_ls.builtins.diagnostics.eslint,
+        -- null_ls.builtins.diagnostics.eslint,
         -- null_ls.builtins.completion.spell,
     },
 })
