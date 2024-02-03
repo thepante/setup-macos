@@ -1020,12 +1020,16 @@ require'lspconfig'.rust_analyzer.setup{
 
 require'lspconfig'.intelephense.setup{
   capabilities = capabilities,
+  filetypes = { 'blade', 'php' },
+  init_options = {
+    provideFormatter = true,
+  },
   on_attach = on_attach,
 }
 
 require'lspconfig'.html.setup {
   capabilities = capabilities,
-  filetype = { 'html', 'php', 'blade', 'svelte', 'astro' },
+  filetypes = { 'html', 'php', 'blade', 'svelte', 'astro' },
   init_options = {
     configurationSection = { 'html', 'css', 'javascript' },
     embeddedLanguages = {
