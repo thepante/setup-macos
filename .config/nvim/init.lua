@@ -82,8 +82,11 @@ vim.g.user_emmet_removetag_key = ',x'
 vim.g.user_emmet_settings = {
   indent_blockement = 1,
   php = {
-    extends = 'html',
+    extends = 'html,css',
     filters = 'html,c',
+  },
+  blade = {
+    extends = 'php',
   },
   css = {
     filters = 'hc',
@@ -120,6 +123,8 @@ vim.cmd([[
 
   " au FocusGained * echo 'foo'
   noremap <Tab> %
+  " command! Commits Flog
+  " command! Cmits Flog
   command! Neo Neogit
 ]])
 
@@ -275,10 +280,10 @@ local buf_options = function()
 
     " autocmd VimEnter * hi Normal ctermbg=NONE guibg=NONE
     autocmd ColorScheme * hi Normal ctermbg=NONE guibg=NONE
-    autocmd BufNewFile,BufRead .aliases* set syntax=bash
-    autocmd BufNewFile,BufRead *CSS.html set filetype=css
+    autocmd BufNewFile,BufRead .aliases* set syn=bash
+    autocmd BufNewFile,BufRead *CSS.html set ft=css
     autocmd BufNewFile,BufRead */src/**{components,pages}/*.js set ft=jsx
-    " autocmd BufNewFile,BufRead *.blade.php set syntax=blade
+    autocmd BufNewFile,BufRead *.blade.php set ft=blade
     " autocmd BufNewFile,BufRead *.php set syn=php
     " autocmd BufNewFile,BufRead *.blade.php set syn=html
 
@@ -321,6 +326,12 @@ require('lazy').setup({
   'sheerun/vim-polyglot',
   'RRethy/vim-illuminate',
   -- 'mtdl9/vim-log-highlighting',
+  {
+    'fei6409/log-highlight.nvim',
+    config = function()
+        require('log-highlight').setup {}
+    end,
+  },
 
   {
     'kevinhwang91/nvim-ufo',
