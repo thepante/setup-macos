@@ -44,6 +44,7 @@ alias test-color='curl -o- https://gist.githubusercontent.com/lifepillar/09a44b8
 
 alias hosts='sudo nvim /etc/hosts'
 alias vhosts='nvim /opt/homebrew/etc/httpd/extra/httpd-vhosts.conf' #'/usr/local/etc/httpd/extra/httpd-vhosts.conf'
+alias fixint='sudo ~/fixinternet.sh'
 
 alias proc-cartillas='~/procesar_cartillas.sh'
 

@@ -41,7 +41,8 @@ set.lazyredraw = true
 set.syntax = 'on'
 set.foldmethod = 'expr'
 set.foldexpr = 'nvim_treesitter#foldexpr()'
-set.foldenable = false
+set.foldenable = true
+set.foldlevel = 99
 set.iskeyword:remove({'$'})
 
 set.completeopt = 'noinsert,menuone,noselect'
@@ -283,7 +284,7 @@ local buf_options = function()
     autocmd BufNewFile,BufRead .aliases* set syn=bash
     autocmd BufNewFile,BufRead *CSS.html set ft=css
     autocmd BufNewFile,BufRead */src/**{components,pages}/*.js set ft=jsx
-    autocmd BufNewFile,BufRead *.blade.php set ft=blade
+    autocmd BufNewFile,BufRead *.blade.php set ft=php
     " autocmd BufNewFile,BufRead *.php set syn=php
     " autocmd BufNewFile,BufRead *.blade.php set syn=html
 
@@ -351,7 +352,7 @@ require('lazy').setup({
 
   -- Code tools & refactoring
   'nvim-treesitter/nvim-treesitter',
-  'nvim-treesitter/nvim-treesitter-context',
+  -- 'nvim-treesitter/nvim-treesitter-context',
   'nvim-treesitter/nvim-treesitter-textobjects',
   'JoosepAlviste/nvim-ts-context-commentstring',
   {
@@ -361,6 +362,21 @@ require('lazy').setup({
   {
     'Julian/vim-textobj-variable-segment',
     dependencies = { 'kana/vim-textobj-user' },
+  },
+
+  {
+    'SmiteshP/nvim-navic',
+    dependencies = 'neovim/nvim-lspconfig'
+  },
+
+  {
+    'utilyre/barbecue.nvim',
+    name = 'barbecue',
+    version = "*",
+    dependencies = {
+      'SmiteshP/nvim-navic',
+    },
+    opts = {},
   },
 
   'windwp/nvim-ts-autotag',
@@ -967,6 +983,10 @@ local on_attach = function(client, bufnr)
   -- Enable completion triggered by <c-x><c-o> ???
   -- vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
+  if client.server_capabilities.documentSymbolProvider then
+    require('nvim-navic').attach(client, bufnr)
+  end
+
   local bufopts = { noremap=true, silent=true, buffer=bufnr }
   kmap('n', 'gr', vim.lsp.buf.references, bufopts)
   kmap('n', 'gD', vim.lsp.buf.declaration, bufopts)
@@ -1047,6 +1067,15 @@ require'lspconfig'.html.setup {
       css = true,
       javascript = true,
     },
+    provideFormatter = true,
+  },
+  on_attach = on_attach,
+}
+
+require'lspconfig'.intelephense.setup{
+  capabilities = capabilities,
+  filetypes = { 'blade', 'php' },
+  init_options = {
     provideFormatter = true,
   },
   on_attach = on_attach,
