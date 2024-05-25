@@ -311,11 +311,19 @@ require('lazy').setup({
   'L3MON4D3/LuaSnip',
   'saadparwaiz1/cmp_luasnip',
   'onsails/lspkind.nvim',
+  -- {
+  --   'Exafunction/codeium.vim',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'hrsh7th/nvim-cmp',
+  --   },
+  -- },
   {
-    'Exafunction/codeium.vim',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'hrsh7th/nvim-cmp',
+    {
+      'supermaven-inc/supermaven-nvim',
+      config = function()
+        require('supermaven-nvim').setup({})
+      end,
     },
   },
   -- use { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' }
