@@ -26,6 +26,11 @@ smartcd() {
     cd "$dir" || return
 }
 
+ht() {
+    local port=${1:-0}
+    static-web-server -d . -p "808$port"
+}
+
 alias ..='smartcd'
 alias c='clear'
 alias cat='bat'
@@ -34,7 +39,7 @@ alias la='ls -lhG'
 alias -g grep='grep --color=auto'
 alias cp='cp -iv'
 alias mv='mv -iv'
-alias ht='http-server .'
+# alias ht='http-server .'
 alias gw='git worktree'
 alias cht='~/.cht-search.sh'
 alias fs='fd --type f --hidden --exclude (.git|.DS_Store|node_modules) --print0 | fzf-tmux -p --read0 --print0 --exit-0 | xargs -r -0 nvim'
