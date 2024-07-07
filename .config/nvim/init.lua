@@ -220,7 +220,7 @@ kmap('n', '<leader>b', '<cmd>Telescope current_buffer_fuzzy_find<CR>', opts)
 kmap('n', '<leader>f', '<cmd>Telescope live_grep<CR>', opts)
 -- kmap('n', 'Ø', '<cmd>Telescope lsp_document_symbols<CR>', opts)
 -- kmap('n', 'Ø', ":lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({}))<CR>", opts)
-kmap('n', 'ø', '<cmd>Telescope lsp_document_symbols<CR>', opts)
+kmap('n', 'ø', '<cmd>Telescope lsp_document_symbols ignore_symbols=variable show_line=true<CR>', opts)
 
 -- kmap('v', '<leader><CR>', ':Gen<CR>')
 -- kmap('n', '<leader><CR>', ':Gen<CR>')
@@ -247,12 +247,19 @@ map('v', '<leader>v', ':Gitsigns blame_line<CR>', opts)
 kmap({'o', 'x'}, 'is', "<cmd>lua require('various-textobjs').subword(true)<CR>")
 kmap({'o', 'x'}, 'as', "<cmd>lua require('various-textobjs').subword(false)<CR>")
 
-local lazypath = vim.fn.stdpath('data')..'/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    'git', 'clone', '--filter=blob:none', 'https://github.com/folke/lazy.nvim.git', '--branch=stable',
-    lazypath,
-  })
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    vim.api.nvim_echo({
+      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+      { out, "WarningMsg" },
+      { "\nPress any key to exit..." },
+    }, true, {})
+    vim.fn.getchar()
+    os.exit(1)
+  end
 end
 vim.opt.rtp:prepend(lazypath)
 
@@ -261,7 +268,9 @@ local buf_options = function()
     filetype plugin indent on
     let g:gruvbox_material_background = 'hard'
     let g:gruvbox_material_dim_inactive_windows = '1'
-    colorscheme gruvbox-material
+    " colorscheme gruvbox-material
+    " colorscheme catppuccin
+    colorscheme embark
 
     let g:VM_maps = {}
     let g:VM_maps["Exit"] = '<C-c>'
@@ -311,19 +320,11 @@ require('lazy').setup({
   'L3MON4D3/LuaSnip',
   'saadparwaiz1/cmp_luasnip',
   'onsails/lspkind.nvim',
-  -- {
-  --   'Exafunction/codeium.vim',
-  --   dependencies = {
-  --     'nvim-lua/plenary.nvim',
-  --     'hrsh7th/nvim-cmp',
-  --   },
-  -- },
   {
-    {
-      'supermaven-inc/supermaven-nvim',
-      config = function()
-        require('supermaven-nvim').setup({})
-      end,
+    'Exafunction/codeium.vim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'hrsh7th/nvim-cmp',
     },
   },
   -- use { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' }
@@ -338,7 +339,7 @@ require('lazy').setup({
   {
     'fei6409/log-highlight.nvim',
     config = function()
-        require('log-highlight').setup {}
+      require('log-highlight').setup {}
     end,
   },
 
@@ -350,6 +351,7 @@ require('lazy').setup({
   -- Language server
   'nvimtools/none-ls.nvim',
   'williamboman/nvim-lsp-installer',
+  'joechrisellis/lsp-format-modifications.nvim',
   {
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -375,6 +377,35 @@ require('lazy').setup({
   {
     'SmiteshP/nvim-navic',
     dependencies = 'neovim/nvim-lspconfig'
+  },
+
+  {
+    "adalessa/laravel.nvim",
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      "tpope/vim-dotenv",
+      "MunifTanjim/nui.nvim",
+      -- "nvimtools/none-ls.nvim",
+    },
+    cmd = { "Sail", "Artisan", "Composer", "Npm", "Yarn", "Laravel" },
+    keys = {
+      { "<leader>la", ":Laravel artisan<cr>" },
+      { "<leader>lr", ":Laravel routes<cr>" },
+      { "<leader>lm", ":Laravel related<cr>" },
+    },
+    event = { "VeryLazy" },
+    config = true,
+  },
+
+  {
+    "rcarriga/nvim-notify",
+    config = function()
+      local notify = require("notify")
+      -- this for transparency
+      notify.setup({ background_colour = "#000000" })
+      -- this overwrites the vim notify function
+      vim.notify = notify.notify
+    end
   },
 
   {
@@ -699,8 +730,8 @@ require('nvim-autopairs').setup({
 
 require('gitsigns').setup({
   signs = {
-    delete    = {hl = 'DiffDelete', text = '_', show_count=true},
-    topdelete = {hl = 'DiffDelete', text = '‾', show_count=true},
+    delete    = {text = '_', show_count=true},
+    topdelete = {text = '‾', show_count=true},
   },
   count_chars = {
     [1] = '1',
@@ -1060,6 +1091,9 @@ require'lspconfig'.rust_analyzer.setup{
 require'lspconfig'.intelephense.setup{
   capabilities = capabilities,
   filetypes = { 'blade', 'php' },
+  telemetry = {
+    enable = false,
+  },
   init_options = {
     provideFormatter = true,
   },
@@ -1168,4 +1202,13 @@ map('n', '<leader>k', ':wincmd k<CR>', opts)
 map('n', '<leader>j', ':wincmd j<CR>', opts)
 map('n', '<leader>h', ':wincmd h<CR>', opts)
 map('n', '<leader>l', ':wincmd l<CR>', opts)
+
+local uv = vim.loop
+vim.api.nvim_create_autocmd('VimEnter', {
+	callback = function()
+		if vim.env.TMUX_PLUGIN_MANAGER_PATH then
+			uv.spawn(vim.env.TMUX_PLUGIN_MANAGER_PATH .. '/tmux-window-name/scripts/rename_session_windows.py', {})
+		end
+	end,
+})
 
