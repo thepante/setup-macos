@@ -515,9 +515,9 @@ require('lazy').setup({
   -- use 'unblevable/quick-scope'
 
   -- Themes
-  -- { 'embark-theme/vim', name = 'embark' },
-  -- { "catppuccin/nvim", name = "catppuccin" },
-  -- 'Mofiqul/vscode.nvim',
+  'Mofiqul/vscode.nvim',
+  { 'embark-theme/vim', name = 'embark' },
+  { "catppuccin/nvim", name = "catppuccin" },
   {
     'sainnhe/gruvbox-material',
     priority = 1000,
@@ -569,7 +569,43 @@ require('lazy').setup({
 
   'karb94/neoscroll.nvim',
   'beauwilliams/statusline.lua',
-  'max397574/better-escape.nvim',
+
+  {
+    'max397574/better-escape.nvim',
+    opts = {
+      mappings = {
+        i = {
+          k = {
+            k = "<Esc>",
+            j = "<Esc>",
+          },
+        },
+        c = {
+          k = {
+            k = "<Esc>",
+            j = "<Esc>",
+          },
+        },
+        t = {
+          k = {
+            k = "<Esc>",
+            j = "<Esc>",
+          },
+        },
+        v = {
+          k = {
+            j = "<Esc>",
+          },
+        },
+        s = {
+          k = {
+            j = "<Esc>",
+          },
+        },
+      },
+    }
+  },
+
   { 'echasnovski/mini.nvim', branch = 'stable' },
   { 'utilyre/sentiment.nvim', version = '*' },
   -- {
@@ -622,11 +658,6 @@ require('neoscroll.config').set_mappings({
 
 require('mason-lspconfig').setup({
     automatic_installation = true,
-})
-
-require('better_escape').setup({
-    mapping = { 'kj' },
-    clear_empty_lines = true,
 })
 
 require('telescope').setup({
@@ -870,7 +901,7 @@ require('nvim-treesitter.configs').setup({
   },
 })
 
-local lspkind = require('lspkind')
+local lspkind = require('lspkind') -- POPUP ver tema decoración | y el padding???
 local luasnip = require('luasnip')
 local cmp = require('cmp')
 
