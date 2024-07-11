@@ -213,7 +213,11 @@ map('v', '<Down>', ":m '>+1<CR>gv=gv", opts)
 map('v', '<Up>', ":m '<-2<CR>gv=gv", opts)
 
 -- File navigation
-map('', '<C-p>', ':Telescope find_files<CR>', opts)
+vim.keymap.set('', '<C-p>', function()
+  require('telescope').extensions['recent-files'].recent_files({})
+end, opts)
+map('', '<C-i>', ':Telescope find_files<CR>', opts)
+-- map('', '<C-p>', ':Telescope find_files<CR>', opts)
 map('', '<M-e>', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts)
 map('', '¬', ':Telescope buffers<CR>', opts)
 kmap('n', '<leader>b', '<cmd>Telescope current_buffer_fuzzy_find<CR>', opts)
@@ -341,6 +345,7 @@ require('lazy').setup({
     config = function()
       require('log-highlight').setup {}
     end,
+    ft = {'log', 'txt'}
   },
 
   {
@@ -419,7 +424,10 @@ require('lazy').setup({
   },
 
   'windwp/nvim-ts-autotag',
-  'wuelnerdotexe/vim-astro',
+  {
+    'wuelnerdotexe/vim-astro',
+    ft = {'astro'},
+  },
 
   -- use {
   --   'Wansmer/treesj',
@@ -478,7 +486,11 @@ require('lazy').setup({
   'terrortylor/nvim-comment',
   'windwp/nvim-autopairs',
   'alvan/vim-closetag',
-  'mattn/emmet-vim',
+
+  {
+    'mattn/emmet-vim',
+    ft = {'html', 'css', 'javascript', 'php', 'blade'},
+  },
 
   -- Git
   'tpope/vim-fugitive',
@@ -512,14 +524,21 @@ require('lazy').setup({
     },
   },
 
+  {
+    'ricardoramirezr/blade-nav.nvim',
+    dependencies = {
+      'hrsh7th/nvim-cmp', -- if using nvim-cmp
+    },
+    ft = {'blade', 'php'}
+  },
+
   -- use 'unblevable/quick-scope'
 
   -- Themes
-  'Mofiqul/vscode.nvim',
-  { 'embark-theme/vim', name = 'embark' },
-  { "catppuccin/nvim", name = "catppuccin" },
+  -- 'Mofiqul/vscode.nvim',
   {
-    'sainnhe/gruvbox-material',
+    'embark-theme/vim',
+    name = 'embark',
     priority = 1000,
     config = buf_options,
   },
@@ -575,32 +594,19 @@ require('lazy').setup({
     opts = {
       mappings = {
         i = {
-          k = {
-            k = "<Esc>",
-            j = "<Esc>",
-          },
+          k = { j = "<Esc>" },
         },
         c = {
-          k = {
-            k = "<Esc>",
-            j = "<Esc>",
-          },
+          k = { j = "<Esc>" },
         },
         t = {
-          k = {
-            k = "<Esc>",
-            j = "<Esc>",
-          },
+          k = { j = "<Esc>" },
         },
         v = {
-          k = {
-            j = "<Esc>",
-          },
+          k = { j = "<Esc>" },
         },
         s = {
-          k = {
-            j = "<Esc>",
-          },
+          k = { j = "<Esc>" },
         },
       },
     }
@@ -695,13 +701,19 @@ require('telescope').setup({
       },
     },
     file_ignore_patterns = {
-      "^node_modules/","^.git/",".git.*",'^vendor/','%.7z','%.JPEG','%.JPG','%.MOV','%.RAF','%.burp','%.bz2',
+      "^node_modules/","^.git/",".git.*",'^vendor/.*%.[^p].*$','%.7z','%.JPEG','%.JPG','%.MOV','%.RAF','%.burp','%.bz2',
       '%.cache','%.class','%.dll','%.docx','%.dylib','%.epub','%.exe','%.flac','%.ico','%.ipynb','%.jar',
       '%.jpeg','%.jpg','%.lock','%.mkv','%.mov','%.mp4','%.otf','%.pdb','%.pdf','%.png','%.rar','%.sqlite3',
       '%.tar','%.tar.gz','%.ttf','%.webp','%.zip','.gradle/','.idea/','.settings/','.vale/','.vscode/',
       '__pycache__/*','build/','gradle/','node_modules/','smalljre_*/*','target/',
     },
-    -- sorter = require('telescope.sorters').get_fzy_sorter(),
+    sorter = require('telescope.sorters').get_fzy_sorter(),
+    file_sorter = function(path)
+      return #vim.fn.split(path, '/') .. path
+    end,
+    generic_sorter = function(a, b)
+      return a.previewer[1] < b.previewer[1]
+    end,
   },
   pickers = {
     buffers = {
@@ -736,6 +748,7 @@ require('telescope').setup({
 require('telescope').load_extension('fzf')
 require('telescope').load_extension('file_browser')
 require('telescope').load_extension('ui-select')
+require('telescope').load_extension('recent-files')
 
 require('mini.pairs').setup()
 -- require('mini.splitjoin').setup()
@@ -1226,7 +1239,7 @@ function run_bun_run()
 end
 map('n', '<leader><CR>', ':lua run_bun_run()<CR>', opts)
 
-map('n', '<leader>g', ':Neogit<CR>', opts)
+map('n', '<leader>;', ':Neogit<CR>', opts)
 
 -- Move between splits
 map('n', '<leader>k', ':wincmd k<CR>', opts)
