@@ -642,7 +642,13 @@ require('lazy').setup({
   --     require('fidget').setup()
   --   end
   -- },
-  'LunarVim/bigfile.nvim',
+  {
+    'LunarVim/bigfile.nvim',
+    ft = {'log', 'txt'}
+  },
+
+  'mollerhoj/telescope-recent-files.nvim',
+
 })
 
 -- require("neodim").setup({
