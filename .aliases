@@ -1,59 +1,21 @@
-# smartcd() {
-#  local d=""
-#   local n=1
-#   for ((i=1; i<=n; i++)); do
-#     d+="../"
-#   done
-#   d="${d}${*}"
-#   eval "cd $d"
-# }
-
-smartcd() {
-    local target=""
-    local num=1
-    local dir=""
-
-    if [[ $1 =~ ^[0-9]+$ ]]; then
-        num=$1
-        shift
-    fi
-
-    for ((i=1; i<=num; i++)); do
-        target+="../"
-    done
-
-    dir="${target}${*}"
-    cd "$dir" || return
-}
-
-ht() {
-    local port=${1:-0}
-    static-web-server -d . -p "808$port"
-}
 
 alias ..='smartcd'
 alias c='clear'
 alias cat='bat'
 alias ls='ls -G'
-alias la='ls -lhG'
+alias la='ls -lahG'
 alias -g grep='grep --color=auto'
 alias cp='cp -iv'
 alias mv='mv -iv'
-# alias ht='http-server .'
 alias gw='git worktree'
-alias cht='~/.cht-search.sh'
 alias fs='fd --type f --hidden --exclude (.git|.DS_Store|node_modules) --print0 | fzf-tmux -p --read0 --print0 --exit-0 | xargs -r -0 nvim'
-alias eza='eza -la --git'
-alias nv='neovide --frame=transparent'
 alias test-color='curl -o- https://gist.githubusercontent.com/lifepillar/09a44b8cf0f9397465614e622979107f/raw/24-bit-color.sh | bash'
 
 alias hosts='sudo nvim /etc/hosts'
 alias vhosts='nvim /opt/homebrew/etc/httpd/extra/httpd-vhosts.conf' #'/usr/local/etc/httpd/extra/httpd-vhosts.conf'
 alias fixint='sudo ~/fixinternet.sh'
 
-alias proc-cartillas='~/procesar_cartillas.sh'
-
-# folders
+# paths
 alias projects='cd ~/Projects'
 alias pj='cd ~/Projects'
 alias dl='cd ~/Downloads'
@@ -70,60 +32,30 @@ alias rtl='ls -tlha ~/.Trash | head -10'
 alias mp3='yt-dlp --no-mtime --extract-audio --audio-format mp3 -P ~/Downloads -o "%(title)s.%(ext)s"'
 alias download='yt-dlp --no-mtime -P ~/Downloads -o "%(title)s.%(ext)s"'
 
-
-# mogrify - convertir imgs
-function conv(){
-  args=("$@")
-    dest=converted-$(date +"%H%M%S")
-    limit=500 #limit size en KB
-    width= #width para -resize
-    target= #especificar input
-    [[ ! -d "$dest" ]] && mkdir "$dest"
-    for ((i=0; i < $#; i++)) {
-      if [[ ${args[$i]} = "-limit" ]] then
-        limit=${args[$i+1]}
-      elif [[ ${args[$i]} = "-width" ]] then
-        width=${args[$i+1]}
-      elif [[ ${args[$i]} = "-target" ]] then
-        target=${args[$i+1]}
-      fi
-    }
-  mogrify -verbose -path $dest -format jpg -define jpeg:extent=${limit}KB $([[ ${width} ]] && echo -resize $width) *$([[ ${target} ]] && echo .$target)
-}
-
-# workaround nvim relativo ya que me volví loco queriendo hacer que nvim establezca cwd a la carpeta por args
-function nvim(){
-  bin=/opt/homebrew/opt/neovim/bin/nvim
-  if [ ! -z "$1" ]; then
-    if [[ -d $1 ]]; then
-      cd "$1" && echo -ne "\e]1;${PWD##*/}\a"; $bin; cd -;
-    else
-       $bin $1;
-    fi
-  else
-    $bin
-  fi
-}
-
-# git pull sin cd
-function pull(){
-  cd "$1" && git p && cd ..;
-}
-
+# copy last downloaded
 function cld(){
   cp $(echo $(cd ~/Downloads && echo $(pwd)/$(ls -t | head -n1))) $1
 }
 
+# remove last downloaded
 function rld(){
   trash -v $(echo $(cd ~/Downloads && echo $(pwd)/$(ls -t | head -n1)))
 }
 
-fzf-open-code() {
-  local output
-  output=$(fzf --height 40% --reverse </dev/tty) && code ${(q-)output}
-  zle reset-prompt
+smartcd() {
+    local target=""
+    local num=1
+    local dir=""
+
+    if [[ $1 =~ ^[0-9]+$ ]]; then num=$1 shift fi
+    for ((i=1; i<=num; i++)); do target+="../" done
+
+    dir="${target}${*}"
+    cd "$dir" || return
 }
 
-zle -N fzf-open-code
-bindkey '^o' fzf-open-code
+ht() {
+    local port=${1:-0}
+    static-web-server -d . -p "808$port"
+}
 

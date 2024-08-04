@@ -72,6 +72,7 @@ local kmap = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
 vim.g.mapleader = ' '
+vim.g.maplocalleader = ','
 vim.g.emmet_html5 = 1
 vim.g.html_indent_script1 = 'inc'
 vim.g.html_indent_style1 = 'inc'
@@ -91,6 +92,9 @@ vim.g.user_emmet_settings = {
   },
   css = {
     filters = 'hc',
+  },
+  html = {
+    extends = 'css',
   },
   javascript = {
     snippets = {
@@ -123,14 +127,12 @@ vim.cmd([[
   nnoremap <silent><m-n> <Cmd>exe v:count1 . "ToggleTerm"<CR>
 
   " au FocusGained * echo 'foo'
-  noremap <Tab> %
-  " command! Commits Flog
-  " command! Cmits Flog
   command! Neo Neogit
 ]])
 
 -- map('n', '<C-i>', '<Cmd-i>', { noremap = true })
 
+map('n', '<C-i>', '<C-i>', opts)
 map('n', '<Tab>', '%', opts)
 
 -- Escape insert
