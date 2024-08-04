@@ -33,12 +33,12 @@ alias mp3='yt-dlp --no-mtime --extract-audio --audio-format mp3 -P ~/Downloads -
 alias download='yt-dlp --no-mtime -P ~/Downloads -o "%(title)s.%(ext)s"'
 
 # copy last downloaded
-function cld(){
+cld(){
   cp $(echo $(cd ~/Downloads && echo $(pwd)/$(ls -t | head -n1))) $1
 }
 
 # remove last downloaded
-function rld(){
+rld(){
   trash -v $(echo $(cd ~/Downloads && echo $(pwd)/$(ls -t | head -n1)))
 }
 
@@ -47,7 +47,10 @@ smartcd() {
     local num=1
     local dir=""
 
-    if [[ $1 =~ ^[0-9]+$ ]]; then num=$1 shift fi
+    if [[ $1 =~ ^[0-9]+$ ]]; then
+        num=$1
+        shift
+    fi
     for ((i=1; i<=num; i++)); do target+="../" done
 
     dir="${target}${*}"
