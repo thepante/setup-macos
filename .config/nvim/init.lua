@@ -128,6 +128,7 @@ vim.cmd([[
 
   " au FocusGained * echo 'foo'
   command! Neo Neogit
+  command! Notes Neorg index
 ]])
 
 -- map('n', '<C-i>', '<Cmd-i>', { noremap = true })
@@ -141,7 +142,9 @@ map('n', '<Tab>', '%', opts)
 map('c', 'kj', '<C-c>', opts)
 map('t', 'kj', '<C-\\><C-n>', opts)
 map('n', '<cr>', ':noh<cr>/kj', { silent = true })
+map('n', 'gd', '<Plug>(neorg.esupports.hop.hop-link)', { silent = true })
 map('n', '<Esc>', '<Esc>:noh<cr>/kj', { silent = true })
+map('i', '<Esc>', '<C-c>:noh<cr>/kj', { silent = true })
 map('n', '<leader>y', 'ggVGy<C-o>', opts)
 
 -- Disable arrow keys & scroll
@@ -651,6 +654,34 @@ require('lazy').setup({
 
   'mollerhoj/telescope-recent-files.nvim',
 
+  {
+    'nvim-neorg/neorg',
+    version = '*',
+    config = function()
+      require('neorg').setup({
+        load = {
+          ['core.defaults'] = {},
+          ['core.concealer'] = {},
+		  -- ['core.export.markdown'] = {},
+		  ['core.integrations.treesitter'] = {},
+		  ['core.completion'] = {
+			config = {
+			  engine = 'nvim-cmp',
+			}
+		  },
+          ['core.dirman'] = {
+            config = {
+              workspaces = {
+                notes = '~/notes',
+              },
+			  index = 'index.norg',
+              default_workspace = 'notes',
+            },
+          },
+        },
+      })
+    end,
+  },
 })
 
 -- require("neodim").setup({
