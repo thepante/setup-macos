@@ -239,7 +239,10 @@ map('n', 'cvs', 'vi"pgvy', opts)
 map('n', 'cvv', "vi'pgvy", opts)
 
 -- Git commands
-map('n', '<leader>gs', ':!git fetch && git status -sb<CR>', opts)
+kmap('n', '<leader>gc', ':lua require("fzf-lua").git_commits()<CR>', opts)
+kmap('n', '<leader>gb', ':lua require("fzf-lua").git_branches()<CR>', opts)
+kmap('n', '<leader>gs', ':lua require("fzf-lua").git_status()<CR>', opts)
+-- map('n', '<leader>gs', ':!git fetch && git status -sb<CR>', opts)
 map('n', '<leader>gp', ':Git pull<CR>', opts)
 map('n', '<leader>gf', ':Git diff %<CR>', opts)
 map('n', '<leader>gd', ':Gdiffsplit<CR>', opts)
@@ -272,47 +275,6 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-local buf_options = function()
-  vim.cmd([[
-    filetype plugin indent on
-    let g:gruvbox_material_background = 'hard'
-    let g:gruvbox_material_dim_inactive_windows = '1'
-    " colorscheme gruvbox-material
-    " colorscheme catppuccin
-    colorscheme embark
-
-    let g:VM_maps = {}
-    let g:VM_maps["Exit"] = '<C-c>'
-    let g:VM_maps['Find Under'] = '<C-d>'
-
-    " highlights
-    hi TreesitterContext guibg=#07090d guifg=#504944
-    hi TreesitterContextBottom gui=underline guifg=#504944
-    hi MiniIndentscopeSymbol guifg=#444444 "#24262A
-    hi Normal ctermbg=NONE guibg=NONE
-    hi NormalFloat guibg=#1c2e42
-    hi EndOfBuffer guibg=NONE ctermbg=NONE
-
-    hi StatusLine guifg=#666666 guibg=NONE
-    hi StatusLineAccent guifg=#504945 guibg=NONE
-    hi StatuslineInsertAccent guifg=#666666 guibg=NONE
-
-    " autocmd VimEnter * hi Normal ctermbg=NONE guibg=NONE
-    autocmd ColorScheme * hi Normal ctermbg=NONE guibg=NONE
-    autocmd BufNewFile,BufRead .aliases* set syn=bash
-    autocmd BufNewFile,BufRead *CSS.html set ft=css
-    autocmd BufNewFile,BufRead */src/**{components,pages}/*.js set ft=jsx
-    autocmd BufNewFile,BufRead *.blade.php set ft=php
-    " autocmd BufNewFile,BufRead *.php set syn=php
-    " autocmd BufNewFile,BufRead *.blade.php set syn=html
-
-    autocmd TermOpen * startinsert
-    autocmd TextYankPost * silent! lua vim.highlight.on_yank({ higroup="IncSearch", timeout=50 })
-    autocmd FileType html,css,svelte,jsx,tsx,vue,php,blade,php.css.html EmmetInstall
-  ]])
-end
-
-
 -- Plugins
 require('lazy').setup({
   -- 'dstein64/vim-startuptime',
@@ -329,13 +291,26 @@ require('lazy').setup({
   'L3MON4D3/LuaSnip',
   'saadparwaiz1/cmp_luasnip',
   'onsails/lspkind.nvim',
+
+  -- {
+  --   'Exafunction/codeium.vim',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'hrsh7th/nvim-cmp',
+  --   },
+  -- },
+
   {
-    'Exafunction/codeium.vim',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'hrsh7th/nvim-cmp',
+    {
+      'supermaven-inc/supermaven-nvim',
+      config = function()
+        require('supermaven-nvim').setup({
+          log_level = 'off',
+        })
+      end,
     },
   },
+
   -- use { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' }
 
   -- LLM
@@ -408,11 +383,11 @@ require('lazy').setup({
   },
 
   {
-    "rcarriga/nvim-notify",
+    'rcarriga/nvim-notify',
     config = function()
-      local notify = require("notify")
+      local notify = require('notify')
       -- this for transparency
-      notify.setup({ background_colour = "#000000" })
+      notify.setup({ background_colour = '#000000' })
       -- this overwrites the vim notify function
       vim.notify = notify.notify
     end
@@ -511,7 +486,13 @@ require('lazy').setup({
       "sindrets/diffview.nvim",
       -- "ibhagwan/fzf-lua",
     },
-    config = true
+    config = true,
+    opts = {
+      disable_hint = true,
+      integrations = {
+        diffview = true,
+      },
+    }
   },
 
   -- File navigation
@@ -530,6 +511,27 @@ require('lazy').setup({
   },
 
   {
+    'ibhagwan/fzf-lua',
+    config = function()
+      local fzf_lua = require('fzf-lua')
+      fzf_lua.setup({
+        defaults = {
+          git_icons = false,
+          file_icons = false,
+          color_icons = false,
+        },
+        winopts = {
+          height = 0.3,
+          width = 0.7,
+          border = 'single',
+          preview = {
+            hidden = 'hidden',
+          },
+        },
+      })
+    end
+  },
+
     'ricardoramirezr/blade-nav.nvim',
     dependencies = {
       'hrsh7th/nvim-cmp', -- if using nvim-cmp
@@ -541,11 +543,23 @@ require('lazy').setup({
 
   -- Themes
   -- 'Mofiqul/vscode.nvim',
+
   {
-    'embark-theme/vim',
-    name = 'embark',
+    'rose-pine/neovim',
+    lazy = false,
     priority = 1000,
-    config = buf_options,
+    config = function()
+      require('rose-pine').setup({
+        variant = 'moon',
+        highlight_groups = {
+          LineNr4 = { fg = '#3B4261' },
+          LineNr3 = { fg = '#445464' },
+          LineNr2 = { fg = '#5D8E97' },
+          LineNr1 = { fg = '#7DAEB9' },
+          LineNr0 = { fg = '#BDEEF9', bold = true },
+        }
+      })
+    end,
   },
 
   -- use { 'folke/todo-comments.nvim', event = "BufReadPost" }
@@ -595,6 +609,17 @@ require('lazy').setup({
   'beauwilliams/statusline.lua',
 
   {
+    'NvChad/nvim-colorizer.lua',
+    config = function()
+      require('colorizer').setup({
+        user_default_options = {
+          css = true,
+        }
+      })
+    end
+  },
+
+  {
     'max397574/better-escape.nvim',
     opts = {
       mappings = {
@@ -637,7 +662,9 @@ require('lazy').setup({
   {
     'yutkat/confirm-quit.nvim',
     event = 'CmdlineEnter',
-    opts = {},
+    opts = {
+      quit_message = ' => Confirm',
+    },
   },
   -- {
   --   'j-hui/fidget.nvim',
@@ -653,6 +680,26 @@ require('lazy').setup({
   },
 
   'mollerhoj/telescope-recent-files.nvim',
+
+  {
+    'MeanderingProgrammer/markdown.nvim',
+    name = 'render-markdown', -- Only needed if you have another plugin named markdown.nvim
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    config = function()
+      require('render-markdown').setup({})
+    end,
+    ft = {'markdown', 'md'}
+  },
+
+  {
+    'ruifm/gitlinker.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      require('gitlinker').setup()
+    end,
+  },
 
   {
     'nvim-neorg/neorg',
@@ -687,6 +734,55 @@ require('lazy').setup({
 -- require("neodim").setup({
 --   alpha = 0.5
 -- })
+
+vim.cmd([[
+  filetype plugin indent on
+  let g:gruvbox_material_background = 'hard'
+  let g:gruvbox_material_dim_inactive_windows = '1'
+  " colorscheme gruvbox-material
+  " colorscheme embark
+  " colorscheme catppuccin
+
+  " colorscheme mosel "  me gustó
+  colorscheme rose-pine "  me gustó
+  " colorscheme kanagawa "  me gustó
+
+  " colorscheme no-clown-fiesta "  me gustó mucho
+  " colorscheme aurora
+
+  " colorscheme sunbather " awesome-vim-colorschemes
+
+  let g:VM_maps = {}
+  let g:VM_maps["Exit"] = '<C-c>'
+  let g:VM_maps['Find Under'] = '<C-d>'
+
+  " highlights
+  hi TreesitterContext guibg=#07090d guifg=#504944
+  hi TreesitterContextBottom gui=underline guifg=#504944
+  hi MiniIndentscopeSymbol guifg=#444444 "#24262A
+  hi Normal ctermbg=NONE guibg=NONE
+  hi NormalFloat guibg=#1c2e42
+  hi EndOfBuffer guibg=NONE ctermbg=NONE
+
+  hi StatusLine guifg=#666666 guibg=NONE
+  hi StatusLineAccent guifg=#504945 guibg=NONE
+  hi StatuslineInsertAccent guifg=#666666 guibg=NONE
+
+  " autocmd VimEnter * hi Normal ctermbg=NONE guibg=NONE
+  autocmd ColorScheme * hi Normal ctermbg=NONE guibg=NONE
+  autocmd BufNewFile,BufRead .aliases* set syn=bash
+  autocmd BufNewFile,BufRead *CSS.html set ft=css
+  autocmd BufNewFile,BufRead */src/**{components,pages}/*.js set ft=jsx
+  autocmd BufNewFile,BufRead *.blade.php set ft=php
+  " autocmd BufNewFile,BufRead *.blade.php set ft=blade
+  autocmd BufNewFile,BufRead *.norg set ft=norg
+  " autocmd BufNewFile,BufRead *.php set syn=php
+  " autocmd BufNewFile,BufRead *.blade.php set syn=html
+
+  autocmd TermOpen * startinsert
+  autocmd TextYankPost * silent! lua vim.highlight.on_yank({ higroup="IncSearch", timeout=50 })
+  autocmd FileType html,css,svelte,jsx,tsx,vue,php,blade,php.css.html EmmetInstall
+]])
 
 require('ufo').setup()
 require('mason').setup()
@@ -755,6 +851,9 @@ require('telescope').setup({
     end,
   },
   pickers = {
+    find_files = {
+      find_command = { 'rg', '--files', '--sortr=modified '},
+    },
     buffers = {
       sort_mru = true,
       ignore_current_buffer = true,
@@ -1153,6 +1252,28 @@ require'lspconfig'.lua_ls.setup{
 
 require'lspconfig'.tsserver.setup{
   capabilities = capabilities,
+    javascript = {
+      inlayHints = {
+        includeInlayParameterNameHints = 'all',
+        includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+        includeInlayFunctionParameterTypeHints = true,
+        includeInlayVariableTypeHints = true,
+        includeInlayPropertyDeclarationTypeHints = true,
+        includeInlayFunctionLikeReturnTypeHints = true,
+        includeInlayEnumMemberValueHints = true,
+      },
+    },
+    typescript = {
+      inlayHints = {
+        includeInlayParameterNameHints = 'all',
+        includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+        includeInlayFunctionParameterTypeHints = true,
+        includeInlayVariableTypeHints = true,
+        includeInlayPropertyDeclarationTypeHints = true,
+        includeInlayFunctionLikeReturnTypeHints = true,
+        includeInlayEnumMemberValueHints = true,
+      },
+    },
   on_attach = on_attach,
 }
 
@@ -1285,6 +1406,65 @@ map('n', '<leader>k', ':wincmd k<CR>', opts)
 map('n', '<leader>j', ':wincmd j<CR>', opts)
 map('n', '<leader>h', ':wincmd h<CR>', opts)
 map('n', '<leader>l', ':wincmd l<CR>', opts)
+
+
+-- Function to disable Tree-sitter features
+local function disable_treesitter_features()
+  local features = {
+    "highlight",
+    "incremental_selection",
+    "indent",
+    "textobjects",
+    "fold",
+    "playground",
+    "query_linter",
+    "rainbow",
+    "refactor",
+    "context_commentstring"
+  }
+  for _, feature in ipairs(features) do
+    vim.cmd("TSBufDisable " .. feature)
+  end
+end
+
+local function disable_additional_plugins()
+  local plugins = {
+    'mini.indentscope',
+    'colorizer',
+  }
+  for _, plugin in ipairs(plugins) do
+    -- Try to disable the plugin if it has a disable method
+    if package.loaded[plugin] then
+      local plugin_module = require(plugin)
+      if plugin_module and type(plugin_module.disable) == 'function' then
+        pcall(plugin_module.disable)
+      end
+    end
+  end
+end
+
+local function disable_treesitter_for_large_files()
+  local file = vim.fn.expand('%:p')
+  local size = vim.fn.getfsize(file)
+  local max_size = 1024 * 1024 * 2 -- 2MB
+  local log_file_types = { 'log', 'txt' }
+
+  if size > max_size then
+    disable_treesitter_features()
+    disable_additional_plugins()
+    return
+  end
+
+  local file_type = vim.fn.expand('%:e')
+  if vim.tbl_contains(log_file_types, file_type) then
+    disable_treesitter_features()
+    disable_additional_plugins()
+  end
+end
+
+vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+  callback = disable_treesitter_for_large_files,
+})
 
 local uv = vim.loop
 vim.api.nvim_create_autocmd('VimEnter', {

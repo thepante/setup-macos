@@ -1,6 +1,7 @@
 local wezterm = require('wezterm')
 local config = wezterm.config_builder()
 
+config.default_prog = { '/bin/zsh', '-l', '-c', 'tmux attach || tmux' }
 config.front_end = 'WebGpu'
 config.max_fps = 120
 
@@ -52,12 +53,24 @@ config.window_padding = {
 config.window_decorations = 'RESIZE | MACOS_FORCE_ENABLE_SHADOW'
 config.window_background_opacity = 0.97
 config.macos_window_background_blur = 20
+config.initial_cols = 160
+config.initial_rows = 60
+
+config.send_composed_key_when_left_alt_is_pressed = true
 
 config.keys = {
   -- Turn off the default CMD-m Hide action, allowing CMD-m to
   -- be potentially recognized and handled by the tab
   { key = 'm', mods = 'CMD', action = wezterm.action.DisableDefaultAssignment },
   { key = "p", mods = "CMD|SHIFT", action = wezterm.action.ActivateCommandPalette },
+  { key = ".", mods = "ALT", action = { SendString="dot" } },
+  { key = "p", mods = "CMD", action = wezterm.action.SendKey { key = 'p', mods = 'CTRL' } },
+  { key = "l", mods = "CMD", action = wezterm.action.SendKey { key = '¬' } },
+  { key = "o", mods = "CMD", action = wezterm.action.SendKey { key = 'ø' } },
+  { key = 'a', mods = 'CMD', action = wezterm.action.SendKey { key = 'Å' } },
+  { key = 'd', mods = 'CMD', action = wezterm.action.SendKey { key = 'Î' } },
+  { key = 'i', mods = 'CMD', action = wezterm.action.SendKey { key = 'i' } },
+  { key = "/", mods = "CMD", action = wezterm.action.SendKey { key = '/', mods = 'CTRL' } },
 }
 
 -- return configuration to wezterm
