@@ -256,6 +256,24 @@ map('n', '<leader>sp', ':Gitsigns preview_hunk<CR>', opts)
 map('n', '<leader>v', ':Gitsigns blame_line<CR>', opts)
 map('v', '<leader>v', ':Gitsigns blame_line<CR>', opts)
 
+kmap("v", "<C-r>", "<CMD>SearchReplaceSingleBufferVisualSelection<CR>", opts)
+kmap("v", "<C-s>", "<CMD>SearchReplaceWithinVisualSelection<CR>", opts)
+kmap("v", "<C-b>", "<CMD>SearchReplaceWithinVisualSelectionCWord<CR>", opts)
+
+kmap("n", "<leader>rs", "<CMD>SearchReplaceSingleBufferSelections<CR>", opts)
+kmap("n", "<leader>ro", "<CMD>SearchReplaceSingleBufferOpen<CR>", opts)
+kmap("n", "<leader>rw", "<CMD>SearchReplaceSingleBufferCWord<CR>", opts)
+kmap("n", "<leader>rW", "<CMD>SearchReplaceSingleBufferCWORD<CR>", opts)
+kmap("n", "<leader>re", "<CMD>SearchReplaceSingleBufferCExpr<CR>", opts)
+kmap("n", "<leader>rf", "<CMD>SearchReplaceSingleBufferCFile<CR>", opts)
+
+kmap("n", "<leader>rbs", "<CMD>SearchReplaceMultiBufferSelections<CR>", opts)
+kmap("n", "<leader>rbo", "<CMD>SearchReplaceMultiBufferOpen<CR>", opts)
+kmap("n", "<leader>rbw", "<CMD>SearchReplaceMultiBufferCWord<CR>", opts)
+kmap("n", "<leader>rbW", "<CMD>SearchReplaceMultiBufferCWORD<CR>", opts)
+kmap("n", "<leader>rbe", "<CMD>SearchReplaceMultiBufferCExpr<CR>", opts)
+kmap("n", "<leader>rbf", "<CMD>SearchReplaceMultiBufferCFile<CR>", opts)
+
 kmap({'o', 'x'}, 'is', "<cmd>lua require('various-textobjs').subword(true)<CR>")
 kmap({'o', 'x'}, 'as', "<cmd>lua require('various-textobjs').subword(false)<CR>")
 
@@ -532,6 +550,18 @@ require('lazy').setup({
     end
   },
 
+  {
+    "roobert/search-replace.nvim",
+    config = function()
+      require("search-replace").setup({
+        -- optionally override defaults
+        default_replace_single_buffer_options = "gcI",
+        default_replace_multi_buffer_options = "egcI",
+      })
+    end,
+  },
+
+  {
     'ricardoramirezr/blade-nav.nvim',
     dependencies = {
       'hrsh7th/nvim-cmp', -- if using nvim-cmp
