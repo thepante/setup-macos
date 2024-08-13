@@ -62,6 +62,7 @@ config.keys = {
   -- Turn off the default CMD-m Hide action, allowing CMD-m to
   -- be potentially recognized and handled by the tab
   { key = 'm', mods = 'CMD', action = wezterm.action.DisableDefaultAssignment },
+  { key = 'h', mods = 'CMD', action = wezterm.action.DisableDefaultAssignment },
   { key = "p", mods = "CMD|SHIFT", action = wezterm.action.ActivateCommandPalette },
   { key = ".", mods = "ALT", action = { SendString="dot" } },
   { key = "p", mods = "CMD", action = wezterm.action.SendKey { key = 'p', mods = 'CTRL' } },
