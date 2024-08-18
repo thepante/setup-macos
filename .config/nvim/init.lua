@@ -218,21 +218,16 @@ map('v', '<Down>', ":m '>+1<CR>gv=gv", opts)
 map('v', '<Up>', ":m '<-2<CR>gv=gv", opts)
 
 -- File navigation
-vim.keymap.set('', '<C-p>', function()
-  require('telescope').extensions['recent-files'].recent_files({})
-end, opts)
-map('', '<C-i>', ':Telescope find_files<CR>', opts)
--- map('', '<C-p>', ':Telescope find_files<CR>', opts)
+map('n', '<C-p>', ':lua require("fzf-lua").files()<CR>', opts)
+map('n', '<C-i>', ':Telescope find_files<CR>', opts)
 map('', '<M-e>', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts)
-map('', '¬', ':Telescope buffers<CR>', opts)
-kmap('n', '<leader>b', '<cmd>Telescope current_buffer_fuzzy_find<CR>', opts)
-kmap('n', '<leader>f', '<cmd>Telescope live_grep<CR>', opts)
--- kmap('n', 'Ø', '<cmd>Telescope lsp_document_symbols<CR>', opts)
--- kmap('n', 'Ø', ":lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({}))<CR>", opts)
-kmap('n', 'ø', '<cmd>Telescope lsp_document_symbols ignore_symbols=variable show_line=true<CR>', opts)
-
--- kmap('v', '<leader><CR>', ':Gen<CR>')
--- kmap('n', '<leader><CR>', ':Gen<CR>')
+map('n', '¬', ':lua require("fzf-lua").buffers()<CR>', opts)
+kmap('n', '<leader>f', ':lua require("fzf-lua").live_grep()<CR>', opts)
+-- kmap('n', '<leader>b', '<cmd>Telescope current_buffer_fuzzy_find results_ts_highlight=false skip_empty_lines=true<CR>', opts)
+-- kmap('n', '<leader>b', ':lua require("fzf-lua").lgrep_curbuf()<CR>', opts)
+kmap('n', '<leader>b', ':lua require("fzf-lua").blines({ start = "cursor" })<CR>', opts)
+kmap('n', '<leader><space>', ':lua require("fzf-lua").blines({ start = "cursor" })<CR>', opts)
+kmap('n', 'ø', ':lua require("fzf-lua").lsp_document_symbols()<CR>', opts)
 
 -- Paste/replace inside string - without yank
 map('n', 'cvs', 'vi"pgvy', opts)
@@ -276,6 +271,54 @@ kmap("n", "<leader>rbf", "<CMD>SearchReplaceMultiBufferCFile<CR>", opts)
 
 kmap({'o', 'x'}, 'is', "<cmd>lua require('various-textobjs').subword(true)<CR>")
 kmap({'o', 'x'}, 'as', "<cmd>lua require('various-textobjs').subword(false)<CR>")
+
+vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
+  pattern = { "*" },
+  callback = function()
+    vim.cmd("silent! noh")
+  end,
+})
+
+--[[
+vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
+  pattern = { "*" },
+  callback = function()
+    -- GRADIENT STATUS COL
+     local separator = " │  "
+     vim.b.statuscolumn =
+         '%s%=%#LineNr4#%{(v:relnum >= 4)?v:relnum.\"' .. separator .. '\":\"\"}' ..
+         '%#LineNr3#%{(v:relnum == 3)?v:relnum.\"' .. separator .. '\":\"\"}' ..
+         '%#LineNr2#%{(v:relnum == 2)?v:relnum.\"' .. separator .. '\":\"\"}' ..
+         '%#LineNr1#%{(v:relnum == 1)?v:relnum.\"' .. separator .. '\":\"\"}' ..
+         '%#LineNr0#%{(v:relnum == 0)?v:lnum.\"' .. separator .. '\":\"\"}'
+  end,
+})
+]]--
+
+--[[
+vim.cmd [[
+  highlight LineNr0 guifg=#ff0000
+  highlight LineNr1 guifg=#ff5500
+  highlight LineNr2 guifg=#ffaa00
+  highlight LineNr3 guifg=#ffff00
+  highlight LineNr4 guifg=#00ff00
+]]
+--[[
+vim.o.statuscolumn = "%=%s%=%#LineNr#%{v:lnum} "
+vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "CursorMoved", "CursorMovedI" }, {
+  pattern = { "*" },
+  callback = function()
+    -- GRADIENT STATUS COL
+    local separator = " │  "
+    vim.b.statuscolumn =
+        '%s%=%#LineNr4#%{(math.abs(v:lnum - v:lnum) >= 4)?v:lnum.\"' .. separator .. '\":\"\"}' ..
+        '%#LineNr3#%{(math.abs(v:lnum - v:lnum) == 3)?v:lnum.\"' .. separator .. '\":\"\"}' ..
+        '%#LineNr2#%{(math.abs(v:lnum - v:lnum) == 2)?v:lnum.\"' .. separator .. '\":\"\"}' ..
+        '%#LineNr1#%{(math.abs(v:lnum - v:lnum) == 1)?v:lnum.\"' .. separator .. '\":\"\"}' ..
+        '%#LineNr0#%{(math.abs(v:lnum - v:lnum) == 0)?v:lnum.\"' .. separator .. '\":\"\"}'
+  end,
+})
+]]--
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -492,7 +535,6 @@ require('lazy').setup({
 
   -- Git
   'tpope/vim-fugitive',
-  -- 'rbong/vim-flog',
   'lewis6991/gitsigns.nvim',
   'sindrets/diffview.nvim',
 
