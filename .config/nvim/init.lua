@@ -134,6 +134,7 @@ vim.cmd([[
 -- map('n', '<C-i>', '<Cmd-i>', { noremap = true })
 
 map('n', '<C-i>', '<C-i>', opts)
+map('n', '<C-s>', '<C-a>', opts)
 map('n', '<Tab>', '%', opts)
 
 -- Escape insert
@@ -705,7 +706,7 @@ require('lazy').setup({
           k = { j = "<Esc>" },
         },
         v = {
-          k = { j = "<Esc>" },
+          j = { k = "k" },
         },
         s = {
           k = { j = "<Esc>" },
@@ -1276,8 +1277,9 @@ local on_attach = function(client, bufnr)
   -- Enable completion triggered by <c-x><c-o> ???
   -- vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
-  if client.server_capabilities.documentSymbolProvider then
-    require('nvim-navic').attach(client, bufnr)
+  if client.server_capabilities.documentRangeFormattingProvider then
+    local lsp_format_modifications = require'lsp-format-modifications'
+    lsp_format_modifications.attach(client, bufnr, { format_on_save = false })
   end
 
   local bufopts = { noremap=true, silent=true, buffer=bufnr }
@@ -1533,6 +1535,16 @@ local function disable_treesitter_for_large_files()
     disable_additional_plugins()
   end
 end
+
+vim.api.nvim_create_autocmd("BufReadPre", {
+    callback = function()
+        local file_type = vim.bo.filetype
+        if (file_type == 'log' or file_type == 'txt') then
+            vim.cmd('syntax off')
+            vim.notify("Syntax highlighting disabled for filetype "..file_type, vim.log.levels.INFO)
+        end
+    end
+})
 
 vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
   callback = disable_treesitter_for_large_files,
