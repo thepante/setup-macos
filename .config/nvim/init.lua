@@ -589,6 +589,13 @@ require('lazy').setup({
             hidden = 'hidden',
           },
         },
+        rg_opts = {
+          ['--files'] = true,
+          ['--hidden'] = true,
+          ['--color'] = 'never',
+          ['--sort'] = 'modified',
+          ['--with-filename'] = true,
+        },
       })
     end
   },

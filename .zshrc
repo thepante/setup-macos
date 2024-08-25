@@ -25,6 +25,7 @@ SPACESHIP_CHAR_SYMBOL_SECONDARY="» "
 SPACESHIP_CHAR_COLOR_SUCCESS="cyan"
 SPACESHIP_CHAR_COLOR_SECONDARY="magenta"
 SPACESHIP_EXEC_TIME_COLOR="#666666"
+SPACESHIP_GIT_STATUS_SHOW=false
 
 SPACESHIP_PHP_SHOW=false
 SPACESHIP_NODE_SHOW=false
@@ -35,6 +36,22 @@ SPACESHIP_PACKAGE_SHOW=true
 SPACESHIP_PACKAGE_SUFFIX=" "
 SPACESHIP_PACKAGE_COLOR="black"
 SPACESHIP_PACKAGE_SYMBOL=
+
+spaceship_direnv() {
+  if printenv DIRENV_FILE >/dev/null; then
+    echo -n "\033[38;5;3m\033[2m[env]\033[0m "
+  fi
+}
+
+SPACESHIP_PROMPT_ORDER=(
+  user
+  dir
+  git
+  direnv
+  host
+  line_sep      # line break
+  char          # prompt character
+)
 
 ZVM_VI_INSERT_ESCAPE_BINDKEY=kj
 
@@ -142,4 +159,6 @@ add-zsh-hook chpwd tmux-git-autofetch
 
 tmux-refresh-status-bar() {(tmux refresh-client -S &)}
 add-zsh-hook chpwd tmux-refresh-status-bar
+
+eval "$(direnv hook zsh)"
 
