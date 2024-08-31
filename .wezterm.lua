@@ -72,6 +72,7 @@ config.keys = {
   { key = 'd', mods = 'CMD', action = wezterm.action.SendKey { key = 'Î' } },
   { key = 'i', mods = 'CMD', action = wezterm.action.SendKey { key = 'i' } },
   { key = "/", mods = "CMD", action = wezterm.action.SendKey { key = '/', mods = 'CTRL' } },
+  { key = ",", mods = "CMD", action = wezterm.action.SendKey { key = '≤' } },
 }
 
 -- return configuration to wezterm
