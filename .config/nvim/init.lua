@@ -118,22 +118,19 @@ end
 
 vim.cmd([[
   " terminal
-  autocmd TermEnter term://*toggleterm#* tnoremap <silent><c-n> <Cmd>exe v:count1 . "ToggleTerm"<CR>
-  autocmd TermEnter term://*toggleterm#* tnoremap <silent><m-n> <Cmd>exe v:count1 . "ToggleTerm"<CR>
+  autocmd TermEnter term://*toggleterm#* tnoremap <silent>≤ <Cmd>exe v:count1 . "ToggleTerm"<CR>
 
   " By applying the mappings this way you can pass a count to your mapping to open a specific window.
   " For example: 2<C-t> will open terminal 2
-  nnoremap <silent><c-n> <Cmd>exe v:count1 . "ToggleTerm"<CR>
-  nnoremap <silent><m-n> <Cmd>exe v:count1 . "ToggleTerm"<CR>
+  nnoremap <silent>≤ <Cmd>exe v:count1 . "ToggleTerm"<CR>
 
   " au FocusGained * echo 'foo'
   command! Neo Neogit
   command! Notes Neorg index
 ]])
 
--- map('n', '<C-i>', '<Cmd-i>', { noremap = true })
-
-map('n', '<C-i>', '<C-i>', opts)
+map('n', '<C-i>', '<Cmd-i>', { noremap = true })
+map('n', '<C-i>', '<C-i>', { noremap = true })
 map('n', '<C-s>', '<C-a>', opts)
 map('n', '<Tab>', '%', opts)
 
@@ -249,8 +246,8 @@ map('n', '<leader>sh', ':Gitsigns stage_hunk<CR>', opts)
 map('v', '<leader>sh', ':Gitsigns stage_hunk<CR>', opts)
 map('n', '<leader>su', ':Gitsigns undo_stage_hunk<CR>', opts)
 map('n', '<leader>sp', ':Gitsigns preview_hunk<CR>', opts)
-map('n', '<leader>v', ':Gitsigns blame_line<CR>', opts)
-map('v', '<leader>v', ':Gitsigns blame_line<CR>', opts)
+map('n', '<leader>.', ':Gitsigns blame_line<CR>', opts)
+map('v', '<leader>.', ':Gitsigns blame_line<CR>', opts)
 
 kmap("v", "<C-r>", "<CMD>SearchReplaceSingleBufferVisualSelection<CR>", opts)
 kmap("v", "<C-s>", "<CMD>SearchReplaceWithinVisualSelection<CR>", opts)
@@ -456,6 +453,10 @@ require('lazy').setup({
   },
 
   {
+    'stevearc/dressing.nvim',
+    opts = {},
+  },
+
     'utilyre/barbecue.nvim',
     name = 'barbecue',
     version = "*",
@@ -637,6 +638,9 @@ require('lazy').setup({
           LineNr2 = { fg = '#5D8E97' },
           LineNr1 = { fg = '#7DAEB9' },
           LineNr0 = { fg = '#BDEEF9', bold = true },
+          FloatBorder = { bg = '#232136' },
+          Visual = { bg = '#4C4067', fg = '#dedede' },
+          PmenuKind = { fg = '#c4a7e7' },
         }
       })
     end,
