@@ -338,7 +338,7 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   -- 'dstein64/vim-startuptime',
   'nvim-lua/plenary.nvim',
-  'ThePrimeagen/harpoon',
+  -- 'ThePrimeagen/harpoon',
 
   -- Completion
   'hrsh7th/cmp-buffer',
@@ -378,14 +378,6 @@ require('lazy').setup({
   -- Syntax highlight
   'sheerun/vim-polyglot',
   'RRethy/vim-illuminate',
-  -- 'mtdl9/vim-log-highlighting',
-  {
-    'fei6409/log-highlight.nvim',
-    config = function()
-      require('log-highlight').setup {}
-    end,
-    ft = {'log', 'txt'}
-  },
 
   {
     'kevinhwang91/nvim-ufo',
@@ -445,9 +437,10 @@ require('lazy').setup({
     'rcarriga/nvim-notify',
     config = function()
       local notify = require('notify')
-      -- this for transparency
-      notify.setup({ background_colour = '#000000' })
-      -- this overwrites the vim notify function
+      notify.setup({
+        background_colour = '#000000' ,
+        render = 'wrapped-compact',
+      })
       vim.notify = notify.notify
     end
   },
@@ -457,13 +450,16 @@ require('lazy').setup({
     opts = {},
   },
 
+  {
     'utilyre/barbecue.nvim',
     name = 'barbecue',
     version = "*",
     dependencies = {
       'SmiteshP/nvim-navic',
     },
-    opts = {},
+    opts = {
+      -- configurations go here
+    },
   },
 
   'windwp/nvim-ts-autotag',
@@ -532,7 +528,7 @@ require('lazy').setup({
 
   {
     'mattn/emmet-vim',
-    ft = {'html', 'css', 'javascript', 'php', 'blade'},
+    ft = {'html', 'css', 'javascript', 'php', 'blade', 'vue'},
   },
 
   -- Git
@@ -597,6 +593,27 @@ require('lazy').setup({
           ['--sort'] = 'modified',
           ['--with-filename'] = true,
         },
+        -- buffers = {
+        --   sort_lastused = true,
+        --   ignore_current_buffer = true,
+        --   find_command = { 'rg', '--files', '--sortr=modified '},
+        -- },
+        keymap = {
+          builtin = {
+            -- Normal mode mappings
+            ['n'] = {
+              ['kj'] = function() fzf_lua.actions.close() end,
+            },
+            -- Insert mode mappings
+            ['i'] = {
+              ['¬'] = 'down',
+              ['<C-p>'] = 'toggle-preview',
+              ['<C-n>'] = 'toggle-preview',
+              ['<M-e>'] = { '<cmd>FzfLua file_browser<CR>', mode = 'i' },
+              ['kj'] = function() fzf_lua.actions.close() end,
+            },
+          },
+        },
       })
     end
   },
@@ -623,7 +640,73 @@ require('lazy').setup({
   -- use 'unblevable/quick-scope'
 
   -- Themes
-  -- 'Mofiqul/vscode.nvim',
+
+  -- {
+  --   'embark-theme/vim',
+  --   name = 'embark',
+  --   priority = 1000,
+  --   config = buf_options,
+  -- },
+
+  -- {
+  --   "catppuccin/nvim",
+  --   name = "catppuccin",
+  --   priority = 1000,
+  --   config = buf_options,
+  -- },
+
+  -- { -- me gustó
+  --   'comfysage/aurora',
+  --   name = 'aurora',
+  --   lazy = false,
+  --   priority = 1000,
+  --   -- config = buf_options,
+  -- },
+
+  { -- me gustó // colores oscuros, aveces dificulta la lectura
+    'comfysage/aki',
+    name = 'aki',
+    lazy = false,
+    priority = 1000,
+    config = function() vim.cmd("colorscheme aki") end
+  },
+
+  -- { -- me gustó // me gusta pero mucho azulado, medio rareli
+  --   'oahlen/iceberg.nvim',
+  --   name = 'iceberg',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = buf_options,
+  -- },
+
+  -- { -- me gustó
+  --   'humbertocarmona/kanagawa-mod.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function() vim.cmd("colorscheme kanagawa") end
+  -- },
+
+  -- { -- ta bueno pero faltaría ajustar algunos colores y más compatibilidad con lenguajes
+  --   'rafi/awesome-vim-colorschemes',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function() vim.cmd("colorscheme sunbather") end
+  -- },
+
+  -- { -- me gustó mucho!!!! // le falta algunos colores? y problemas al ver diff de git?
+  --   'mellow-theme/mellow.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   -- config = buf_options,
+  --   config = function() vim.cmd("colorscheme mellow") end
+  -- },
+
+  -- { -- me gustó maso
+  --   'domeee/mosel.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   setup = function() vim.cmd("colorscheme mosel") end,
+  -- },
 
   {
     'rose-pine/neovim',
@@ -645,6 +728,26 @@ require('lazy').setup({
       })
     end,
   },
+
+  -- {
+  --   "felipeagc/fleet-theme-nvim",
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function() vim.cmd("colorscheme fleet") end
+  -- },
+
+  -- {
+  --   'aktersnurra/no-clown-fiesta.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   -- config = buf_options,
+  -- },
+
+  -- {
+  --   'sainnhe/gruvbox-material',
+  --   priority = 1000,
+  --   config = buf_options,
+  -- },
 
   -- use { 'folke/todo-comments.nvim', event = "BufReadPost" }
 
@@ -823,18 +926,6 @@ vim.cmd([[
   filetype plugin indent on
   let g:gruvbox_material_background = 'hard'
   let g:gruvbox_material_dim_inactive_windows = '1'
-  " colorscheme gruvbox-material
-  " colorscheme embark
-  " colorscheme catppuccin
-
-  " colorscheme mosel "  me gustó
-  colorscheme rose-pine "  me gustó
-  " colorscheme kanagawa "  me gustó
-
-  " colorscheme no-clown-fiesta "  me gustó mucho
-  " colorscheme aurora
-
-  " colorscheme sunbather " awesome-vim-colorschemes
 
   let g:VM_maps = {}
   let g:VM_maps["Exit"] = '<C-c>'
@@ -871,15 +962,20 @@ vim.cmd([[
 require('ufo').setup()
 require('mason').setup()
 
-require('neoscroll').setup({
-  mappings = {'<C-u>', '<C-y>', '<C-e>', 'zt', 'zz', 'zb'},
-})
-
-require('neoscroll.config').set_mappings({
-  zt = {'zt', {'120'}},
-  zz = {'zz', {'120'}},
-  zb = {'zb', {'120'}},
-})
+neoscroll = require('neoscroll')
+local ns_keymap = {
+  ["<C-u>"] = function() neoscroll.ctrl_u({ duration = 250 }) end;
+  ["<C-d>"] = function() neoscroll.ctrl_d({ duration = 250 }) end;
+  ["<C-y>"] = function() neoscroll.scroll(-0.1, { move_cursor=false; duration = 100 }) end;
+  ["<C-e>"] = function() neoscroll.scroll(0.1, { move_cursor=false; duration = 100 }) end;
+  ["zt"]    = function() neoscroll.zt({ half_win_duration = 120 }) end;
+  ["zz"]    = function() neoscroll.zz({ half_win_duration = 120 }) end;
+  ["zb"]    = function() neoscroll.zb({ half_win_duration = 120 }) end;
+}
+local modes = { 'n', 'v', 'x' }
+for key, func in pairs(ns_keymap) do
+  vim.keymap.set(modes, key, func)
+end
 
 require('mason-lspconfig').setup({
     automatic_installation = true,
@@ -1055,6 +1151,7 @@ require('nvim-treesitter.configs').setup({
     'typescript',
     'vim',
     'vimdoc',
+    'vue',
     'yaml',
   },
   highlight = { enable = true },
@@ -1134,6 +1231,7 @@ require('nvim-treesitter.configs').setup({
       node_decremental = "<Left>",
     },
   },
+  disable = { 'log', 'txt' },
 })
 
 local lspkind = require('lspkind') -- POPUP ver tema decoración | y el padding???
@@ -1245,8 +1343,9 @@ cmp.setup({
 cmp.setup.cmdline(':', {
   mapping = cmp.mapping.preset.cmdline(),
   sources = cmp.config.sources({
-    { name = 'cmdline', keyword_length = 2 },
-    { name = 'path' },
+      { name = 'path', option = { trailing_slash = true } },
+    }, {
+      { name = 'cmdline', keyword_length = 2, option = { treat_trailing_slash = true } },
   }),
 })
 
@@ -1267,6 +1366,10 @@ cmp.setup.filetype('gitcommit', {
   }, {
     { name = 'buffer' },
   }),
+})
+
+cmp.setup.filetype('log', {
+  enabled = false,
 })
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -1335,7 +1438,7 @@ require'lspconfig'.lua_ls.setup{
   },
 }
 
-require'lspconfig'.tsserver.setup{
+require'lspconfig'.ts_ls.setup{
   capabilities = capabilities,
     javascript = {
       inlayHints = {
@@ -1391,7 +1494,7 @@ require'lspconfig'.intelephense.setup{
 
 require'lspconfig'.html.setup {
   capabilities = capabilities,
-  filetypes = { 'html', 'php', 'blade', 'svelte', 'astro' },
+  filetypes = { 'html', 'php', 'blade', 'svelte', 'astro', 'vue' },
   init_options = {
     configurationSection = { 'html', 'css', 'javascript' },
     embeddedLanguages = {
@@ -1547,14 +1650,17 @@ local function disable_treesitter_for_large_files()
   end
 end
 
-vim.api.nvim_create_autocmd("BufReadPre", {
-    callback = function()
-        local file_type = vim.bo.filetype
-        if (file_type == 'log' or file_type == 'txt') then
-            vim.cmd('syntax off')
-            vim.notify("Syntax highlighting disabled for filetype "..file_type, vim.log.levels.INFO)
-        end
+vim.api.nvim_create_autocmd("BufReadPost", {
+  callback = function()
+    if not vim.b.already_read then
+      vim.b.already_read = true
+      local file_type = vim.bo.filetype
+      if (file_type == 'log' or file_type == 'txt') then
+        vim.cmd('syntax off')
+        vim.notify("Syntax highlighting disabled for filetype "..file_type, vim.log.levels.INFO)
+      end
     end
+  end
 })
 
 vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {

@@ -5,6 +5,13 @@ config.default_prog = { '/bin/zsh', '-l', '-c', 'tmux attach || tmux' }
 config.front_end = 'WebGpu'
 config.max_fps = 120
 
+config.webgpu_power_preference = 'HighPerformance'
+config.default_cursor_style = 'BlinkingBlock'
+config.cursor_blink_ease_out = 'Constant'
+config.cursor_blink_ease_in = 'Constant'
+config.animation_fps = 4
+
+-- For example, changing the color scheme:
 config.colors = {
   foreground = '#CBE0F0',
   -- background = '#000000',
@@ -56,7 +63,12 @@ config.macos_window_background_blur = 20
 config.initial_cols = 160
 config.initial_rows = 60
 
+config.send_composed_key_when_right_alt_is_pressed = true
+-- config.enable_csi_u_key_encoding = true
+-- config.enable_kitty_keyboard = true
 config.send_composed_key_when_left_alt_is_pressed = true
+-- config.use_dead_keys = true
+-- config.use_ime = true
 
 config.keys = {
   -- Turn off the default CMD-m Hide action, allowing CMD-m to

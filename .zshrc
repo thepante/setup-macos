@@ -99,20 +99,30 @@ export FZF_DIRS_COMMAND='fd -HLI -t d . '$fzf_excluded
 # Create a JAVA_HOME variable, determined dynamically
 # export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-1.8.jdk/Contents/Home
 
+# # export JAVA_HOME=$(/usr/libexec/java_home -v 11)
+# # export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+# export PATH=$JAVA_HOME/bin:$PATH
+
 # export ANDROID_HOME=~/Library/Android/sdk/
 # export ANDROID_SDK=~/Library/Android/sdk/
 # export ANDROID_SDK_ROOT=~/Library/Android/sdk/
 
-# export GRADLE_HOME=/Library/gradle/gradle-3.2
+# # export GRADLE_HOME=/Library/gradle/gradle-3.2
+# # export PATH=$PATH:$GRADLE_HOME/bin
+
+# export GRADLE_HOME=/Users/fabian/.sdkman/candidates/gradle/current
 # export PATH=$PATH:$GRADLE_HOME/bin
 
-# PATH=$PATH:"$ANDROID_HOME"platform-tools
-# PATH=$PATH:"$ANDROID_HOME"tools
-# # export ANDROID_HOME=/Users/$USER/Library/Android/sdk
-# # export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+# # PATH=$PATH:/opt/homebrew/opt/gradle@7/bin/
 
-# pyenv
-PATH=$PATH:$(pyenv root)/shims
+PATH=$PATH:"$ANDROID_HOME"platform-tools
+PATH=$PATH:"$ANDROID_HOME"tools
+# export ANDROID_HOME=/Users/$USER/Library/Android/sdk
+# export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+
+# export JAVA_HOME="$(/usr/libexec/java_home)"
+# export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-1.8.jdk/Contents/Home
+# export PATH=${JAVA_HOME}/bin:$PATH
 
 # Tmux plugins
 export PATH=$HOME/.tmux/plugins/t-smart-tmux-session-manager/bin:$PATH
@@ -140,11 +150,11 @@ eval "$(zoxide init --cmd a zsh)"
 # eval "$(fzf --zsh)"
 
 # # source "$HOME/.zsh/kk/kk.plugin.zsh"
-# source "$HOME/.sdkman/bin/sdkman-init.sh"
+source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 #THI MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-# export SDKMAN_DIR="$HOME/.sdkman"
-# [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 # [ -n "$SSH_AUTH_SOCK" ] && (echo "$SSH_AUTH_SOCK" > ~/.ssh/ssh-agent.env_sock)
 # [ -n "$SSH_AGENT_PID" ] && (ps aux | grep ssh-agent | awk '{print $2}' > ~/.ssh/ssh-agent.env_pid)

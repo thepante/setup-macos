@@ -35,11 +35,11 @@
 
 [alias]
 	graph = "!f(){ git log --oneline --abbrev-commit --graph --decorate; }; f"
-	p = "!f(){ git fetch && git stash && git pull && git stash pop; }; f"
 	rs= "!f(){ git fetch && git status -sb; }; f"
 	s = "status -sb --untracked-files=no"
 	u = "remote -v update"
-	l = "log -10"
+	p = "!f(){ git fetch && git stash && git pull && git stash pop; }; f"
+	l = "log -10 --decorate --oneline --graph"
 	rl= "log --pretty=format:\"%C(yellow)%h%Creset %s %C(blue)[%aN]%Creset %Cgreen(%cr)%Creset\" --date=short HEAD..origin"
 
 [format]
