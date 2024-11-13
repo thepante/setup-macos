@@ -30,6 +30,7 @@ alias lth='la -tlha ~/.Trash | head -10'
 
 alias mp3='yt-dlp --no-mtime --extract-audio --audio-format mp3 -P ~/Downloads -o "%(title)s.%(ext)s"'
 alias download='yt-dlp --no-mtime -P ~/Downloads -o "%(title)s.%(ext)s"'
+alias download-ig="yt-dlp -f bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4] --downloader ffmpeg --downloader-args 'ffmpeg:-c:v libx264 -vf scale=1080:1920'"
 
 # copy last downloaded
 cld(){
