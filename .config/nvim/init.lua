@@ -105,10 +105,10 @@ vim.g.user_emmet_settings = {
 
 -- Autoclose tags
 vim.g.closetag_emptyTags_caseSensitive = 1
-vim.g.closetag_filenames = '*.html,*.xhtml,*.jsx,*.js,*.tsx,*.php'
-vim.g.closetag_xhtml_filenames = '*.xml,*.xhtml,*.jsx,*.js,*.tsx,*.php'
-vim.g.closetag_filetypes = 'html,xhtml,jsx,js,tsx,php'
-vim.g.closetag_xhtml_filetypes = 'html,xhtml,jsx,js,tsx,php'
+vim.g.closetag_filenames = '*.html,*.xhtml,*.jsx,*.js,*.tsx,*.vue,*.php'
+vim.g.closetag_xhtml_filenames = '*.xml,*.xhtml,*.jsx,*.js,*.tsx,*.vue,*.php'
+vim.g.closetag_filetypes = 'html,xhtml,jsx,js,tsx,vue,php'
+vim.g.closetag_xhtml_filetypes = 'html,xhtml,jsx,js,tsx,vue,php'
 
 -- require('vscode').load()
 
@@ -415,23 +415,24 @@ require('lazy').setup({
     dependencies = 'neovim/nvim-lspconfig'
   },
 
-  {
-    "adalessa/laravel.nvim",
-    dependencies = {
-      "nvim-telescope/telescope.nvim",
-      "tpope/vim-dotenv",
-      "MunifTanjim/nui.nvim",
-      -- "nvimtools/none-ls.nvim",
-    },
-    cmd = { "Sail", "Artisan", "Composer", "Npm", "Yarn", "Laravel" },
-    keys = {
-      { "<leader>la", ":Laravel artisan<cr>" },
-      { "<leader>lr", ":Laravel routes<cr>" },
-      { "<leader>lm", ":Laravel related<cr>" },
-    },
-    event = { "VeryLazy" },
-    config = true,
-  },
+  -- {
+  --   'adalessa/laravel.nvim',
+  --   dependencies = {
+  --     'nvim-telescope/telescope.nvim',
+  --     'tpope/vim-dotenv',
+  --     'MunifTanjim/nui.nvim',
+  --     -- 'nvimtools/none-ls.nvim',
+  --   },
+  --   cmd = { 'Artisan', 'Composer', 'Laravel' },
+  --   keys = {
+  --     { '<leader>la', ':Laravel artisan<cr>' },
+  --     { '<leader>lr', ':Laravel routes<cr>' },
+  --     { '<leader>lm', ':Laravel related<cr>' },
+  --   },
+  --   event = { 'VeryLazy' },
+  --   ft = {'blade', 'php'},
+  --   config = true,
+  -- },
 
   {
     'rcarriga/nvim-notify',
@@ -645,14 +646,21 @@ require('lazy').setup({
   --   'embark-theme/vim',
   --   name = 'embark',
   --   priority = 1000,
-  --   config = buf_options,
+  --   config = function() vim.cmd("colorscheme embark") end
   -- },
 
+  {
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    priority = 1000,
+    config = function() vim.cmd("colorscheme catppuccin") end
+  },
+
   -- {
-  --   "catppuccin/nvim",
-  --   name = "catppuccin",
+  --   'felipeagc/fleet-theme-nvim',
+  --   name = 'fleet',
   --   priority = 1000,
-  --   config = buf_options,
+  --   config = function() vim.cmd("colorscheme fleet") end
   -- },
 
   -- { -- me gustó
@@ -660,16 +668,17 @@ require('lazy').setup({
   --   name = 'aurora',
   --   lazy = false,
   --   priority = 1000,
-  --   -- config = buf_options,
+  --   config = function() vim.cmd("colorscheme aurora") end
   -- },
 
-  { -- me gustó // colores oscuros, aveces dificulta la lectura
-    'comfysage/aki',
-    name = 'aki',
-    lazy = false,
-    priority = 1000,
-    config = function() vim.cmd("colorscheme aki") end
-  },
+  -- -- estaba usando este en casa:
+  -- { -- me gustó // colores oscuros, aveces dificulta la lectura
+  --   'comfysage/aki',
+  --   name = 'aki',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function() vim.cmd("colorscheme aki") end
+  -- },
 
   -- { -- me gustó // me gusta pero mucho azulado, medio rareli
   --   'oahlen/iceberg.nvim',
@@ -697,7 +706,6 @@ require('lazy').setup({
   --   'mellow-theme/mellow.nvim',
   --   lazy = false,
   --   priority = 1000,
-  --   -- config = buf_options,
   --   config = function() vim.cmd("colorscheme mellow") end
   -- },
 
@@ -706,6 +714,28 @@ require('lazy').setup({
   --   lazy = false,
   --   priority = 1000,
   --   setup = function() vim.cmd("colorscheme mosel") end,
+  -- },
+
+  -- {
+  --   "felipeagc/fleet-theme-nvim",
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function() vim.cmd("colorscheme fleet") end
+  -- },
+
+  -- -- este estaba usando en casa
+  -- {
+  --   'aktersnurra/no-clown-fiesta.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function() vim.cmd("colorscheme no-clown-fiesta") end
+  -- },
+
+  -- {
+  --   'sainnhe/gruvbox-material',
+  --   priority = 1000,
+  --   config = buf_options,
+  --   setup = function() vim.cmd("colorscheme gruvbox-material") end,
   -- },
 
   {
@@ -728,26 +758,6 @@ require('lazy').setup({
       })
     end,
   },
-
-  -- {
-  --   "felipeagc/fleet-theme-nvim",
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function() vim.cmd("colorscheme fleet") end
-  -- },
-
-  -- {
-  --   'aktersnurra/no-clown-fiesta.nvim',
-  --   lazy = false,
-  --   priority = 1000,
-  --   -- config = buf_options,
-  -- },
-
-  -- {
-  --   'sainnhe/gruvbox-material',
-  --   priority = 1000,
-  --   config = buf_options,
-  -- },
 
   -- use { 'folke/todo-comments.nvim', event = "BufReadPost" }
 
@@ -1037,6 +1047,7 @@ require('telescope').setup({
     buffers = {
       sort_mru = true,
       ignore_current_buffer = true,
+      find_command = { 'rg', '--files', '--sortr=modified '}, -- ???????
     },
     current_buffer_fuzzy_find = {
       preview = { treesitter = false, },

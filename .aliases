@@ -10,6 +10,7 @@ alias cp='cp -iv'
 alias mv='mv -iv'
 alias gw='git worktree'
 alias lg='lazygit'
+alias ssh='TERM=xterm-256color \ssh'
 alias fs='fd --type f --hidden --exclude (.git|.DS_Store|node_modules) --print0 | fzf-tmux -p --read0 --print0 --exit-0 | xargs -r -0 nvim'
 alias test-color='curl -o- https://gist.githubusercontent.com/lifepillar/09a44b8cf0f9397465614e622979107f/raw/24-bit-color.sh | bash'
 

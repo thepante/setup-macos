@@ -1,0 +1,26 @@
+macos-titlebar-style = hidden
+font-family = 'JetBrainsMono Nerd Font'
+# font-style = SemiBold
+font-style = Medium
+font-style-bold = ExtraBold
+background = 191724
+
+# Disable default CMD-m and CMD-h actions
+keybind = cmd+m=ignore
+keybind = cmd+h=ignore
+
+# Send literal "dot" with ALT+.
+keybind = alt+period=text:dot
+
+# Map CMD+p to CTRL+p
+# TODO
+
+# Custom key mappings
+keybind = cmd+l=text:¬
+keybind = cmd+o=text:ø
+keybind = cmd+a=text:Å
+keybind = cmd+d=text:Î
+keybind = cmd+i=text:i
+keybind = cmd+/=csi:^_ # TODO
+keybind = cmd+comma=text:≤
+
