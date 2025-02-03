@@ -1,6 +1,7 @@
 
 alias ..='smartcd'
 alias c='clear'
+alias cdg='cd $(git rev-parse --show-toplevel)'
 alias cat='bat'
 alias nv='nvim'
 alias hq='htmlq'
