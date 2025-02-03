@@ -1356,7 +1356,7 @@ cmp.setup.cmdline(':', {
   sources = cmp.config.sources({
       { name = 'path', option = { trailing_slash = true } },
     }, {
-      { name = 'cmdline', keyword_length = 2, option = { treat_trailing_slash = true } },
+      { name = 'cmdline', keyword_length = 2, option = { treat_trailing_slash = false } },
   }),
 })
 
