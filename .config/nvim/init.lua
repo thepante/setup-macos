@@ -133,6 +133,7 @@ map('n', '<C-i>', '<Cmd-i>', { noremap = true })
 map('n', '<C-i>', '<C-i>', { noremap = true })
 map('n', '<C-s>', '<C-a>', opts)
 map('n', '<Tab>', '%', opts)
+map('v', '<Tab>', '%', opts)
 
 -- Escape insert
 -- map('i', 'kj', '<C-c>', opts)
@@ -217,15 +218,16 @@ map('v', '<Up>', ":m '<-2<CR>gv=gv", opts)
 
 -- File navigation
 map('n', '<C-p>', ':lua require("fzf-lua").files()<CR>', opts)
+map('n', '∏', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts) -- cmd-shift-p
 map('n', '<C-i>', ':Telescope find_files<CR>', opts)
 map('', '<M-e>', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts)
-map('n', '¬', ':lua require("fzf-lua").buffers()<CR>', opts)
-kmap('n', '<leader>f', ':lua require("fzf-lua").live_grep()<CR>', opts)
+map('n', '¬', ':lua require("fzf-lua").buffers()<CR>', opts) -- cmd-l
+kmap('n', 'Ï', ':lua require("fzf-lua").live_grep()<CR>', opts) -- cmd-f
 -- kmap('n', '<leader>b', '<cmd>Telescope current_buffer_fuzzy_find results_ts_highlight=false skip_empty_lines=true<CR>', opts)
 -- kmap('n', '<leader>b', ':lua require("fzf-lua").lgrep_curbuf()<CR>', opts)
-kmap('n', '<leader>b', ':lua require("fzf-lua").blines({ start = "cursor" })<CR>', opts)
+-- kmap('n', '<leader>b', ':lua require("fzf-lua").blines({ start = "cursor" })<CR>', opts)
 kmap('n', '<leader><space>', ':lua require("fzf-lua").blines({ start = "cursor" })<CR>', opts)
-kmap('n', 'ø', ':lua require("fzf-lua").lsp_document_symbols()<CR>', opts)
+kmap('n', 'ø', ':lua require("fzf-lua").lsp_document_symbols()<CR>', opts) -- cmd+o
 
 -- Paste/replace inside string - without yank
 map('n', 'cvs', 'vi"pgvy', opts)
