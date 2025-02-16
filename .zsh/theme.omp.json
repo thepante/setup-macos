@@ -1,0 +1,98 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "palette": {
+    "gray": "#4C566A",
+    "gray_alt": "##6C6C6C",
+    "pink": "#FFAFD7",
+    "red": "#BF616A",
+    "blue_lighter": "#88C0D0",
+    "blue_darker": "#81A1C1"
+  },
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "p:blue_darker",
+          "properties": {
+            "style": "full"
+          },
+          "style": "plain",
+          "template": "{{ .Path }} ",
+          "type": "path"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "p:gray_alt",
+          "properties": {
+            "branch_ahead_icon": "<p:blue_lighter>\u21e1 </>",
+            "branch_behind_icon": "<p:blue_lighter>\u21e3 </>",
+            "branch_icon": "",
+            "fetch_status": true,
+            "fetch_upstream_icon": true,
+            "github_icon": ""
+          },
+          "style": "plain",
+          "template": "{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}<p:pink>*</>{{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} {{ end }} ",
+          "type": "git"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "#A3BE8C",
+          "properties": {
+            "style": "austin"
+          },
+          "style": "plain",
+          "template": " {{ .FormattedMs }} ",
+          "type": "executiontime"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "p:pink", // #B48EAD #5FF1FE
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}p:red{{ end }}"
+          ],
+          "properties": {
+            "always_enabled": true
+          },
+          "style": "plain",
+          "template": "\u276f ",
+          "type": "status"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "transient_prompt": {
+    "foreground": "#B48EAD",
+    "foreground_templates": [
+      "{{ if gt .Code 0 }}p:red{{ end }}"
+    ],
+    "template": "<p:gray>{{ .Folder }}</> {{ if gt .Code 0 }}<p:red>{{ else }}<p:gray>{{ end }}\u276f</> ",
+    "background": "transparent",
+    "properties": {
+      "style": "full",
+      "path_formatting": {
+        "foreground": "p:gray"
+      }
+    }
+  },
+  "final_space": true,
+  "version": 3
+}

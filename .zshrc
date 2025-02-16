@@ -1,9 +1,9 @@
 fpath=($fpath "/Users/fabian/.zfunctions")
 source /Users/fabian/.config/broot/launcher/bash/br
 
-# Spaceship prompt
-autoload -U promptinit; promptinit
-prompt spaceship
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+  eval "$(oh-my-posh init zsh --config ~/.zsh/theme.omp.json)"
+fi
 
 autoload -U select-word-style
 select-word-style bash
@@ -13,45 +13,6 @@ HISTSIZE=3000
 SAVEHIST=3000
 HISTDUP=erase
 ZSHZ_CASE=ignore
-
-SPACESHIP_PROMPT_PREFIXES_SHOW=false
-SPACESHIP_DIR_PREFIX=
-SPACESHIP_DIR_COLOR="cyan"
-SPACESHIP_VI_MODE_INSERT=''
-SPACESHIP_VI_MODE_NORMAL=''
-SPACESHIP_VI_MODE_COLOR="#626262" # antes 'black'
-SPACESHIP_CHAR_SYMBOL="» " # ❯
-SPACESHIP_CHAR_SYMBOL_SECONDARY="» "
-SPACESHIP_CHAR_COLOR_SUCCESS="cyan"
-SPACESHIP_CHAR_COLOR_SECONDARY="magenta"
-SPACESHIP_EXEC_TIME_COLOR="#666666"
-SPACESHIP_GIT_STATUS_SHOW=false
-
-SPACESHIP_PHP_SHOW=false
-SPACESHIP_NODE_SHOW=false
-SPACESHIP_DOCKER_SHOW=false
-SPACESHIP_SVELTE_SHOW=false
-
-SPACESHIP_PACKAGE_SHOW=true
-SPACESHIP_PACKAGE_SUFFIX=" "
-SPACESHIP_PACKAGE_COLOR="black"
-SPACESHIP_PACKAGE_SYMBOL=
-
-spaceship_direnv() {
-  if printenv DIRENV_FILE >/dev/null; then
-    echo -n "\033[38;5;3m\033[2m[env]\033[0m "
-  fi
-}
-
-SPACESHIP_PROMPT_ORDER=(
-  user
-  dir
-  git
-  direnv
-  host
-  line_sep      # line break
-  char          # prompt character
-)
 
 ZVM_VI_INSERT_ESCAPE_BINDKEY=kj
 
