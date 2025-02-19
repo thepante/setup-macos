@@ -80,6 +80,7 @@
     }
   ],
   "transient_prompt": {
+    "newline": true,
     "foreground": "#B48EAD",
     "foreground_templates": [
       "{{ if gt .Code 0 }}p:red{{ end }}"
