@@ -1,5 +1,5 @@
 fpath=($fpath "/Users/fabian/.zfunctions")
-source /Users/fabian/.config/broot/launcher/bash/br
+# source /Users/fabian/.config/broot/launcher/bash/br
 
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   eval "$(oh-my-posh init zsh --config ~/.zsh/theme.omp.json)"
@@ -29,6 +29,8 @@ setopt nosharehistory
 setopt noextendedhistory
 setopt histfindnodups
 
+
+export PATH="$HOME/.bun/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 export RIPGREP_CONFIG_PATH=~/.ripgreprc
 export HOMEBREW_NO_AUTO_UPDATE=1
@@ -97,21 +99,20 @@ source ~/.zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 source ~/.script-kill-apps.sh
 
-# TODO ARREGLAR ESTO!
-# better command history
-autoload -U history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-bindkey "^[[A" history-beginning-search-backward-end # "^[OA"
-bindkey "^[[B" history-beginning-search-forward-end # "^[OB"
-# bindkey "^[DA" history-beginning-search-backward-end # "^[OA"
-# bindkey "^[DB" history-beginning-search-forward-end # "^[OB"
+# # TODO ARREGLAR ESTO!
+# # better command history
+# autoload -U history-search-end
+# zle -N history-beginning-search-backward-end history-search-end
+# zle -N history-beginning-search-forward-end history-search-end
+# bindkey "^[[A" history-beginning-search-backward-end # "^[OA"
+# bindkey "^[[B" history-beginning-search-forward-end # "^[OB"
+# # bindkey "^[DA" history-beginning-search-backward-end # "^[OA"
+# # bindkey "^[DB" history-beginning-search-forward-end # "^[OB"
 
-eval "$(zoxide init --cmd a zsh)"
 # eval "$(fzf --zsh)"
 
-# # source "$HOME/.zsh/kk/kk.plugin.zsh"
-source "$HOME/.sdkman/bin/sdkman-init.sh"
+# # # source "$HOME/.zsh/kk/kk.plugin.zsh"
+# source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 #THI MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
@@ -131,5 +132,7 @@ add-zsh-hook chpwd tmux-git-autofetch
 tmux-refresh-status-bar() {(tmux refresh-client -S &)}
 add-zsh-hook chpwd tmux-refresh-status-bar
 
+eval "$(zoxide init --cmd a zsh)"
 eval "$(direnv hook zsh)"
+eval "$(atuin init zsh)"
 
