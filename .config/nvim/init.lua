@@ -1467,6 +1467,31 @@ require'lspconfig'.volar.setup{
   on_attach = on_attach,
 }
 
+local util = require 'lspconfig.util'
+require'lspconfig'.biome.setup{
+  capabilities = capabilities,
+  cmd = { 'biome', 'lsp-proxy' },
+  root_dir = util.root_pattern('biome.json', 'biome.jsonc'),
+  filetypes = {
+    "astro",
+    "css",
+    "javascript",
+    "javascriptreact",
+    "json",
+    "jsonc",
+    "svelte",
+    "typescript",
+    "typescript.tsx",
+    "typescriptreact",
+    "vue",
+  },
+  init_options = {
+    provideFormatter = true,
+    provideInlayHints = true,
+  },
+  on_attach = on_attach,
+}
+
 require'lspconfig'.ts_ls.setup{
   capabilities = capabilities,
     javascript = {
