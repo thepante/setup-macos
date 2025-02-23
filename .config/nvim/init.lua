@@ -1406,7 +1406,7 @@ local on_attach = function(client, bufnr)
 
   if client.server_capabilities.documentRangeFormattingProvider then
     local lsp_format_modifications = require'lsp-format-modifications'
-    lsp_format_modifications.attach(client, bufnr, { format_on_save = false })
+    lsp_format_modifications.attach(client, bufnr, { format_on_save = true })
   end
 
   local bufopts = { noremap=true, silent=true, buffer=bufnr }
@@ -1449,6 +1449,22 @@ require'lspconfig'.lua_ls.setup{
       },
     },
   },
+}
+
+require'lspconfig'.volar.setup{
+  capabilities = capabilities,
+  filetypes = { 'vue', 'json' },
+  init_options = {
+    provideFormatter = true,
+    embeddedLanguages = {
+      css = true,
+      javascript = true,
+      typescript = true,
+      html = true,
+      json = true,
+    },
+  },
+  on_attach = on_attach,
 }
 
 require'lspconfig'.ts_ls.setup{
