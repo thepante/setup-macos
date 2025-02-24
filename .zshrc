@@ -1,7 +1,7 @@
 fpath=($fpath "/Users/fabian/.zfunctions")
 # source /Users/fabian/.config/broot/launcher/bash/br
 
-if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ] && [ "$TERM_PROGRAM" != "WarpTerminal" ]; then
   eval "$(oh-my-posh init zsh --config ~/.zsh/theme.omp.json)"
 fi
 
@@ -135,4 +135,6 @@ add-zsh-hook chpwd tmux-refresh-status-bar
 eval "$(zoxide init --cmd a zsh)"
 eval "$(direnv hook zsh)"
 eval "$(atuin init zsh)"
+
+bindkey '^r' atuin-search
 
