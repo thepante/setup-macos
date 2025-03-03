@@ -1,6 +1,11 @@
 vim.loader.enable()
 
-local set = vim.opt
+local api, fn, opt, g = vim.api, vim.fn, vim.opt, vim.g
+local set = opt
+
+local opts = { noremap = true, silent = true }
+local map = api.nvim_set_keymap
+local kmap = vim.keymap.set
 
 set.textwidth = 130
 set.numberwidth = 1
@@ -67,21 +72,17 @@ vim.o.wildignore = [[
 */vendor/**.(md|json|yml).*
 ]]
 
-local map = vim.api.nvim_set_keymap
-local kmap = vim.keymap.set
-local opts = { noremap = true, silent = true }
+g.mapleader = ' '
+g.maplocalleader = ','
+g.emmet_html5 = 1
+g.html_indent_script1 = 'inc'
+g.html_indent_style1 = 'inc'
+g.user_emmet_install_global = 0
+g.user_emmet_leader_key = ','
+g.user_emmet_splitjointag_key = ',s'
+g.user_emmet_removetag_key = ',x'
 
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ','
-vim.g.emmet_html5 = 1
-vim.g.html_indent_script1 = 'inc'
-vim.g.html_indent_style1 = 'inc'
-vim.g.user_emmet_install_global = 0
-vim.g.user_emmet_leader_key = ','
-vim.g.user_emmet_splitjointag_key = ',s'
-vim.g.user_emmet_removetag_key = ',x'
-
-vim.g.user_emmet_settings = {
+g.user_emmet_settings = {
   indent_blockement = 1,
   php = {
     extends = 'html,css',
@@ -104,15 +105,15 @@ vim.g.user_emmet_settings = {
 }
 
 -- Autoclose tags
-vim.g.closetag_emptyTags_caseSensitive = 1
-vim.g.closetag_filenames = '*.html,*.xhtml,*.jsx,*.js,*.tsx,*.vue,*.php'
-vim.g.closetag_xhtml_filenames = '*.xml,*.xhtml,*.jsx,*.js,*.tsx,*.vue,*.php'
-vim.g.closetag_filetypes = 'html,xhtml,jsx,js,tsx,vue,php'
-vim.g.closetag_xhtml_filetypes = 'html,xhtml,jsx,js,tsx,vue,php'
+g.closetag_emptyTags_caseSensitive = 1
+g.closetag_filenames = '*.html,*.xhtml,*.jsx,*.js,*.tsx,*.vue,*.php'
+g.closetag_xhtml_filenames = '*.xml,*.xhtml,*.jsx,*.js,*.tsx,*.vue,*.php'
+g.closetag_filetypes = 'html,xhtml,jsx,js,tsx,vue,php'
+g.closetag_xhtml_filetypes = 'html,xhtml,jsx,js,tsx,vue,php'
 
 -- require('vscode').load()
 
-if vim.g.started_by_firenvim == true then
+if g.started_by_firenvim == true then
   set.background = 'light'
 end
 
@@ -162,7 +163,7 @@ map('n', 'Î', ':bnext<CR>', opts)
 
 -- Close buffer
 function close_buffer()
-  local buftype = vim.api.nvim_buf_get_option(0, 'buftype')
+  local buftype = api.nvim_buf_get_option(0, 'buftype')
   if buftype == 'terminal' then
     vim.cmd('bd!')
   else
@@ -206,10 +207,10 @@ map('n', '<leader>[', ':lua require("harpoon.ui").nav_prev()<CR>', opts)
 map('n', '<leader>]', ':lua require("harpoon.ui").nav_next()<CR>', opts)
 
 -- Move lines
-map('n', '<C-j>', ':m .+1<CR>==', opts)
-map('n', '<C-k>', ':m .-2<CR>==', opts)
-map('v', '<C-j>', ":m '>+1<CR>gv=gv", opts)
-map('v', '<C-k>', ":m '<-2<CR>gv=gv", opts)
+-- map('n', '<C-j>', ':m .+1<CR>==', opts)
+-- map('n', '<C-k>', ':m .-2<CR>==', opts)
+-- map('v', '<C-j>', ":m '>+1<CR>gv=gv", opts)
+-- map('v', '<C-k>', ":m '<-2<CR>gv=gv", opts)
 
 map('n', '<Down>', ':m .+1<CR>==', opts)
 map('n', '<Up>', ':m .-2<CR>==', opts)
@@ -232,6 +233,11 @@ kmap('n', 'ø', ':lua require("fzf-lua").lsp_document_symbols()<CR>', opts) -- c
 -- Paste/replace inside string - without yank
 map('n', 'cvs', 'vi"pgvy', opts)
 map('n', 'cvv', "vi'pgvy", opts)
+
+kmap('n', '<leader>ih', function()
+  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+  vim.cmd('echo "Inlay hints: ' .. tostring(vim.lsp.inlay_hint.is_enabled()) .. '"')
+end)
 
 -- Git commands
 kmap('n', '<leader>gc', ':lua require("fzf-lua").git_commits()<CR>', opts)
@@ -272,7 +278,7 @@ kmap("n", "<leader>rbf", "<CMD>SearchReplaceMultiBufferCFile<CR>", opts)
 kmap({'o', 'x'}, 'is', "<cmd>lua require('various-textobjs').subword(true)<CR>")
 kmap({'o', 'x'}, 'as', "<cmd>lua require('various-textobjs').subword(false)<CR>")
 
-vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
+api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
   pattern = { "*" },
   callback = function()
     vim.cmd("silent! noh")
@@ -320,27 +326,32 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "CursorMoved", "CursorMove
 })
 ]]--
 
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+local lazypath = fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
   local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
   if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo({
+    api.nvim_echo({
       { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
       { out, "WarningMsg" },
       { "\nPress any key to exit..." },
     }, true, {})
-    vim.fn.getchar()
+    fn.getchar()
     os.exit(1)
   end
 end
-vim.opt.rtp:prepend(lazypath)
+opt.rtp:prepend(lazypath)
 
 -- Plugins
 require('lazy').setup({
-  -- 'dstein64/vim-startuptime',
-  'nvim-lua/plenary.nvim',
-  -- 'ThePrimeagen/harpoon',
+--   -- 'dstein64/vim-startuptime',
+--   -- 'ThePrimeagen/harpoon',
+
+  {
+    'nvim-lua/plenary.nvim',
+    lazy = false,
+    priority = 1000,
+  },
 
   -- Completion
   'hrsh7th/cmp-buffer',
@@ -352,14 +363,7 @@ require('lazy').setup({
   'L3MON4D3/LuaSnip',
   'saadparwaiz1/cmp_luasnip',
   'onsails/lspkind.nvim',
-
-  -- {
-  --   'Exafunction/codeium.vim',
-  --   dependencies = {
-  --     'nvim-lua/plenary.nvim',
-  --     'hrsh7th/nvim-cmp',
-  --   },
-  -- },
+  -- 'tpope/vim-rsi',
 
   {
     {
@@ -367,15 +371,13 @@ require('lazy').setup({
       config = function()
         require('supermaven-nvim').setup({
           log_level = 'off',
+		  disable_filetypes = { 'log', 'txt' },
         })
       end,
     },
   },
 
-  -- use { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' }
-
-  -- LLM
-  -- 'David-Kunz/gen.nvim',
+  { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' },
 
   -- Syntax highlight
   'sheerun/vim-polyglot',
@@ -392,6 +394,7 @@ require('lazy').setup({
   'joechrisellis/lsp-format-modifications.nvim',
   {
     'neovim/nvim-lspconfig',
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = {
       { 'williamboman/mason.nvim', build = ':MasonUpdate' },
       { 'williamboman/mason-lspconfig.nvim' },
@@ -405,7 +408,7 @@ require('lazy').setup({
   'JoosepAlviste/nvim-ts-context-commentstring',
   {
     'chrisgrieser/nvim-various-textobjs',
-    opts = { useDefaultKeymaps = true, },
+    opts = { keymaps = { useDefaults = true } },
   },
   {
     'Julian/vim-textobj-variable-segment',
@@ -438,11 +441,15 @@ require('lazy').setup({
 
   {
     'rcarriga/nvim-notify',
+    event = "VeryLazy",
     config = function()
       local notify = require('notify')
       notify.setup({
-        background_colour = '#000000' ,
+        background_colour = '#000000',
         render = 'wrapped-compact',
+        timeout = 3000,
+        max_height = function() return math.floor(vim.o.lines * 0.75) end,
+        max_width = function() return math.floor(vim.o.columns * 0.75) end,
       })
       vim.notify = notify.notify
     end
@@ -651,12 +658,12 @@ require('lazy').setup({
   --   config = function() vim.cmd("colorscheme embark") end
   -- },
 
-  {
-    'catppuccin/nvim',
-    name = 'catppuccin',
-    priority = 1000,
-    config = function() vim.cmd("colorscheme catppuccin") end
-  },
+  -- {
+  --   'catppuccin/nvim',
+  --   name = 'catppuccin',
+  --   priority = 1000,
+  --   config = function() vim.cmd("colorscheme catppuccin") end
+  -- },
 
   -- {
   --   'felipeagc/fleet-theme-nvim',
@@ -758,6 +765,7 @@ require('lazy').setup({
           PmenuKind = { fg = '#c4a7e7' },
         }
       })
+      vim.cmd("colorscheme rose-pine")
     end,
   },
 
@@ -853,9 +861,9 @@ require('lazy').setup({
   -- },
   {
     'glacambre/firenvim',
-    lazy = not vim.g.started_by_firenvim,
+    lazy = not g.started_by_firenvim,
     build = function()
-      vim.fn['firenvim#install'](0)
+      fn['firenvim#install'](0)
     end
   },
   {
@@ -1036,7 +1044,7 @@ require('telescope').setup({
     },
     sorter = require('telescope.sorters').get_fzy_sorter(),
     file_sorter = function(path)
-      return #vim.fn.split(path, '/') .. path
+      return #fn.split(path, '/') .. path
     end,
     generic_sorter = function(a, b)
       return a.previewer[1] < b.previewer[1]
@@ -1092,13 +1100,6 @@ require('mini.indentscope').setup({
   }
 })
 
-vim.g.codeium_enable = true
-vim.g.codeium_filetypes = {
-  TelescopePrompt = false,
-}
-
--- kmap('i', '<C-e>', function () return vim.fn['codeium#Accept']() end, { expr = true, noremap = true })
-
 require('nvim-autopairs').setup({
   disable_filetype = { 'TelescopePrompt' }
 })
@@ -1147,6 +1148,7 @@ require('nvim-treesitter.configs').setup({
     'blade',
     'c',
     'css',
+    'go',
     'html',
     'javascript',
     'json',
@@ -1167,10 +1169,19 @@ require('nvim-treesitter.configs').setup({
     'vue',
     'yaml',
   },
-  highlight = { enable = true },
+  highlight = {
+	enable = true,
+	disable = function(lang, buf)
+      local max_filesize = 100 * 1024 -- 100 KB
+      local ok, stats = pcall(vim.loop.fs_stat, api.nvim_buf_get_name(buf))
+      if ok and stats and stats.size > max_filesize then
+        return true
+      end
+    end,
+},
   indent = { enable = true },
   auto_install = true,
-  sync_install = true,
+  sync_install = false,
   autotag = {
     enable = true,
     filetypes = {
@@ -1311,7 +1322,10 @@ cmp.setup({
     -- end
   },
   performance = {
-    max_view_entries = 14,
+    debounce = 60,
+    throttle = 30,
+    fetching_timeout = 100,
+    max_view_entries = 10,
   },
   window = {
     completion = cmp.config.window.bordered(),
@@ -1409,6 +1423,14 @@ local on_attach = function(client, bufnr)
     lsp_format_modifications.attach(client, bufnr, { format_on_save = true })
   end
 
+  if client.server_capabilities.documentSymbolProvider then
+    require('nvim-navic').attach(client, bufnr)
+  end
+
+  if vim.lsp.inlay_hint then
+    vim.lsp.inlay_hint.enable(true)
+  end
+
   local bufopts = { noremap=true, silent=true, buffer=bufnr }
   kmap('n', 'gr', vim.lsp.buf.references, bufopts)
   kmap('n', 'gD', vim.lsp.buf.declaration, bufopts)
@@ -1442,7 +1464,7 @@ require'lspconfig'.lua_ls.setup{
       },
       workspace = {
         -- Make the server aware of Neovim runtime files
-        library = vim.api.nvim_get_runtime_file("", true),
+        library = api.nvim_get_runtime_file("", true),
       },
       telemetry = {
         enable = false,
@@ -1451,9 +1473,41 @@ require'lspconfig'.lua_ls.setup{
   },
 }
 
+require'lspconfig'.gopls.setup{
+  settings = {
+    gopls = {
+      hints = {
+        assignVariableTypes = true,
+        compositeLiteralFields = true,
+        compositeLiteralTypes = true,
+        constantValues = true,
+        functionTypeParameters = true,
+        parameterNames = true,
+        rangeVariableTypes = true,
+      },
+    },
+  },
+}
+
 require'lspconfig'.volar.setup{
   capabilities = capabilities,
   filetypes = { 'vue', 'json' },
+  settings = {
+    vue = {
+      useWorkspaceDependencies = true,
+      validation = {
+        script = true,
+        style = true,
+        template = true,
+      },
+      completion = {
+        autoImport = true,
+        tagCasing = 'kebab',
+        tagPrefix = 'v',
+        getAttributes = 'all',
+      },
+    },
+  },
   init_options = {
     provideFormatter = true,
     embeddedLanguages = {
@@ -1516,6 +1570,11 @@ require'lspconfig'.ts_ls.setup{
         includeInlayEnumMemberValueHints = true,
       },
     },
+  filetype = {
+    'javascript',
+    'typescript',
+    'vue',
+  },
   on_attach = on_attach,
 }
 
@@ -1548,7 +1607,7 @@ require'lspconfig'.intelephense.setup{
 
 require'lspconfig'.html.setup {
   capabilities = capabilities,
-  filetypes = { 'html', 'php', 'blade', 'svelte', 'astro', 'vue' },
+  filetypes = { 'html', 'blade', 'svelte', 'astro' },
   init_options = {
     configurationSection = { 'html', 'css', 'javascript' },
     embeddedLanguages = {
@@ -1590,7 +1649,7 @@ null_ls.setup({
 
 -- Smart line delete
 local function smart_dd()
-  if vim.api.nvim_get_current_line():match("^%s*$") then
+  if api.nvim_get_current_line():match("^%s*$") then
     return "\"_dd"
   else
     return "dd"
@@ -1622,8 +1681,8 @@ vim.keymap.set('n', 'dd', smart_dd, { noremap = true, expr = true })
 -- statusline.tabline = false
 
 function open_in_vscode()
-  local pos = vim.api.nvim_win_get_cursor(0)
-  local file = vim.fn.expand('%:p')
+  local pos = api.nvim_win_get_cursor(0)
+  local file = fn.expand('%:p')
   local target = string.format("%s:%d:%d", file, pos[1], (pos[2]+1))
   -- vim.api.nvim_echo({{target, 'Normal'}}, true, {})
   os.execute(string.format("code . && code -g '%s'", target))
@@ -1632,12 +1691,12 @@ map('n', '<leader>c', ':lua open_in_vscode()<CR>', opts)
 
 
 function open_in_finder()
-  os.execute(string.format("open '%s'", vim.fn.expand('%:h')))
+  os.execute(string.format("open '%s'", fn.expand('%:h')))
 end
 map('n', '<leader>o', ':lua open_in_finder()<CR>', opts)
 
 function run_bun_run()
-  vim.cmd(string.format("!bun '%s'", vim.fn.expand('%:p')))
+  vim.cmd(string.format("!bun '%s'", fn.expand('%:p')))
 end
 map('n', '<leader><CR>', ':lua run_bun_run()<CR>', opts)
 
@@ -1686,8 +1745,8 @@ local function disable_additional_plugins()
 end
 
 local function disable_treesitter_for_large_files()
-  local file = vim.fn.expand('%:p')
-  local size = vim.fn.getfsize(file)
+  local file = fn.expand('%:p')
+  local size = fn.getfsize(file)
   local max_size = 1024 * 1024 * 2 -- 2MB
   local log_file_types = { 'log', 'txt' }
 
@@ -1697,7 +1756,7 @@ local function disable_treesitter_for_large_files()
     return
   end
 
-  local file_type = vim.fn.expand('%:e')
+  local file_type = fn.expand('%:e')
   if vim.tbl_contains(log_file_types, file_type) then
     disable_treesitter_features()
     disable_additional_plugins()
@@ -1717,12 +1776,12 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   end
 })
 
-vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
   callback = disable_treesitter_for_large_files,
 })
 
 local uv = vim.loop
-vim.api.nvim_create_autocmd('VimEnter', {
+api.nvim_create_autocmd('VimEnter', {
 	callback = function()
 		if vim.env.TMUX_PLUGIN_MANAGER_PATH then
 			uv.spawn(vim.env.TMUX_PLUGIN_MANAGER_PATH .. '/tmux-window-name/scripts/rename_session_windows.py', {})
