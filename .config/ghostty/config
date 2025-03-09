@@ -1,8 +1,16 @@
 macos-titlebar-style = hidden
+# macos-titlebar-style = transparent
+macos-window-shadow = true
+macos-titlebar-proxy-icon = hidden
+shell-integration = none
+title = " "
+
 font-family = 'JetBrainsMono Nerd Font'
 # font-style = SemiBold
+font-size = 14
 font-style = Medium
 font-style-bold = ExtraBold
+adjust-cell-height = 9
 background = 191724
 
 # Disable default CMD-m and CMD-h actions
