@@ -2,15 +2,24 @@ macos-titlebar-style = hidden
 # macos-titlebar-style = transparent
 macos-window-shadow = true
 macos-titlebar-proxy-icon = hidden
+# macos-option-as-alt = true
 shell-integration = none
 title = " "
+
+# # custom-shader = ghostty-shaders/negative.glsl
+# # custom-shader = ghostty-shaders/in-game-crt.glsl
+# # custom-shader = ghostty-shaders/test.glsl
+# custom-shader = ghostty-shaders/test-2.glsl
+# # custom-shader = ghostty-shaders/glitchy.glsl
+# # custom-shader = ghostty-shaders/retro-terminal.glsl
 
 font-family = 'JetBrainsMono Nerd Font'
 # font-style = SemiBold
 font-size = 14
 font-style = Medium
 font-style-bold = ExtraBold
-adjust-cell-height = 9
+#adjust-cell-height = 9
+adjust-cell-height = 6
 background = 191724
 
 # Disable default CMD-m and CMD-h actions
@@ -31,4 +40,6 @@ keybind = cmd+d=text:Î
 keybind = cmd+i=text:i
 keybind = cmd+/=csi:^_ # TODO
 keybind = cmd+comma=text:≤
+
+command=/opt/homebrew/bin/tmux attach || /opt/homebrew/bin/tmux
 

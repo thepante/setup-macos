@@ -188,6 +188,10 @@ map('o', '<Tab>', '%', opts)
 -- Rename a symbol without language server
 map('n', '<leader>R', '#Ncgn', opts)
 
+-- -- Better indenting
+-- map('v', '>', '>gv', opts)
+-- map('v', '<', '<gv', opts)
+
 -- Better n and zz
 map('n', 'zz', 'zz6<C-e>', opts)
 map('', 'n', 'nzz6<C-e>', opts)
@@ -747,26 +751,38 @@ require('lazy').setup({
   --   setup = function() vim.cmd("colorscheme gruvbox-material") end,
   -- },
 
+  -- {
+  --   'rose-pine/neovim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     require('rose-pine').setup({
+  --       variant = 'moon',
+  --       highlight_groups = {
+  --         LineNr4 = { fg = '#3B4261' },
+  --         LineNr3 = { fg = '#445464' },
+  --         LineNr2 = { fg = '#5D8E97' },
+  --         LineNr1 = { fg = '#7DAEB9' },
+  --         LineNr0 = { fg = '#BDEEF9', bold = true },
+  --         FloatBorder = { bg = '#232136' },
+  --         Visual = { bg = '#4C4067', fg = '#dedede' },
+  --         PmenuKind = { fg = '#c4a7e7' },
+  --       }
+  --     })
+  --     vim.cmd("colorscheme rose-pine")
+  --   end,
+  -- },
+
   {
-    'rose-pine/neovim',
+    'anAcc22/sakura.nvim',
+    -- 'numToStr/Sakura.nvim',
+    dependencies = 'rktjmp/lush.nvim',
     lazy = false,
     priority = 1000,
-    config = function()
-      require('rose-pine').setup({
-        variant = 'moon',
-        highlight_groups = {
-          LineNr4 = { fg = '#3B4261' },
-          LineNr3 = { fg = '#445464' },
-          LineNr2 = { fg = '#5D8E97' },
-          LineNr1 = { fg = '#7DAEB9' },
-          LineNr0 = { fg = '#BDEEF9', bold = true },
-          FloatBorder = { bg = '#232136' },
-          Visual = { bg = '#4C4067', fg = '#dedede' },
-          PmenuKind = { fg = '#c4a7e7' },
-        }
-      })
-      vim.cmd("colorscheme rose-pine")
-    end,
+    config = function(plugin)
+      vim.opt.rtp:append(plugin.dir .. '/packages/neovim')
+      vim.cmd([[colorscheme sakura]])
+    end
   },
 
   -- use { 'folke/todo-comments.nvim', event = "BufReadPost" }
@@ -956,7 +972,7 @@ vim.cmd([[
   hi TreesitterContextBottom gui=underline guifg=#504944
   hi MiniIndentscopeSymbol guifg=#444444 "#24262A
   hi Normal ctermbg=NONE guibg=NONE
-  hi NormalFloat guibg=#1c2e42
+  " hi NormalFloat guibg=#1c2e42
   hi EndOfBuffer guibg=NONE ctermbg=NONE
 
   hi StatusLine guifg=#666666 guibg=NONE
@@ -1279,7 +1295,7 @@ cmp.setup({
     { name = 'fugitive' },
     { name = 'path', keyword_length = 2 },
   }, {
-    { name = 'buffer', keyword_length = 2 },
+    { name = 'buffer', keyword_length = 5 },
   }),
   experimental = {
     ghost_text = false,
@@ -1406,10 +1422,16 @@ capabilities.textDocument.foldingRange = {
   lineFoldingOnly = true,
 }
 
+capabilities.textDocument.synchronization = nil
+capabilities.textDocument.references = nil
+if not vim.lsp.inlay_hint then
+  capabilities.textDocument.inlayHint = nil
+end
+
 -- LSP Config Mappings
 kmap('n', '<leader>dd', vim.diagnostic.open_float, opts)
-kmap('n', '[d', vim.diagnostic.goto_prev, opts)
-kmap('n', ']d', vim.diagnostic.goto_next, opts)
+kmap('n', '<leader>dp', vim.diagnostic.goto_prev, opts)
+kmap('n', '<leader>dn', vim.diagnostic.goto_next, opts)
 kmap('n', '<leader>q', vim.diagnostic.setloclist, opts)
 
 
@@ -1435,7 +1457,7 @@ local on_attach = function(client, bufnr)
   kmap('n', 'gr', vim.lsp.buf.references, bufopts)
   kmap('n', 'gD', vim.lsp.buf.declaration, bufopts)
   kmap('n', 'gd', vim.lsp.buf.definition, bufopts)
-  -- kmap('n', 'gi', vim.lsp.buf.implementation, bufopts)
+  kmap('n', 'gi', vim.lsp.buf.implementation, bufopts)
   kmap('n', 'gi', '<cmd>Telescope lsp_references theme=cursor<CR>', bufopts)
   kmap('n', 'gt', vim.lsp.buf.type_definition, bufopts)
   kmap('n', 'gh', vim.lsp.buf.hover, bufopts)
@@ -1601,6 +1623,10 @@ require'lspconfig'.intelephense.setup{
   },
   init_options = {
     provideFormatter = true,
+  },
+  inlayHints = {
+    parameterNames = 'all',
+    enabled = 'all',
   },
   on_attach = on_attach,
 }
