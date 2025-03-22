@@ -29,6 +29,7 @@ set.hidden = true
 set.splitbelow = true
 set.splitright = true
 set.scrolloff = 1
+set.sidescrolloff = 20
 set.swapfile = false
 set.termguicolors = true
 set.tabstop = 4
@@ -43,6 +44,8 @@ set.signcolumn = 'yes:1'
 set.title = true
 set.ttyfast = true
 set.lazyredraw = true
+set.redrawtime = 1500
+set.synmaxcol = 240
 set.syntax = 'on'
 set.foldmethod = 'expr'
 set.foldexpr = 'nvim_treesitter#foldexpr()'
@@ -358,15 +361,27 @@ require('lazy').setup({
   },
 
   -- Completion
-  'hrsh7th/cmp-buffer',
-  'hrsh7th/cmp-path',
-  'hrsh7th/cmp-cmdline',
+--   'hrsh7th/cmp-buffer',
+--   'hrsh7th/cmp-path',
+--   'hrsh7th/cmp-cmdline',
   'hrsh7th/cmp-nvim-lsp',
   'hrsh7th/cmp-nvim-lsp-signature-help',
-  'hrsh7th/nvim-cmp',
-  'L3MON4D3/LuaSnip',
-  'saadparwaiz1/cmp_luasnip',
-  'onsails/lspkind.nvim',
+--   'hrsh7th/nvim-cmp',
+--   'L3MON4D3/LuaSnip',
+--   'saadparwaiz1/cmp_luasnip',
+--   'onsails/lspkind.nvim',
+
+  { 'hrsh7th/cmp-buffer', event = "InsertEnter" },
+  { 'hrsh7th/cmp-path', event = "InsertEnter" },
+  { 'hrsh7th/cmp-cmdline', event = "CmdlineEnter" },
+  -- { 'hrsh7th/cmp-nvim-lsp', event = "InsertEnter" },
+  -- { 'hrsh7th/cmp-nvim-lsp-signature-help', event = "InsertEnter" },
+  { 'hrsh7th/nvim-cmp', event = { "InsertEnter", "CmdlineEnter" } },
+  { 'L3MON4D3/LuaSnip', event = "InsertEnter" },
+  { 'saadparwaiz1/cmp_luasnip', event = "InsertEnter" },
+  -- { 'onsails/lspkind.nvim', event = "InsertEnter" },
+  { 'onsails/lspkind.nvim', event = "InsertEnter" },
+
   -- 'tpope/vim-rsi',
 
   {
@@ -632,16 +647,16 @@ require('lazy').setup({
     end
   },
 
-  {
-    "roobert/search-replace.nvim",
-    config = function()
-      require("search-replace").setup({
-        -- optionally override defaults
-        default_replace_single_buffer_options = "gcI",
-        default_replace_multi_buffer_options = "egcI",
-      })
-    end,
-  },
+  -- {
+  --   'roobert/search-replace.nvim',
+  --   config = function()
+  --     require('search-replace').setup({
+  --       -- optionally override defaults
+  --       default_replace_single_buffer_options = 'gcI',
+  --       default_replace_multi_buffer_options = 'egcI',
+  --     })
+  --   end,
+  -- },
 
   {
     'ricardoramirezr/blade-nav.nvim',
@@ -649,6 +664,14 @@ require('lazy').setup({
       'hrsh7th/nvim-cmp', -- if using nvim-cmp
     },
     ft = {'blade', 'php'}
+  },
+
+  {
+    'MagicDuck/grug-far.nvim',
+    config = function()
+      require('grug-far').setup({
+      })
+    end
   },
 
   -- use 'unblevable/quick-scope'
@@ -889,14 +912,23 @@ require('lazy').setup({
       quit_message = ' => Confirm',
     },
   },
-  -- {
-  --   'j-hui/fidget.nvim',
-  --   version = 'legacy',
-  --   event = 'LspAttach',
-  --   config = function()
-  --     require('fidget').setup()
-  --   end
-  -- },
+  {
+    'j-hui/fidget.nvim',
+    -- version = 'legacy',
+    -- event = 'LspAttach',
+    config = function()
+      require('fidget').setup({
+        notification = {
+          window = {
+            winblend = 0,
+          },
+        },
+        -- progress = {
+        --   ignore_empty_message = false,
+        -- },
+      })
+    end,
+  },
   {
     'LunarVim/bigfile.nvim',
     ft = {'log', 'txt'}
@@ -979,7 +1011,6 @@ vim.cmd([[
   hi StatusLineAccent guifg=#504945 guibg=NONE
   hi StatuslineInsertAccent guifg=#666666 guibg=NONE
 
-  " autocmd VimEnter * hi Normal ctermbg=NONE guibg=NONE
   autocmd ColorScheme * hi Normal ctermbg=NONE guibg=NONE
   autocmd BufNewFile,BufRead .aliases* set syn=bash
   autocmd BufNewFile,BufRead *CSS.html set ft=css
@@ -998,7 +1029,7 @@ vim.cmd([[
 require('ufo').setup()
 require('mason').setup()
 
-neoscroll = require('neoscroll')
+local neoscroll = require('neoscroll')
 local ns_keymap = {
   ["<C-u>"] = function() neoscroll.ctrl_u({ duration = 250 }) end;
   ["<C-d>"] = function() neoscroll.ctrl_d({ duration = 250 }) end;
@@ -1187,6 +1218,7 @@ require('nvim-treesitter.configs').setup({
   },
   highlight = {
 	enable = true,
+	additional_vim_regex_highlighting = false, -- TEST
 	disable = function(lang, buf)
       local max_filesize = 100 * 1024 -- 100 KB
       local ok, stats = pcall(vim.loop.fs_stat, api.nvim_buf_get_name(buf))
@@ -1342,6 +1374,8 @@ cmp.setup({
     throttle = 30,
     fetching_timeout = 100,
     max_view_entries = 10,
+    async_budget = 1,
+    max_items = 300,
   },
   window = {
     completion = cmp.config.window.bordered(),
@@ -1429,7 +1463,7 @@ if not vim.lsp.inlay_hint then
 end
 
 -- LSP Config Mappings
-kmap('n', '<leader>dd', vim.diagnostic.open_float, opts)
+kmap('n', '<leader>di', vim.diagnostic.open_float, opts)
 kmap('n', '<leader>dp', vim.diagnostic.goto_prev, opts)
 kmap('n', '<leader>dn', vim.diagnostic.goto_next, opts)
 kmap('n', '<leader>q', vim.diagnostic.setloclist, opts)
@@ -1668,11 +1702,6 @@ null_ls.setup({
     },
 })
 
--- local has_words_before = function()
---   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
---   return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
--- end
-
 -- Smart line delete
 local function smart_dd()
   if api.nvim_get_current_line():match("^%s*$") then
@@ -1706,24 +1735,24 @@ vim.keymap.set('n', 'dd', smart_dd, { noremap = true, expr = true })
 -- local statusline = require('statusline')
 -- statusline.tabline = false
 
-function open_in_vscode()
+function open_in_trae()
   local pos = api.nvim_win_get_cursor(0)
   local file = fn.expand('%:p')
   local target = string.format("%s:%d:%d", file, pos[1], (pos[2]+1))
   -- vim.api.nvim_echo({{target, 'Normal'}}, true, {})
-  os.execute(string.format("code . && code -g '%s'", target))
+  os.execute(string.format("trae . && code -g '%s'", target))
 end
-map('n', '<leader>c', ':lua open_in_vscode()<CR>', opts)
-
 
 function open_in_finder()
   os.execute(string.format("open '%s'", fn.expand('%:h')))
 end
-map('n', '<leader>o', ':lua open_in_finder()<CR>', opts)
 
 function run_bun_run()
   vim.cmd(string.format("!bun '%s'", fn.expand('%:p')))
 end
+
+map('n', '<leader>c', ':lua open_in_trae()<CR>', opts)
+map('n', '<leader>o', ':lua open_in_finder()<CR>', opts)
 map('n', '<leader><CR>', ':lua run_bun_run()<CR>', opts)
 
 map('n', '<leader>;', ':Neogit<CR>', opts)
@@ -1735,7 +1764,6 @@ map('n', '<leader>h', ':wincmd h<CR>', opts)
 map('n', '<leader>l', ':wincmd l<CR>', opts)
 
 
--- Function to disable Tree-sitter features
 local function disable_treesitter_features()
   local features = {
     "highlight",
@@ -1789,7 +1817,11 @@ local function disable_treesitter_for_large_files()
   end
 end
 
-vim.api.nvim_create_autocmd("BufReadPost", {
+api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+  callback = disable_treesitter_for_large_files,
+})
+
+api.nvim_create_autocmd("BufReadPost", {
   callback = function()
     if not vim.b.already_read then
       vim.b.already_read = true
@@ -1800,10 +1832,6 @@ vim.api.nvim_create_autocmd("BufReadPost", {
       end
     end
   end
-})
-
-api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
-  callback = disable_treesitter_for_large_files,
 })
 
 local uv = vim.loop
