@@ -1217,16 +1217,16 @@ require('nvim-treesitter.configs').setup({
     'yaml',
   },
   highlight = {
-	enable = true,
-	additional_vim_regex_highlighting = false, -- TEST
-	disable = function(lang, buf)
+    enable = true,
+    additional_vim_regex_highlighting = false, -- TEST
+    disable = function(lang, buf)
       local max_filesize = 100 * 1024 -- 100 KB
       local ok, stats = pcall(vim.loop.fs_stat, api.nvim_buf_get_name(buf))
       if ok and stats and stats.size > max_filesize then
         return true
       end
     end,
-},
+  },
   indent = { enable = true },
   auto_install = true,
   sync_install = false,
@@ -1283,13 +1283,13 @@ require('nvim-treesitter.configs').setup({
     swap = {
         enable = true,
         swap_next = {
-            ["<leader>ma"] = "@parameter.inner", -- swap parameters/argument with next
-            ["<leader>m:"] = "@property.outer", -- swap object property with next
+            ["<leader>ml"] = "@parameter.inner", -- swap parameters/argument with next
+            ["<leader>mj"] = "@property.outer", -- swap object property with next
             ["<leader>mm"] = "@function.outer", -- swap function with next
         },
         swap_previous = {
-            ["<leader>,a"] = "@parameter.inner", -- swap parameters/argument with prev
-            ["<leader>,:"] = "@property.outer", -- swap object property with prev
+            ["<leader>mh"] = "@parameter.inner", -- swap parameters/argument with prev
+            ["<leader>mk"] = "@property.outer", -- swap object property with prev
             ["<leader>,m"] = "@function.outer", -- swap function with previous
         },
     },
@@ -1483,9 +1483,20 @@ local on_attach = function(client, bufnr)
     require('nvim-navic').attach(client, bufnr)
   end
 
-  if vim.lsp.inlay_hint then
-    vim.lsp.inlay_hint.enable(true)
+  -- -- Use vim.cmd with echo to display messages in Neovim
+  -- vim.cmd('echo "LSP client attached with the following capabilities: ' .. vim.inspect(client.resolved_capabilities) .. '"')
+
+  if client.server_capabilities.inlayHintProvider then
+      vim.lsp.inlay_hint(bufnr, true)
   end
+
+  -- if client.server_capabilities.inlayHintProvider then
+  --   vim.lsp.inlay_hint.enable(true)
+  -- end
+
+  -- if vim.lsp.inlay_hint then
+  --   vim.lsp.inlay_hint.enable(true)
+  -- end
 
   local bufopts = { noremap=true, silent=true, buffer=bufnr }
   kmap('n', 'gr', vim.lsp.buf.references, bufopts)
@@ -1561,6 +1572,22 @@ require'lspconfig'.volar.setup{
         tagCasing = 'kebab',
         tagPrefix = 'v',
         getAttributes = 'all',
+      },
+      format = {
+        defaultFormatter = {
+          css = 'vscode-css-languageservice',
+          html = 'prettyhtml',
+          js = 'vscode-typescript-languageservice',
+          json = 'vscode-json-languageservice',
+          less = 'vscode-css-languageservice',
+          md = 'vscode-markdown-languageservice',
+          postcss = 'vscode-css-languageservice',
+          pug = 'pug-formatter',
+          sass = 'vscode-css-languageservice',
+          scss = 'vscode-css-languageservice',
+          ts = 'vscode-typescript-languageservice',
+          yaml = 'vscode-json-languageservice',
+        },
       },
     },
   },
@@ -1740,7 +1767,7 @@ function open_in_trae()
   local file = fn.expand('%:p')
   local target = string.format("%s:%d:%d", file, pos[1], (pos[2]+1))
   -- vim.api.nvim_echo({{target, 'Normal'}}, true, {})
-  os.execute(string.format("trae . && code -g '%s'", target))
+  os.execute(string.format("trae . && trae -g '%s'", target))
 end
 
 function open_in_finder()
