@@ -361,28 +361,115 @@ require('lazy').setup({
   },
 
   -- Completion
---   'hrsh7th/cmp-buffer',
---   'hrsh7th/cmp-path',
---   'hrsh7th/cmp-cmdline',
-  'hrsh7th/cmp-nvim-lsp',
-  'hrsh7th/cmp-nvim-lsp-signature-help',
---   'hrsh7th/nvim-cmp',
---   'L3MON4D3/LuaSnip',
---   'saadparwaiz1/cmp_luasnip',
---   'onsails/lspkind.nvim',
+  {
+    'saghen/blink.cmp',
+    dependencies = { 'rafamadriz/friendly-snippets' },
+    version = '1.*',
 
-  { 'hrsh7th/cmp-buffer', event = "InsertEnter" },
-  { 'hrsh7th/cmp-path', event = "InsertEnter" },
-  { 'hrsh7th/cmp-cmdline', event = "CmdlineEnter" },
-  -- { 'hrsh7th/cmp-nvim-lsp', event = "InsertEnter" },
-  -- { 'hrsh7th/cmp-nvim-lsp-signature-help', event = "InsertEnter" },
-  { 'hrsh7th/nvim-cmp', event = { "InsertEnter", "CmdlineEnter" } },
-  { 'L3MON4D3/LuaSnip', event = "InsertEnter" },
-  { 'saadparwaiz1/cmp_luasnip', event = "InsertEnter" },
-  -- { 'onsails/lspkind.nvim', event = "InsertEnter" },
-  { 'onsails/lspkind.nvim', event = "InsertEnter" },
+    opts = {
+      keymap = { preset = 'enter' },
 
-  -- 'tpope/vim-rsi',
+      appearance = {
+        nerd_font_variant = 'mono',
+        kind_icons = {
+          Text = '󰉿',
+          Method = '󰊕',
+          Function = '󰊕',
+          Constructor = '󰒓',
+
+          Field = '󰜢',
+          Variable = '󰆦',
+          Property = '󰀫',
+
+          Class = '󱡠',
+          Interface = '󱡠',
+          Struct = '󱡠',
+          Module = '󰅩',
+
+          Unit = '󰪚',
+          Value = '󰦨',
+          Enum = '󰦨',
+          EnumMember = '󰦨',
+
+          Keyword = '󰻾',
+          Constant = '󰏿',
+
+          Snippet = '󱄽',
+          Color = '󰏘',
+          File = '󰈔',
+          Reference = '󰬲',
+          Folder = '󰉋',
+          Event = '󱐋',
+          Operator = '󰪚',
+          TypeParameter = '󰬛',
+        },
+      },
+
+      completion = {
+        documentation = { auto_show = false },
+        menu = {
+          border = "rounded",
+          draw = {
+            align_to = 'label',
+            columns = {
+              {"label", "label_description", gap = 1},
+              {"kind_icon", "source_name", gap = 1},
+            },
+            components = {
+              label = {
+                width = { max = 30 },
+              },
+              source_name = {
+                width = { min = 3, max = 3 },
+                text = function(ctx) return ctx.source_name end,
+                ellipsis = false,
+              },
+            },
+          }
+        }
+      },
+
+      cmdline = {
+        enabled = true,
+        keymap = { preset = 'cmdline' },
+        sources = function()
+          -- TODO: acá hacer que filter por el largo del input
+          local type = vim.fn.getcmdtype()
+          if type == '/' or type == '?' then return { 'buffer' } end
+          if type == ':' or type == '@' then return { 'cmdline' } end
+          return {}
+        end,
+        completion = {
+          trigger = {
+            show_on_blocked_trigger_characters = {},
+            show_on_x_blocked_trigger_characters = {},
+          },
+          list = {
+            selection = {
+              preselect = false,
+              auto_insert = true,
+            },
+          },
+          menu = {
+            auto_show = true,
+            draw = {
+              columns = {
+                {"label"},
+                {"kind_icon"},
+              },
+            },
+          },
+          ghost_text = { enabled = true }
+        }
+      },
+
+      sources = { default = { 'lsp', 'path', 'snippets', 'buffer' } },
+      fuzzy = { implementation = "prefer_rust_with_warning" },
+      signature = { enabled = true, },
+    },
+
+    opts_extend = { "sources.default" }
+  },
 
   {
     {
@@ -958,6 +1045,7 @@ require('lazy').setup({
 
   {
     'nvim-neorg/neorg',
+    dependencies = { 'benlubas/neorg-interim-ls' },
     version = '*',
     config = function()
       require('neorg').setup({
@@ -967,9 +1055,9 @@ require('lazy').setup({
 		  -- ['core.export.markdown'] = {},
 		  ['core.integrations.treesitter'] = {},
 		  ['core.completion'] = {
-			config = {
-			  engine = 'nvim-cmp',
-			}
+            config = {
+              engine = { module_name = "external.lsp-completion" }
+            },
 		  },
           ['core.dirman'] = {
             config = {
@@ -978,6 +1066,14 @@ require('lazy').setup({
               },
 			  index = 'index.norg',
               default_workspace = 'notes',
+            },
+          },
+          ["external.interim-ls"] = {
+            config = {
+              completion_provider = {
+                enable = true,
+                documentation = true,
+              }
             },
           },
         },
@@ -1010,6 +1106,16 @@ vim.cmd([[
   hi StatusLine guifg=#666666 guibg=NONE
   hi StatusLineAccent guifg=#504945 guibg=NONE
   hi StatuslineInsertAccent guifg=#666666 guibg=NONE
+
+  hi BlinkCmpMenu guibg=#1A1724  guifg=#5A525A
+  hi BlinkCmpMenuBorder guibg=#1A1724 guifg=#635053
+  hi BlinkCmpMenuSelection guibg=#362e35
+  hi BlinkCmpLabel guibg=#1A1724 guifg=#d5c2c5
+  hi BlinkCmpLabelDetail guibg=#1A1724 guifg=#d5c2c5
+  hi BlinkCmpLabelDescription guibg=#1A1724 guifg=#d5c2c5
+  hi BlinkCmpKind guibg=#1a1724 guifg=#746E6F
+  hi BlinkCmpSource guibg=#1a1724 guifg=#746E6F
+  hi BlinkCmpScrollBarThumb guibg=#2D2B32
 
   autocmd ColorScheme * hi Normal ctermbg=NONE guibg=NONE
   autocmd BufNewFile,BufRead .aliases* set syn=bash
@@ -1189,6 +1295,8 @@ parser_config.blade = {
 }
 
 require('nvim-treesitter.configs').setup({
+  modules = {},
+  ignore_install = {},
   ensure_installed = {
     'astro',
     'bash',
@@ -1306,161 +1414,77 @@ require('nvim-treesitter.configs').setup({
   disable = { 'log', 'txt' },
 })
 
-local lspkind = require('lspkind') -- POPUP ver tema decoración | y el padding???
-local luasnip = require('luasnip')
-local cmp = require('cmp')
-
-cmp.setup({
-  -- completion = {
-  --   completeopt = "menu,menuone,noinsert,noselect",
-  -- },
-  snippet = {
-    expand = function(args)
-      luasnip.lsp_expand(args.body)
-    end,
-  },
-  sources = cmp.config.sources({
-    { name = 'luasnip', priority = 10, keyword_length = 2 },
-    { name = 'nvim_lsp', priority = 9 },
-    { name = 'null_ls', priority = 8 },
-    -- { name = 'nvim_lsp_signature_help' },
-    { name = 'fugitive' },
-    { name = 'path', keyword_length = 2 },
-  }, {
-    { name = 'buffer', keyword_length = 5 },
-  }),
-  experimental = {
-    ghost_text = false,
-  },
-  formatting = {
-    fields = { "abbr", "kind", "menu" },
-    format = function(entry, vim_item)
-        local kind = lspkind.cmp_format({
-            mode = "symbol_text",
-            maxwidth = 50,
-            menu = { omni = "omni" },
-        })(entry, vim_item)
-
-        local strings = vim.split(kind.kind, "%s", { trimempty = true })
-
-        local source = ({
-            nvim_lsp = 'LSP',
-            nvim_lua = 'Nvim Lua',
-            cmp_git = 'Git',
-            luasnip = 'Snippet',
-            fugitive = 'Fugitive',
-            buffer = 'Buffer',
-        })[entry.source.name]
-
-        kind.kind = " "..(strings[1] or "")
-        kind.menu = source and " ["..(source).."]" or ""
-
-        vim_item.dup = 0
-        return kind
-    end,
-    -- format = function(entry, vim_item)
-    --   vim_item.menu = ({
-    --     nvim_lsp = '[LSP]',
-    --     luasnip = '[Snippet]',
-    --     nvim_lua = '[Nvim Lua]',
-    --     fugitive = '[Fugitive]',
-    --     buffer = '[Buffer]',
-    --   })[entry.source.name]
-    --   return vim_item
-    -- end
-  },
-  performance = {
-    debounce = 60,
-    throttle = 30,
-    fetching_timeout = 100,
-    max_view_entries = 10,
-    async_budget = 1,
-    max_items = 300,
-  },
-  window = {
-    completion = cmp.config.window.bordered(),
-    documentation = cmp.config.window.bordered({ winhighlight = "" }),
-  },
-  mapping = {
-    ["<Down>"] = cmp.mapping(function(fallback) -- <C-j>
-      if cmp.visible() then
-        -- local entry = cmp.get_selected_entry()
-        -- if not entry then
-          cmp.select_next_item({
-            behavior = cmp.SelectBehavior.Select
-          })
-        -- end
-      elseif luasnip.expand_or_jumpable() then
-        luasnip.expand_or_jump()
-      else
-        fallback()
-      end
-    end, { "i", "s", "c" }),
-    ["<Up>"] = cmp.mapping(function(fallback) -- <C-k>
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end, { "i", "s", "c" }),
-    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-    ['<C-y>'] = cmp.config.disable,
-    ['<C-e>'] = cmp.mapping({
-      i = cmp.mapping.abort(),
-      c = cmp.mapping.close(),
-    }),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }),
-  },
-})
-
-cmp.setup.cmdline(':', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-      { name = 'path', option = { trailing_slash = true } },
-    }, {
-      { name = 'cmdline', keyword_length = 2, option = { treat_trailing_slash = false } },
-  }),
-})
-
-cmp.setup.cmdline({ '/', '?' }, {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-    { name = 'buffer' },
-  })
-})
-
-local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
-
-cmp.setup.filetype('gitcommit', {
-  sources = cmp.config.sources({
-    { name = 'cmp_git' },
-    { name = 'git' },
-  }, {
-    { name = 'buffer' },
-  }),
-})
-
-cmp.setup.filetype('log', {
-  enabled = false,
-})
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-capabilities.textDocument.foldingRange = {
+local base_capabilities = vim.lsp.protocol.make_client_capabilities()
+base_capabilities.textDocument.completion.completionItem.snippetSupport = true
+base_capabilities.textDocument.foldingRange = {
   dynamicRegistration = false,
   lineFoldingOnly = true,
 }
-
-capabilities.textDocument.synchronization = nil
-capabilities.textDocument.references = nil
 if not vim.lsp.inlay_hint then
-  capabilities.textDocument.inlayHint = nil
+  base_capabilities.textDocument.inlayHint = nil
 end
+
+local capabilities = require('blink.cmp').get_lsp_capabilities(base_capabilities)
+
+require('lspconfig').lua_ls.setup{
+  capabilities = capabilities,
+  settings = {
+    Lua = {
+      runtime = { version = 'LuaJIT' },
+      diagnostics = { globals = {'vim'} },
+      workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+      telemetry = { enable = false },
+    },
+  },
+}
+
+require'lspconfig'.volar.setup{
+  capabilities = capabilities,
+  filetypes = { 'vue', 'json' },
+  settings = {
+    vue = {
+      useWorkspaceDependencies = true,
+      validation = {
+        script = true,
+        style = true,
+        template = true,
+      },
+      completion = {
+        autoImport = true,
+        tagCasing = 'kebab',
+        tagPrefix = 'v',
+        getAttributes = 'all',
+      },
+      format = {
+        defaultFormatter = {
+          css = 'vscode-css-languageservice',
+          html = 'prettyhtml',
+          js = 'vscode-typescript-languageservice',
+          json = 'vscode-json-languageservice',
+          less = 'vscode-css-languageservice',
+          md = 'vscode-markdown-languageservice',
+          postcss = 'vscode-css-languageservice',
+          pug = 'pug-formatter',
+          sass = 'vscode-css-languageservice',
+          scss = 'vscode-css-languageservice',
+          ts = 'vscode-typescript-languageservice',
+          yaml = 'vscode-json-languageservice',
+        },
+      },
+    },
+  },
+  init_options = {
+    provideFormatter = true,
+    embeddedLanguages = {
+      css = true,
+      javascript = true,
+      typescript = true,
+      html = true,
+      json = true,
+    },
+  },
+  on_attach = on_attach,
+}
 
 -- LSP Config Mappings
 kmap('n', '<leader>di', vim.diagnostic.open_float, opts)
