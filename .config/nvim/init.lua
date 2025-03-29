@@ -360,6 +360,7 @@ require('lazy').setup({
 
     opts = {
       keymap = { preset = 'enter' },
+      signature = { enabled = true, },
 
       appearance = {
         nerd_font_variant = 'mono',
@@ -421,15 +422,29 @@ require('lazy').setup({
         }
       },
 
+      sources = {
+        min_keyword_length = 2,
+        default = { 'lsp', 'path', 'snippets', 'buffer' },
+      },
+
+      fuzzy = {
+        implementation = "prefer_rust_with_warning",
+        sorts = {
+          'exact',
+          'score',
+          'sort_text',
+        },
+      },
+
       cmdline = {
         enabled = true,
         keymap = {
           preset = 'inherit',
            ["<Tab>"] = {"show_and_insert", "select_next"},
            ["<S-Tab>"] = {"show_and_insert", "select_prev"},
+           ["<CR>"] = {"select_accept_and_enter", "fallback"},
         },
         sources = function()
-          -- TODO: acá hacer que filter por el largo del input
           local type = vim.fn.getcmdtype()
           if type == '/' or type == '?' then return { 'buffer' } end
           if type == ':' or type == '@' then return { 'cmdline' } end
@@ -458,21 +473,6 @@ require('lazy').setup({
           ghost_text = { enabled = true }
         }
       },
-
-      sources = {
-        min_keyword_length = 2,
-        default = { 'lsp', 'path', 'snippets', 'buffer' },
-      },
-
-      fuzzy = {
-        implementation = "prefer_rust_with_warning",
-        sorts = {
-          'exact',
-          'score',
-          'sort_text',
-        },
-      },
-      signature = { enabled = true, },
     },
 
     opts_extend = { "sources.default" }
@@ -1461,8 +1461,8 @@ local on_attach = function(client, bufnr)
 
   kmap('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
   kmap('n', '<leader>r', vim.lsp.buf.rename, bufopts)
-  -- kmap('n', '<leader>f', vim.lsp.buf.formatting, bufopts)
-  kmap('v', '<leader>f', ':lua vim.lsp.buf.format<CR>', bufopts)
+  -- kmap('n', '<leader>f', vim.lsp.buf.format, bufopts)
+  kmap('v', '<leader>f', vim.lsp.buf.format, bufopts)
 
   kmap('n', '<leader>dk', vim.diagnostic.goto_prev, bufopts)
   kmap('n', '<leader>dj', vim.diagnostic.goto_next, bufopts)
