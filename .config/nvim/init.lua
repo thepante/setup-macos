@@ -516,7 +516,6 @@ require('lazy').setup({
 
   -- Code tools & refactoring
   'nvim-treesitter/nvim-treesitter',
-  -- 'nvim-treesitter/nvim-treesitter-context',
   'nvim-treesitter/nvim-treesitter-textobjects',
   'JoosepAlviste/nvim-ts-context-commentstring',
   {
@@ -1029,6 +1028,8 @@ vim.cmd([[
   hi Normal ctermbg=NONE guibg=NONE
   " hi NormalFloat guibg=#1c2e42
   hi EndOfBuffer guibg=NONE ctermbg=NONE
+  hi DiffDelete ctermfg=red guifg=#D17783
+  hi DiffAdd ctermfg=green guifg=#89A798
 
   hi StatusLine guifg=#666666 guibg=NONE
   hi StatusLineAccent guifg=#504945 guibg=NONE
