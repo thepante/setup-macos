@@ -114,21 +114,13 @@ g.closetag_xhtml_filenames = '*.xml,*.xhtml,*.jsx,*.js,*.tsx,*.vue,*.php'
 g.closetag_filetypes = 'html,xhtml,jsx,js,tsx,vue,php'
 g.closetag_xhtml_filetypes = 'html,xhtml,jsx,js,tsx,vue,php'
 
--- require('vscode').load()
-
-if g.started_by_firenvim == true then
-  set.background = 'light'
-end
-
 vim.cmd([[
-  " terminal
   autocmd TermEnter term://*toggleterm#* tnoremap <silent>≤ <Cmd>exe v:count1 . "ToggleTerm"<CR>
 
   " By applying the mappings this way you can pass a count to your mapping to open a specific window.
   " For example: 2<C-t> will open terminal 2
   nnoremap <silent>≤ <Cmd>exe v:count1 . "ToggleTerm"<CR>
 
-  " au FocusGained * echo 'foo'
   command! Neo Neogit
   command! Notes Neorg index
 ]])
@@ -191,9 +183,9 @@ map('o', '<Tab>', '%', opts)
 -- Rename a symbol without language server
 map('n', '<leader>R', '#Ncgn', opts)
 
--- -- Better indenting
--- map('v', '>', '>gv', opts)
--- map('v', '<', '<gv', opts)
+-- Better indenting
+map('v', '>', '>gv', opts)
+map('v', '<', '<gv', opts)
 
 -- Better n and zz
 map('n', 'zz', 'zz6<C-e>', opts)
@@ -463,8 +455,19 @@ require('lazy').setup({
         }
       },
 
-      sources = { default = { 'lsp', 'path', 'snippets', 'buffer' } },
-      fuzzy = { implementation = "prefer_rust_with_warning" },
+      sources = {
+        min_keyword_length = 2,
+        default = { 'lsp', 'path', 'snippets', 'buffer' },
+      },
+
+      fuzzy = {
+        implementation = "prefer_rust_with_warning",
+        sorts = {
+          'exact',
+          'score',
+          'sort_text',
+        },
+      },
       signature = { enabled = true, },
     },
 
@@ -956,21 +959,11 @@ require('lazy').setup({
     'max397574/better-escape.nvim',
     opts = {
       mappings = {
-        i = {
-          k = { j = "<Esc>" },
-        },
-        c = {
-          k = { j = "<Esc>" },
-        },
-        t = {
-          k = { j = "<Esc>" },
-        },
-        v = {
-          j = { k = "k" },
-        },
-        s = {
-          k = { j = "<Esc>" },
-        },
+        i = { k = { j = "<Esc>" }, },
+        c = { k = { j = "<Esc>" }, },
+        t = { k = { j = "<Esc>" }, },
+        v = { j = { k = "k" }, },
+        s = { k = { j = "<Esc>" }, },
       },
     }
   },
@@ -1025,7 +1018,7 @@ require('lazy').setup({
 
   {
     'MeanderingProgrammer/markdown.nvim',
-    name = 'render-markdown', -- Only needed if you have another plugin named markdown.nvim
+    name = 'render-markdown',
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
@@ -1081,10 +1074,6 @@ require('lazy').setup({
     end,
   },
 })
-
--- require("neodim").setup({
---   alpha = 0.5
--- })
 
 vim.cmd([[
   filetype plugin indent on
@@ -1546,20 +1535,10 @@ end
 require'lspconfig'.lua_ls.setup{
   settings = {
     Lua = {
-      runtime = {
-        version = 'LuaJIT',
-      },
-      diagnostics = {
-        -- Get the language server to recognize the `vim` global
-        globals = {'vim'},
-      },
-      workspace = {
-        -- Make the server aware of Neovim runtime files
-        library = api.nvim_get_runtime_file("", true),
-      },
-      telemetry = {
-        enable = false,
-      },
+      runtime = { version = 'LuaJIT' },
+      diagnostics = { globals = {'vim'} }, -- Get the language server to recognize the `vim` global
+      workspace = { library = api.nvim_get_runtime_file("", true) }, -- Make the server aware of Neovim runtime files
+      telemetry = { enable = false },
     },
   },
 }
@@ -1802,10 +1781,9 @@ function run_bun_run()
   vim.cmd(string.format("!bun '%s'", fn.expand('%:p')))
 end
 
-map('n', '<leader>c', ':lua open_in_trae()<CR>', opts)
-map('n', '<leader>o', ':lua open_in_finder()<CR>', opts)
+map('n', '<leader>ot', ':lua open_in_trae()<CR>', opts)
+map('n', '<leader>of', ':lua open_in_finder()<CR>', opts)
 map('n', '<leader><CR>', ':lua run_bun_run()<CR>', opts)
-
 map('n', '<leader>;', ':Neogit<CR>', opts)
 
 -- Move between splits
