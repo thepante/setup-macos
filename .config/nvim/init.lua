@@ -423,7 +423,11 @@ require('lazy').setup({
 
       cmdline = {
         enabled = true,
-        keymap = { preset = 'cmdline' },
+        keymap = {
+          preset = 'inherit',
+           ["<Tab>"] = {"show_and_insert", "select_next"},
+           ["<S-Tab>"] = {"show_and_insert", "select_prev"},
+        },
         sources = function()
           -- TODO: acá hacer que filter por el largo del input
           local type = vim.fn.getcmdtype()
@@ -737,17 +741,6 @@ require('lazy').setup({
     end
   },
 
-  -- {
-  --   'roobert/search-replace.nvim',
-  --   config = function()
-  --     require('search-replace').setup({
-  --       -- optionally override defaults
-  --       default_replace_single_buffer_options = 'gcI',
-  --       default_replace_multi_buffer_options = 'egcI',
-  --     })
-  --   end,
-  -- },
-
   {
     'ricardoramirezr/blade-nav.nvim',
     dependencies = {
@@ -764,61 +757,13 @@ require('lazy').setup({
     end
   },
 
-  -- use 'unblevable/quick-scope'
-
   -- Themes
-
-  -- {
-  --   'embark-theme/vim',
-  --   name = 'embark',
-  --   priority = 1000,
-  --   config = function() vim.cmd("colorscheme embark") end
-  -- },
 
   -- {
   --   'catppuccin/nvim',
   --   name = 'catppuccin',
   --   priority = 1000,
   --   config = function() vim.cmd("colorscheme catppuccin") end
-  -- },
-
-  -- {
-  --   'felipeagc/fleet-theme-nvim',
-  --   name = 'fleet',
-  --   priority = 1000,
-  --   config = function() vim.cmd("colorscheme fleet") end
-  -- },
-
-  -- { -- me gustó
-  --   'comfysage/aurora',
-  --   name = 'aurora',
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function() vim.cmd("colorscheme aurora") end
-  -- },
-
-  -- -- estaba usando este en casa:
-  -- { -- me gustó // colores oscuros, aveces dificulta la lectura
-  --   'comfysage/aki',
-  --   name = 'aki',
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function() vim.cmd("colorscheme aki") end
-  -- },
-
-  -- { -- me gustó // me gusta pero mucho azulado, medio rareli
-  --   'oahlen/iceberg.nvim',
-  --   name = 'iceberg',
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = buf_options,
-  -- },
-
-  -- { -- me gustó
-  --   'humbertocarmona/kanagawa-mod.nvim',
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function() vim.cmd("colorscheme kanagawa") end
   -- },
 
   -- { -- ta bueno pero faltaría ajustar algunos colores y más compatibilidad con lenguajes
@@ -833,13 +778,6 @@ require('lazy').setup({
   --   lazy = false,
   --   priority = 1000,
   --   config = function() vim.cmd("colorscheme mellow") end
-  -- },
-
-  -- { -- me gustó maso
-  --   'domeee/mosel.nvim',
-  --   lazy = false,
-  --   priority = 1000,
-  --   setup = function() vim.cmd("colorscheme mosel") end,
   -- },
 
   -- {
@@ -1233,7 +1171,6 @@ require('telescope').load_extension('recent-files')
 
 require('mini.pairs').setup()
 -- require('mini.splitjoin').setup()
--- require('mini.statusline').setup()
 
 require('mini.indentscope').setup({
   draw = {
@@ -1761,9 +1698,6 @@ vim.keymap.set('n', 'dd', smart_dd, { noremap = true, expr = true })
 --   group = "lsp_document_highlight",
 --   desc = "Clear All the References",
 -- })
-
--- local statusline = require('statusline')
--- statusline.tabline = false
 
 function open_in_trae()
   local pos = api.nvim_win_get_cursor(0)
