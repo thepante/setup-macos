@@ -45,7 +45,7 @@ set.title = true
 set.ttyfast = true
 set.lazyredraw = true
 set.redrawtime = 1500
-set.synmaxcol = 240
+set.synmaxcol = 320
 set.syntax = 'on'
 set.foldmethod = 'expr'
 set.foldexpr = 'nvim_treesitter#foldexpr()'
@@ -442,7 +442,7 @@ require('lazy').setup({
           preset = 'inherit',
            ["<Tab>"] = {"show_and_insert", "select_next"},
            ["<S-Tab>"] = {"show_and_insert", "select_prev"},
-           ["<CR>"] = {"select_accept_and_enter", "fallback"},
+           ["<CR>"] = {"accept_and_enter", "fallback"},
         },
         sources = function()
           local type = vim.fn.getcmdtype()
@@ -742,9 +742,6 @@ require('lazy').setup({
 
   {
     'ricardoramirezr/blade-nav.nvim',
-    dependencies = {
-      'hrsh7th/nvim-cmp', -- if using nvim-cmp
-    },
     ft = {'blade', 'php'}
   },
 
@@ -835,7 +832,7 @@ require('lazy').setup({
     end
   },
 
-  -- use { 'folke/todo-comments.nvim', event = "BufReadPost" }
+  { 'folke/todo-comments.nvim', event = "BufReadPost" },
 
   -- use {
   --   "zbirenbaum/neodim",
@@ -1497,54 +1494,6 @@ require'lspconfig'.gopls.setup{
   },
 }
 
-require'lspconfig'.volar.setup{
-  capabilities = capabilities,
-  filetypes = { 'vue', 'json' },
-  settings = {
-    vue = {
-      useWorkspaceDependencies = true,
-      validation = {
-        script = true,
-        style = true,
-        template = true,
-      },
-      completion = {
-        autoImport = true,
-        tagCasing = 'kebab',
-        tagPrefix = 'v',
-        getAttributes = 'all',
-      },
-      format = {
-        defaultFormatter = {
-          css = 'vscode-css-languageservice',
-          html = 'prettyhtml',
-          js = 'vscode-typescript-languageservice',
-          json = 'vscode-json-languageservice',
-          less = 'vscode-css-languageservice',
-          md = 'vscode-markdown-languageservice',
-          postcss = 'vscode-css-languageservice',
-          pug = 'pug-formatter',
-          sass = 'vscode-css-languageservice',
-          scss = 'vscode-css-languageservice',
-          ts = 'vscode-typescript-languageservice',
-          yaml = 'vscode-json-languageservice',
-        },
-      },
-    },
-  },
-  init_options = {
-    provideFormatter = true,
-    embeddedLanguages = {
-      css = true,
-      javascript = true,
-      typescript = true,
-      html = true,
-      json = true,
-    },
-  },
-  on_attach = on_attach,
-}
-
 local util = require 'lspconfig.util'
 require'lspconfig'.biome.setup{
   capabilities = capabilities,
@@ -1562,6 +1511,7 @@ require'lspconfig'.biome.setup{
     "typescript.tsx",
     "typescriptreact",
     "vue",
+    "html",
   },
   init_options = {
     provideFormatter = true,
@@ -1598,6 +1548,7 @@ require'lspconfig'.ts_ls.setup{
     'javascript',
     'typescript',
     'vue',
+    'html',
   },
   on_attach = on_attach,
 }
