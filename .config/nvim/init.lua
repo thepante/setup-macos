@@ -199,12 +199,6 @@ map('n', '<C-x>', '<C-x>', opts)
 -- Files navigation with Harpoon
 -- map <leader>p :lua require("harpoon.ui").toggle_quick_menu()<CR>, opts)
 
-map('n', '<leader>e', ':Telescope harpoon marks theme=dropdown<CR>', opts)
-map('n', '<leader>m', ':lua require("harpoon.mark").add_file()<CR>', opts)
-map('n', '<leader>u', ':lua require("harpoon.mark").remove_file()<CR>', opts)
-map('n', '<leader>[', ':lua require("harpoon.ui").nav_prev()<CR>', opts)
-map('n', '<leader>]', ':lua require("harpoon.ui").nav_next()<CR>', opts)
-
 -- Move lines
 -- map('n', '<C-j>', ':m .+1<CR>==', opts)
 -- map('n', '<C-k>', ':m .-2<CR>==', opts)
@@ -345,7 +339,6 @@ opt.rtp:prepend(lazypath)
 -- Plugins
 require('lazy').setup({
 --   -- 'dstein64/vim-startuptime',
---   -- 'ThePrimeagen/harpoon',
 
   {
     'nvim-lua/plenary.nvim',
@@ -661,6 +654,7 @@ require('lazy').setup({
 
   {
     "NeogitOrg/neogit",
+    cmd = "Neogit",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-telescope/telescope.nvim",
@@ -1019,10 +1013,18 @@ vim.g.VM_maps = {
 }
 
 local colors = {
-	background = "#15141B",
-	border = "#635053",
-	silver = "#746E6F",
-	light = "#d5c2c5",
+  background = "#15141B",
+  border = "#635053",
+  silver = "#746E6F",
+  light = "#d5c2c5",
+  diff = {
+    add = "#89A798",
+    add_cursor = "#C3E4D4",
+    add_bg = "#192724",
+    delete = "#D17783",
+    delete_cursor = "#EFA5AF",
+    delete_bg = "#27191F",
+  }
 }
 
 -- Highlights
@@ -1031,10 +1033,18 @@ set_hl(0, "TreesitterContext", { bg = "#07090d", fg = "#504944" })
 set_hl(0, "TreesitterContextBottom", { underline = true, fg = "#504944" })
 set_hl(0, "MiniIndentscopeSymbol", { fg = "#444444" })
 set_hl(0, "Normal", { ctermbg = "NONE", bg = "NONE" })
--- set_hl(0, "LineNr", { bold = true, cterm = { bold = true }, term = { bold = true } }) -- TODO
+set_hl(0, "Cursor", { bg = "#D17783" }) -- TODO
+set_hl(0, "CursorLineNr", { italic = false, fg = "#C5A2A9" })
 set_hl(0, "EndOfBuffer", { bg = "NONE", ctermbg = "NONE" })
-set_hl(0, "DiffDelete", { ctermfg = "red", fg = "#D17783" })
-set_hl(0, "DiffAdd", { ctermfg = "green", fg = "#89A798" })
+
+set_hl(0, "DiffAdd", { ctermfg = "green", fg = colors.diff.add })
+set_hl(0, "DiffDelete", { ctermfg = "red", fg = colors.diff.delete })
+set_hl(0, "NeogitDiffAdd", { ctermfg = "green", bg = colors.add_bg, fg = colors.diff.add })
+set_hl(0, "NeogitDiffAddHighlight", { ctermfg = "green", bg = colors.add_bg, fg = colors.diff.add })
+set_hl(0, "NeogitDiffAddCursor", { ctermfg = "green", bg = colors.add_bg, fg = colors.diff.add_cursor })
+set_hl(0, "NeogitDiffDelete", { ctermfg = "red", bg = colors.diff.delete_bg, fg = colors.diff.delete })
+set_hl(0, "NeogitDiffDeleteHighlight", { ctermfg = "red", bg = colors.diff.delete_bg, fg = colors.diff.delete })
+set_hl(0, "NeogitDiffDeleteCursor", { ctermfg = "red", bg = colors.diff.delete_bg, fg = colors.diff.delete_cursor })
 
 set_hl(0, "StatusLine", { fg = "#666666", bg = "NONE" })
 set_hl(0, "StatusLineAccent", { fg = "#504945", bg = "NONE" })
@@ -1063,7 +1073,6 @@ vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
   callback = function()
     set_hl(0, "Normal", { ctermbg = "NONE", bg = "NONE" })
-    -- set_hl(0, "LineNr", { bold = true, cterm = { bold = true }, term = { bold = true } }) -- TODO
   end,
 })
 
@@ -1196,6 +1205,14 @@ require('telescope').setup({
       sort_mru = true,
       ignore_current_buffer = true,
       find_command = { 'rg', '--files', '--sortr=modified '}, -- ???????
+      mappings = {
+        n = {
+          ['<c-d>'] = require('telescope.actions').delete_buffer,
+        },
+        i = {
+          ['<c-d>'] = require('telescope.actions').delete_buffer,
+        },
+      }
     },
     current_buffer_fuzzy_find = {
       preview = { treesitter = false, },
