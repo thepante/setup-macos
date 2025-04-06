@@ -218,6 +218,7 @@ map('v', '<Up>', ":m '<-2<CR>gv=gv", opts)
 
 -- File navigation
 map('n', '<C-p>', ':lua require("fzf-lua").files()<CR>', opts)
+map('n', '<C-m>', ':lua require("fzf-lua").files({ cwd = vim.fn.expand("%:p:h") })<CR>', opts) -- TODO
 map('n', '∏', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts) -- cmd-shift-p
 map('n', '<C-i>', ':Telescope find_files<CR>', opts)
 map('', '<M-e>', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts)
@@ -568,7 +569,7 @@ require('lazy').setup({
   },
 
   {
-    'stevearc/dressing.nvim',
+    'stevearc/dressing.nvim', -- TODO reemplazar por snacks.nvim
     opts = {},
   },
 
@@ -703,7 +704,7 @@ require('lazy').setup({
         winopts = {
           height = 0.3,
           width = 0.7,
-          border = 'single',
+          border = 'rounded',
           preview = {
             hidden = 'hidden',
           },
@@ -955,7 +956,6 @@ require('lazy').setup({
     name = 'render-markdown',
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
-    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
     config = function()
       require('render-markdown').setup({})
     end,
@@ -1009,53 +1009,113 @@ require('lazy').setup({
   },
 })
 
-vim.cmd([[
-  filetype plugin indent on
-  let g:gruvbox_material_background = 'hard'
-  let g:gruvbox_material_dim_inactive_windows = '1'
+vim.cmd("filetype plugin indent on")
+vim.g.gruvbox_material_background = "hard"
+vim.g.gruvbox_material_dim_inactive_windows = 1
 
-  let g:VM_maps = {}
-  let g:VM_maps["Exit"] = '<C-c>'
-  let g:VM_maps['Find Under'] = '<C-d>'
+vim.g.VM_maps = {
+  Exit = "<C-c>",
+  ["Find Under"] = "<C-d>",
+}
 
-  " highlights
-  hi TreesitterContext guibg=#07090d guifg=#504944
-  hi TreesitterContextBottom gui=underline guifg=#504944
-  hi MiniIndentscopeSymbol guifg=#444444 "#24262A
-  hi Normal ctermbg=NONE guibg=NONE
-  " hi NormalFloat guibg=#1c2e42
-  hi EndOfBuffer guibg=NONE ctermbg=NONE
-  hi DiffDelete ctermfg=red guifg=#D17783
-  hi DiffAdd ctermfg=green guifg=#89A798
+local colors = {
+	background = "#15141B",
+	border = "#635053",
+	silver = "#746E6F",
+	light = "#d5c2c5",
+}
 
-  hi StatusLine guifg=#666666 guibg=NONE
-  hi StatusLineAccent guifg=#504945 guibg=NONE
-  hi StatuslineInsertAccent guifg=#666666 guibg=NONE
+-- Highlights
+local set_hl = vim.api.nvim_set_hl
+set_hl(0, "TreesitterContext", { bg = "#07090d", fg = "#504944" })
+set_hl(0, "TreesitterContextBottom", { underline = true, fg = "#504944" })
+set_hl(0, "MiniIndentscopeSymbol", { fg = "#444444" })
+set_hl(0, "Normal", { ctermbg = "NONE", bg = "NONE" })
+-- set_hl(0, "LineNr", { bold = true, cterm = { bold = true }, term = { bold = true } }) -- TODO
+set_hl(0, "EndOfBuffer", { bg = "NONE", ctermbg = "NONE" })
+set_hl(0, "DiffDelete", { ctermfg = "red", fg = "#D17783" })
+set_hl(0, "DiffAdd", { ctermfg = "green", fg = "#89A798" })
 
-  hi BlinkCmpMenu guibg=#1A1724  guifg=#5A525A
-  hi BlinkCmpMenuBorder guibg=#1A1724 guifg=#635053
-  hi BlinkCmpMenuSelection guibg=#362e35
-  hi BlinkCmpLabel guibg=#1A1724 guifg=#d5c2c5
-  hi BlinkCmpLabelDetail guibg=#1A1724 guifg=#d5c2c5
-  hi BlinkCmpLabelDescription guibg=#1A1724 guifg=#d5c2c5
-  hi BlinkCmpKind guibg=#1a1724 guifg=#746E6F
-  hi BlinkCmpSource guibg=#1a1724 guifg=#746E6F
-  hi BlinkCmpScrollBarThumb guibg=#2D2B32
+set_hl(0, "StatusLine", { fg = "#666666", bg = "NONE" })
+set_hl(0, "StatusLineAccent", { fg = "#504945", bg = "NONE" })
+set_hl(0, "StatuslineInsertAccent", { fg = "#666666", bg = "NONE" })
 
-  autocmd ColorScheme * hi Normal ctermbg=NONE guibg=NONE
-  autocmd BufNewFile,BufRead .aliases* set syn=bash
-  autocmd BufNewFile,BufRead *CSS.html set ft=css
-  autocmd BufNewFile,BufRead */src/**{components,pages}/*.js set ft=jsx
-  autocmd BufNewFile,BufRead *.blade.php set ft=php
-  " autocmd BufNewFile,BufRead *.blade.php set ft=blade
-  autocmd BufNewFile,BufRead *.norg set ft=norg
-  " autocmd BufNewFile,BufRead *.php set syn=php
-  " autocmd BufNewFile,BufRead *.blade.php set syn=html
+-- CMP Highlights
+-- :lua vim.api.nvim_set_hl(0, "FzfLuaBorder", { link = "FloatBorder" }) -- TODO links
+set_hl(0, "BlinkCmpMenu", { bg = colors.background, fg = "#5A525A" })
+set_hl(0, "BlinkCmpMenuBorder", { bg = colors.background, fg = colors.border })
+set_hl(0, "BlinkCmpMenuSelection", { bg = "#362e35", fg = colors.light }) -- acá lo quería sin el fg pero está bugueado
+set_hl(0, "BlinkCmpLabel", { bg = colors.background, fg = colors.light })
+set_hl(0, "BlinkCmpLabelDetail", { bg = colors.background, fg = colors.light })
+set_hl(0, "BlinkCmpLabelDescription", { bg = colors.background, fg = colors.light })
+set_hl(0, "BlinkCmpKind", { bg = colors.background, fg = colors.silver })
+set_hl(0, "BlinkCmpSource", { bg = colors.background, fg = colors.silver })
+set_hl(0, "BlinkCmpScrollBarThumb", { bg = "#2D2B32" })
 
-  autocmd TermOpen * startinsert
-  autocmd TextYankPost * silent! lua vim.highlight.on_yank({ higroup="IncSearch", timeout=50 })
-  autocmd FileType html,css,svelte,jsx,tsx,vue,php,blade,php.css.html EmmetInstall
-]])
+set_hl(0, "TelescopeBorder", { bg = colors.background, fg = colors.border })
+set_hl(0, "FzfLuaBorder", { bg = colors.background, fg = colors.border })
+
+-- Autocmds
+local augroup = vim.api.nvim_create_augroup("CustomAutocmds", { clear = true })
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+  group = augroup,
+  pattern = "*",
+  callback = function()
+    set_hl(0, "Normal", { ctermbg = "NONE", bg = "NONE" })
+    -- set_hl(0, "LineNr", { bold = true, cterm = { bold = true }, term = { bold = true } }) -- TODO
+  end,
+})
+
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+  group = augroup,
+  pattern = ".aliases*",
+  command = "set filetype=bash",
+})
+
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+  group = augroup,
+  pattern = "*CSS.html",
+  command = "set filetype=css",
+})
+
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+  group = augroup,
+  pattern = "*/src/**/{components,pages}/*.js",
+  command = "set filetype=jsx",
+})
+
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+  group = augroup,
+  pattern = "*.blade.php",
+  command = "set filetype=php",
+})
+
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+  group = augroup,
+  pattern = "*.norg",
+  command = "set filetype=norg",
+})
+
+vim.api.nvim_create_autocmd("TermOpen", {
+  group = augroup,
+  pattern = "*",
+  command = "startinsert",
+})
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+  group = augroup,
+  callback = function()
+    vim.highlight.on_yank({ higroup = "IncSearch", timeout = 50 })
+  end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup,
+  pattern = "html,css,svelte,jsx,tsx,vue,php,blade,php.css.html",
+  command = "EmmetInstall",
+})
+
 
 require('ufo').setup()
 require('mason').setup()
@@ -1434,13 +1494,13 @@ local on_attach = function(client, bufnr)
   -- -- Use vim.cmd with echo to display messages in Neovim
   -- vim.cmd('echo "LSP client attached with the following capabilities: ' .. vim.inspect(client.resolved_capabilities) .. '"')
 
-  if client.server_capabilities.inlayHintProvider then
-      vim.lsp.inlay_hint(bufnr, true)
-  end
-
   -- if client.server_capabilities.inlayHintProvider then
-  --   vim.lsp.inlay_hint.enable(true)
+  --   vim.lsp.inlay_hint(bufnr, true)
   -- end
+
+  if client.server_capabilities.inlayHintProvider then
+    vim.lsp.inlay_hint.enable(true)
+  end
 
   -- if vim.lsp.inlay_hint then
   --   vim.lsp.inlay_hint.enable(true)
@@ -1681,16 +1741,16 @@ map('n', '<leader>l', ':wincmd l<CR>', opts)
 
 local function disable_treesitter_features()
   local features = {
-    "highlight",
-    "incremental_selection",
+    -- "highlight",
+    -- "incremental_selection",
     "indent",
-    "textobjects",
+    -- "textobjects",
     "fold",
     "playground",
     "query_linter",
     "rainbow",
     "refactor",
-    "context_commentstring"
+    -- "context_commentstring"
   }
   for _, feature in ipairs(features) do
     vim.cmd("TSBufDisable " .. feature)

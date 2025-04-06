@@ -41,5 +41,5 @@ keybind = cmd+i=text:i
 keybind = cmd+/=csi:^_ # TODO
 keybind = cmd+comma=text:≤
 
-command=/opt/homebrew/bin/tmux attach || /opt/homebrew/bin/tmux
+command = "/bin/bash -l -i -c '/opt/homebrew/bin/tmux attach || /opt/homebrew/bin/tmux'"
 
