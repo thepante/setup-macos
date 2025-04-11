@@ -20,7 +20,8 @@ font-style = Medium
 font-style-bold = ExtraBold
 #adjust-cell-height = 9
 adjust-cell-height = 6
-background = 191724
+# background = 191724
+background = 15141B
 
 # Disable default CMD-m and CMD-h actions
 keybind = cmd+m=ignore

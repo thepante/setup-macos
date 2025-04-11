@@ -216,7 +216,8 @@ map('n', '<C-m>', ':lua require("fzf-lua").files({ cwd = vim.fn.expand("%:p:h") 
 map('n', '∏', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts) -- cmd-shift-p
 map('n', '<C-i>', ':Telescope find_files<CR>', opts)
 map('', '<M-e>', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts)
-map('n', '¬', ':lua require("fzf-lua").buffers()<CR>', opts) -- cmd-l
+map('n', '¬', ':Telescope buffers<CR>', opts) -- cmd-l
+map('n', '<leader>u', ':lua require("fzf-lua").buffers()<CR>', opts) -- cmd-l
 kmap('n', 'Ï', ':lua require("fzf-lua").live_grep()<CR>', opts) -- cmd-f
 -- kmap('n', '<leader>b', '<cmd>Telescope current_buffer_fuzzy_find results_ts_highlight=false skip_empty_lines=true<CR>', opts)
 -- kmap('n', '<leader>b', ':lua require("fzf-lua").lgrep_curbuf()<CR>', opts)
@@ -353,7 +354,10 @@ require('lazy').setup({
     version = '1.*',
 
     opts = {
-      keymap = { preset = 'enter' },
+      keymap = {
+        preset = 'enter',
+        ['<CR>'] = {"select_and_accept", "fallback"},
+      },
       signature = { enabled = true, },
 
       appearance = {
@@ -464,7 +468,7 @@ require('lazy').setup({
               },
             },
           },
-          ghost_text = { enabled = true }
+          ghost_text = { enabled = false }
         }
       },
     },
@@ -1036,6 +1040,7 @@ set_hl(0, "Normal", { ctermbg = "NONE", bg = "NONE" })
 set_hl(0, "Cursor", { bg = "#D17783" }) -- TODO
 set_hl(0, "CursorLineNr", { italic = false, fg = "#C5A2A9" })
 set_hl(0, "EndOfBuffer", { bg = "NONE", ctermbg = "NONE" })
+set_hl(0, "Visual", { bg = "#C5A2A9", fg = "#262626" })
 
 set_hl(0, "DiffAdd", { ctermfg = "green", fg = colors.diff.add })
 set_hl(0, "DiffDelete", { ctermfg = "red", fg = colors.diff.delete })
@@ -1165,6 +1170,9 @@ require('telescope').setup({
     },
     path_display = {
       truncate = 3,
+      filename_first = {
+        reverse_directories = false,
+      }
     },
     mappings = {
       n = {
@@ -1199,10 +1207,11 @@ require('telescope').setup({
   },
   pickers = {
     find_files = {
-      find_command = { 'rg', '--files', '--sortr=modified '},
+      path_display = nil,
     },
     buffers = {
       sort_mru = true,
+      line_number = false,
       ignore_current_buffer = true,
       find_command = { 'rg', '--files', '--sortr=modified '}, -- ???????
       mappings = {
@@ -1221,6 +1230,12 @@ require('telescope').setup({
     live_grep = {
       preview = { treesitter = false, },
       layout_config = { width = 180, preview_width = 70, },
+    },
+    lsp_references = {
+      preview = { treesitter = true, },
+      layout_config = { width = 200 },
+      fname_width = 100,
+      show_line = false,
     },
   },
   extensions = {
