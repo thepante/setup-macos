@@ -1038,13 +1038,14 @@ local set_hl = vim.api.nvim_set_hl
 set_hl(0, "TreesitterContext", { bg = "#07090d", fg = "#504944" })
 set_hl(0, "TreesitterContextBottom", { underline = true, fg = "#504944" })
 set_hl(0, "MiniIndentscopeSymbol", { fg = "#444444" })
-set_hl(0, "Normal", { ctermbg = "NONE", bg = "NONE" })
+set_hl(0, "Normal", { ctermbg = "NONE", bg = "NONE", fg = "#D5C2C5" })
 set_hl(0, "Cursor", { bg = "#D17783" }) -- TODO
 set_hl(0, "CursorLineNr", { italic = false, fg = "#C5A2A9" })
 set_hl(0, "EndOfBuffer", { link = "SignColumn" })
 set_hl(0, "WinSeparator", { fg = "#141E29" })
 set_hl(0, "StatusLineNC", { bg = "NONE", fg = "#494848" })
 set_hl(0, "Visual", { bg = "#C5A2A9", fg = "#262626" })
+set_hl(0, "ErrorMsg", { fg = colors.diff.delete })
 
 set_hl(0, "DiffAdd", { ctermfg = "green", fg = colors.diff.add })
 set_hl(0, "DiffDelete", { ctermfg = "red", fg = colors.diff.delete })
