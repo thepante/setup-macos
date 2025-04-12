@@ -490,6 +490,33 @@ require('lazy').setup({
 
   { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' },
 
+  {
+    'yetone/avante.nvim',
+    event = 'VeryLazy',
+    version = false,
+    opts = {
+      provider = 'gemini',
+    },
+    build = 'make',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'stevearc/dressing.nvim',
+      'nvim-lua/plenary.nvim',
+      'MunifTanjim/nui.nvim',
+      --- optional
+      'nvim-telescope/telescope.nvim', -- for file_selector provider telescope
+      'ibhagwan/fzf-lua', -- for file_selector provider fzf
+      {
+        -- Make sure to set this up properly if you have lazy=true
+        'MeanderingProgrammer/render-markdown.nvim',
+        opts = {
+          file_types = {'markdown', 'Avante'}
+        },
+        ft = {'markdown', 'Avante'}
+      }
+    },
+  },
+
   -- Syntax highlight
   'sheerun/vim-polyglot',
   'RRethy/vim-illuminate',
@@ -1766,7 +1793,8 @@ end
 
 map('n', '<leader>ot', ':lua open_in_trae()<CR>', opts)
 map('n', '<leader>of', ':lua open_in_finder()<CR>', opts)
-map('n', '<leader><CR>', ':lua run_bun_run()<CR>', opts)
+map('n', '<leader>rn', ':lua run_bun_run()<CR>', opts)
+map('n', '<leader><CR>', ':AvanteToggle<CR>', opts)
 map('n', '<leader>;', ':Neogit<CR>', opts)
 
 -- Move between splits
