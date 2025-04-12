@@ -1023,11 +1023,13 @@ local colors = {
   light = "#d5c2c5",
   diff = {
     add = "#89A798",
+    add_bg = "#151e21",
     add_cursor = "#C3E4D4",
-    add_bg = "#192724",
+    add_cursor_bg = "#1c282c",
     delete = "#D17783",
-    delete_cursor = "#EFA5AF",
     delete_bg = "#27191F",
+    delete_cursor = "#EFA5AF",
+    delete_cursor_bg = "#2E1E25",
   }
 }
 
@@ -1039,17 +1041,19 @@ set_hl(0, "MiniIndentscopeSymbol", { fg = "#444444" })
 set_hl(0, "Normal", { ctermbg = "NONE", bg = "NONE" })
 set_hl(0, "Cursor", { bg = "#D17783" }) -- TODO
 set_hl(0, "CursorLineNr", { italic = false, fg = "#C5A2A9" })
-set_hl(0, "EndOfBuffer", { bg = "NONE", ctermbg = "NONE" })
+set_hl(0, "EndOfBuffer", { link = "SignColumn" })
+set_hl(0, "WinSeparator", { fg = "#141E29" })
+set_hl(0, "StatusLineNC", { bg = "NONE", fg = "#494848" })
 set_hl(0, "Visual", { bg = "#C5A2A9", fg = "#262626" })
 
 set_hl(0, "DiffAdd", { ctermfg = "green", fg = colors.diff.add })
 set_hl(0, "DiffDelete", { ctermfg = "red", fg = colors.diff.delete })
-set_hl(0, "NeogitDiffAdd", { ctermfg = "green", bg = colors.add_bg, fg = colors.diff.add })
-set_hl(0, "NeogitDiffAddHighlight", { ctermfg = "green", bg = colors.add_bg, fg = colors.diff.add })
-set_hl(0, "NeogitDiffAddCursor", { ctermfg = "green", bg = colors.add_bg, fg = colors.diff.add_cursor })
+set_hl(0, "NeogitDiffAdd", { ctermfg = "green", bg = colors.diff.add_bg, fg = colors.diff.add })
+set_hl(0, "NeogitDiffAddHighlight", { ctermfg = "green", bg = colors.diff.add_bg, fg = colors.diff.add })
+set_hl(0, "NeogitDiffAddCursor", { ctermfg = "green", bg = colors.diff.add_cursor_bg, fg = colors.diff.add_cursor })
 set_hl(0, "NeogitDiffDelete", { ctermfg = "red", bg = colors.diff.delete_bg, fg = colors.diff.delete })
 set_hl(0, "NeogitDiffDeleteHighlight", { ctermfg = "red", bg = colors.diff.delete_bg, fg = colors.diff.delete })
-set_hl(0, "NeogitDiffDeleteCursor", { ctermfg = "red", bg = colors.diff.delete_bg, fg = colors.diff.delete_cursor })
+set_hl(0, "NeogitDiffDeleteCursor", { ctermfg = "red", bg = colors.diff.delete_cursor_bg, fg = colors.diff.delete_cursor })
 
 set_hl(0, "StatusLine", { fg = "#666666", bg = "NONE" })
 set_hl(0, "StatusLineAccent", { fg = "#504945", bg = "NONE" })
