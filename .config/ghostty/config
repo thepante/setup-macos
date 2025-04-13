@@ -22,6 +22,10 @@ font-style-bold = ExtraBold
 adjust-cell-height = 6
 # background = 191724
 background = 15141B
+bold-is-bright = true
+cursor-color = #5FF1FE
+cursor-style = bar
+cursor-style-blink = true
 
 # Disable default CMD-m and CMD-h actions
 keybind = cmd+m=ignore
@@ -41,6 +45,19 @@ keybind = cmd+d=text:Î
 keybind = cmd+i=text:i
 keybind = cmd+/=csi:^_ # TODO
 keybind = cmd+comma=text:≤
+keybind = cmd+enter=text:ß
 
-command = "/bin/bash -l -i -c '/opt/homebrew/bin/tmux attach || /opt/homebrew/bin/tmux'"
+keybind = global:cmd+shift+enter=toggle_quick_terminal
+
+# macos-icon = blueprint
+macos-icon = xray
+window-width = 130
+window-height = 55
+
+quick-terminal-position = center
+
+# esto supuestamente si no está activado puede generar problemas y crashear
+window-vsync = false
+
+initial-command = "/bin/bash -l -i -c '/opt/homebrew/bin/tmux attach || /opt/homebrew/bin/tmux'"
 
