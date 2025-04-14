@@ -1036,11 +1036,51 @@ require('lazy').setup({
 
   {
     'stevearc/oil.nvim',
-    opts = {},
     dependencies = { { "echasnovski/mini.icons", opts = {} } },
     lazy = false,
+    opts = {},
   },
 
+})
+
+local detail = false
+require("oil").setup({
+  skip_confirm_for_simple_edits = true,
+  prompt_save_on_select_new_entry = false,
+  delete_to_trash = true,
+  view_options = {
+    show_hidden = true,
+  },
+  git = {
+    -- Return true to automatically git add/mv/rm files
+    add = function(path)
+      return true
+    end,
+    mv = function(src_path, dest_path)
+      return true
+    end,
+    rm = function(path)
+      return true
+    end,
+  },
+  float = {
+    padding = 4,
+    preview_split = 'below',
+  },
+
+  keymaps = {
+    ["gd"] = {
+      desc = "Toggle file detail view",
+      callback = function()
+        detail = not detail
+        if detail then
+          require("oil").set_columns({ "icon", "permissions", "size", "mtime" })
+        else
+          require("oil").set_columns({ "icon" })
+        end
+      end,
+    },
+  },
 })
 
 vim.cmd("filetype plugin indent on")
