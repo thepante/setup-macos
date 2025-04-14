@@ -51,7 +51,6 @@ set.foldmethod = 'expr'
 set.foldexpr = 'nvim_treesitter#foldexpr()'
 set.foldenable = true
 set.foldlevel = 99
-set.iskeyword:remove({'$'})
 
 set.completeopt = 'noinsert,menuone,noselect'
 set.inccommand = 'split'
@@ -156,16 +155,12 @@ map('n', '<C-d>', ':bnext<CR>', opts)
 map('n', 'Å', ':bprev<CR>', opts)
 map('n', 'Î', ':bnext<CR>', opts)
 
--- Close buffer
-function close_buffer()
-  local buftype = api.nvim_buf_get_option(0, 'buftype')
-  if buftype == 'terminal' then
-    vim.cmd('bd!')
-  else
-    vim.cmd('bd')
-  end
-end
-map('n', '<leader>w', ':lua close_buffer()<CR>', opts)
+map('n', 'n', [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]], opts)
+map('n', 'N', [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]], opts)
+map('n', '*', [[*<Cmd>lua require('hlslens').start()<CR>]], opts)
+map('n', '#', [[#<Cmd>lua require('hlslens').start()<CR>]], opts)
+map('n', 'g*', [[g*<Cmd>lua require('hlslens').start()<CR>]], opts)
+map('n', 'g#', [[g#<Cmd>lua require('hlslens').start()<CR>]], opts)
 
 -- Comment toggle
 map('n', '<C-/>', ':CommentToggle<CR>', opts)
@@ -217,13 +212,14 @@ map('n', '∏', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opt
 map('n', '<C-i>', ':Telescope find_files<CR>', opts)
 map('', '<M-e>', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts)
 map('n', '¬', ':Telescope buffers<CR>', opts) -- cmd-l
-map('n', '<leader>o', ':Oil --float<CR>', opts)
+map('n', '<leader><backspace>', ':Oil --float<CR>', opts)
 map('n', '<leader>u', ':lua require("fzf-lua").buffers()<CR>', opts) -- cmd-l
 kmap('n', 'Ï', ':lua require("fzf-lua").live_grep()<CR>', opts) -- cmd-f
+kmap('n', '<leader>f', ':GrugFar<CR>', opts) -- cmd-f
 -- kmap('n', '<leader>b', '<cmd>Telescope current_buffer_fuzzy_find results_ts_highlight=false skip_empty_lines=true<CR>', opts)
 -- kmap('n', '<leader>b', ':lua require("fzf-lua").lgrep_curbuf()<CR>', opts)
 -- kmap('n', '<leader>b', ':lua require("fzf-lua").blines({ start = "cursor" })<CR>', opts)
-kmap('n', '<leader><space>', ':lua require("fzf-lua").blines({ start = "cursor" })<CR>', opts)
+kmap('n', '<leader><space>', '<cmd>Telescope current_buffer_fuzzy_find skip_empty_lines=true<CR>', opts)
 kmap('n', 'ø', ':lua require("fzf-lua").lsp_document_symbols()<CR>', opts) -- cmd+o
 
 -- Paste/replace inside string - without yank
@@ -278,6 +274,13 @@ api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
   pattern = { "*" },
   callback = function()
     vim.cmd("silent! noh")
+  end,
+})
+
+api.nvim_create_autocmd({ "Filetype" }, {
+  pattern = "php",
+  callback = function()
+    vim.opt_local.iskeyword:append({'$'})
   end,
 })
 
@@ -775,8 +778,7 @@ require('lazy').setup({
   {
     'MagicDuck/grug-far.nvim',
     config = function()
-      require('grug-far').setup({
-      })
+      require('grug-far').setup({})
     end
   },
 
@@ -946,13 +948,7 @@ require('lazy').setup({
       fn['firenvim#install'](0)
     end
   },
-  {
-    'yutkat/confirm-quit.nvim',
-    event = 'CmdlineEnter',
-    opts = {
-      quit_message = ' => Confirm',
-    },
-  },
+
   {
     'j-hui/fidget.nvim',
     -- version = 'legacy',
@@ -1035,6 +1031,9 @@ require('lazy').setup({
   },
 
   {
+  { 'kevinhwang91/nvim-hlslens' },
+
+  {
     'stevearc/oil.nvim',
     dependencies = { { "echasnovski/mini.icons", opts = {} } },
     lazy = false,
@@ -1082,6 +1081,8 @@ require("oil").setup({
     },
   },
 })
+
+require('hlslens').setup()
 
 vim.cmd("filetype plugin indent on")
 vim.g.gruvbox_material_background = "hard"
@@ -1135,6 +1136,10 @@ set_hl(0, "NeogitDiffDeleteCursor", { ctermfg = "red", bg = colors.diff.delete_c
 set_hl(0, "StatusLine", { fg = "#666666", bg = "NONE" })
 set_hl(0, "StatusLineAccent", { fg = "#504945", bg = "NONE" })
 set_hl(0, "StatuslineInsertAccent", { fg = "#666666", bg = "NONE" })
+
+set_hl(0, "HlSearchNear", { fg = "NONE", bg = "NONE" })
+set_hl(0, "HlSearchLens", { fg = colors.background })
+set_hl(0, "HlSearchLensNear", { link = "MoreMsg" })
 
 -- CMP Highlights
 -- :lua vim.api.nvim_set_hl(0, "FzfLuaBorder", { link = "FloatBorder" }) -- TODO links
