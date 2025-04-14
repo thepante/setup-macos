@@ -217,6 +217,7 @@ map('n', '∏', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opt
 map('n', '<C-i>', ':Telescope find_files<CR>', opts)
 map('', '<M-e>', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts)
 map('n', '¬', ':Telescope buffers<CR>', opts) -- cmd-l
+map('n', '<leader>o', ':Oil --float<CR>', opts)
 map('n', '<leader>u', ':lua require("fzf-lua").buffers()<CR>', opts) -- cmd-l
 kmap('n', 'Ï', ':lua require("fzf-lua").live_grep()<CR>', opts) -- cmd-f
 -- kmap('n', '<leader>b', '<cmd>Telescope current_buffer_fuzzy_find results_ts_highlight=false skip_empty_lines=true<CR>', opts)
@@ -1032,6 +1033,14 @@ require('lazy').setup({
       })
     end,
   },
+
+  {
+    'stevearc/oil.nvim',
+    opts = {},
+    dependencies = { { "echasnovski/mini.icons", opts = {} } },
+    lazy = false,
+  },
+
 })
 
 vim.cmd("filetype plugin indent on")
@@ -1196,9 +1205,10 @@ require('telescope').setup({
     previewer = false,
     layout_config = {
       prompt_position = 'top',
-      height = 18,
-      width = 100,
       preview_width = 50,
+      height = 15,
+      width = 88,
+      horizontal = { anchor = 'N', anchor_padding = 12, },
     },
     path_display = {
       truncate = 3,
@@ -1253,7 +1263,7 @@ require('telescope').setup({
         i = {
           ['<c-d>'] = require('telescope.actions').delete_buffer,
         },
-      }
+      },
     },
     current_buffer_fuzzy_find = {
       preview = { treesitter = false, },
@@ -1261,11 +1271,21 @@ require('telescope').setup({
     },
     live_grep = {
       preview = { treesitter = false, },
-      layout_config = { width = 180, preview_width = 70, },
+      -- layout_config = { width = 180, preview_width = 70, },
+      layout_config = { width = 120, preview_width = 0.7, },
     },
     lsp_references = {
+      theme = 'cursor',
+      layout_config = { width = 100, preview_width = 0.8, },
       preview = { treesitter = true, },
-      layout_config = { width = 200 },
+      attach_mappings = function(_, map)
+        local actions = require('telescope.actions')
+        map('n', 'j', actions.move_selection_next)
+        map('n', 'k', actions.move_selection_previous)
+        map('n', 'kj', function() end)
+        return true
+      end,
+      initial_mode = 'normal',
       fname_width = 100,
       show_line = false,
     },
@@ -1575,7 +1595,7 @@ local on_attach = function(client, bufnr)
   kmap('n', 'gD', vim.lsp.buf.declaration, bufopts)
   kmap('n', 'gd', vim.lsp.buf.definition, bufopts)
   kmap('n', 'gi', vim.lsp.buf.implementation, bufopts)
-  kmap('n', 'gi', '<cmd>Telescope lsp_references theme=cursor<CR>', bufopts)
+  kmap('n', 'gi', '<cmd>Telescope lsp_references<CR>', bufopts)
   kmap('n', 'gt', vim.lsp.buf.type_definition, bufopts)
   kmap('n', 'gh', vim.lsp.buf.hover, bufopts)
   kmap('n', 'K', vim.lsp.buf.hover, bufopts)
