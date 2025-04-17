@@ -54,7 +54,8 @@ macos-icon = xray
 window-width = 130
 window-height = 55
 
-quick-terminal-position = center
+quick-terminal-position = top
+quick-terminal-animation-duration = 0.146
 
 # esto supuestamente si no está activado puede generar problemas y crashear
 window-vsync = false
