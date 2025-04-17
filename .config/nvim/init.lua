@@ -277,13 +277,6 @@ api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
   end,
 })
 
-api.nvim_create_autocmd({ "Filetype" }, {
-  pattern = "php",
-  callback = function()
-    vim.opt_local.iskeyword:append({'$'})
-  end,
-})
-
 --[[
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
   pattern = { "*" },
@@ -1031,6 +1024,17 @@ require('lazy').setup({
   },
 
   {
+    'nvzone/typr',
+    dependencies = 'nvzone/volt',
+    cmd = { 'Typr', 'TyprStats' },
+    opts = {},
+  },
+  { 'nvzone/volt', lazy = true },
+  {
+    'nvzone/minty',
+    cmd = { 'Shades', 'Huefy' },
+  },
+
   { 'kevinhwang91/nvim-hlslens' },
 
   {
