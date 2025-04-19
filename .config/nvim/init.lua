@@ -249,6 +249,11 @@ map('n', '<leader>sp', ':Gitsigns preview_hunk<CR>', opts)
 map('n', '<leader>.', ':Gitsigns blame_line<CR>', opts)
 map('v', '<leader>.', ':Gitsigns blame_line<CR>', opts)
 
+-- Treesj
+map('n', '<leader>sm', ':TSJToggle<CR>', opts)
+map('n', '<leader>sj', ':TSJSplit<CR>', opts)
+map('n', '<leader>sk', ':TSJJoin<CR>', opts)
+
 kmap("v", "<C-r>", "<CMD>SearchReplaceSingleBufferVisualSelection<CR>", opts)
 kmap("v", "<C-s>", "<CMD>SearchReplaceWithinVisualSelection<CR>", opts)
 kmap("v", "<C-b>", "<CMD>SearchReplaceWithinVisualSelectionCWord<CR>", opts)
