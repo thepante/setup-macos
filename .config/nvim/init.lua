@@ -1503,6 +1503,9 @@ require('nvim-treesitter.configs').setup({
 
         ["ac"] = "@class.outer",
         ["ic"] = "@class.inner",
+
+        ["at"] = "@comment.outer",
+        ["it"] = "@comment.inner",
       },
     },
     swap = {
@@ -1651,7 +1654,7 @@ local on_attach = function(client, bufnr)
   kmap('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
 
   kmap('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
-  kmap('n', '<leader>r', vim.lsp.buf.rename, bufopts)
+  kmap('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
   -- kmap('n', '<leader>f', vim.lsp.buf.format, bufopts)
   kmap('v', '<leader>f', vim.lsp.buf.format, bufopts)
 
