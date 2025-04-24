@@ -178,9 +178,9 @@ map('o', '<Tab>', '%', opts)
 -- Rename a symbol without language server
 map('n', '<leader>R', '#Ncgn', opts)
 
--- Better indenting
-map('v', '>', '>gv', opts)
-map('v', '<', '<gv', opts)
+-- -- Better indenting
+-- map('v', '>', '>gv', opts)
+-- map('v', '<', '<gv', opts)
 
 -- Better n and zz
 map('n', 'zz', 'zz6<C-e>', opts)
@@ -212,7 +212,7 @@ map('n', '∏', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opt
 map('n', '<C-i>', ':Telescope find_files<CR>', opts)
 map('', '<M-e>', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts)
 map('n', '¬', ':Telescope buffers<CR>', opts) -- cmd-l
-map('n', '<leader><backspace>', ':Oil --float<CR>', opts)
+map('n', '-', ':Oil --float<CR>', opts)
 map('n', '<leader>u', ':lua require("fzf-lua").buffers()<CR>', opts) -- cmd-l
 kmap('n', 'Ï', ':lua require("fzf-lua").live_grep()<CR>', opts) -- cmd-f
 kmap('n', '<leader>f', ':GrugFar<CR>', opts) -- cmd-f
@@ -399,6 +399,9 @@ require('lazy').setup({
       },
 
       completion = {
+        list = {
+          selection = { preselect = true },
+        },
         documentation = { auto_show = false },
         menu = {
           border = "rounded",
@@ -617,13 +620,13 @@ require('lazy').setup({
     ft = {'astro'},
   },
 
-  -- use {
-  --   'Wansmer/treesj',
-  --   requires = { 'nvim-treesitter' },
-  --   config = function()
-  --     require('treesj').setup()
-  --   end,
-  -- }
+  {
+    'Wansmer/treesj',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+      require('treesj').setup()
+    end,
+  },
 
   -- {
   --   'abecodes/tabout.nvim',
@@ -1525,6 +1528,26 @@ require('nvim-treesitter.configs').setup({
             ["<leader>mk"] = "@property.outer", -- swap object property with prev
             ["<leader>,m"] = "@function.outer", -- swap function with previous
         },
+    },
+    move = {
+      enable = true,
+      set_jumps = false,
+      goto_previous_start = {
+        ['[m'] = '@function.outer',
+        ['[['] = '@class.outer',
+      },
+      goto_previous_end = {
+        ['[M'] = '@function.outer',
+        ['[]'] = '@class.outer',
+      },
+      goto_next_start = {
+        [']m'] = '@function.outer',
+        [']]'] = '@class.outer',
+      },
+      goto_next_end = {
+        [']M'] = '@function.outer',
+        [']['] = '@class.outer',
+      },
     },
   },
   incremental_selection = {
