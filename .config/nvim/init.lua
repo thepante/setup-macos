@@ -212,7 +212,7 @@ map('n', '∏', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opt
 map('n', '<C-i>', ':Telescope find_files<CR>', opts)
 map('', '<M-e>', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', opts)
 map('n', '¬', ':Telescope buffers<CR>', opts) -- cmd-l
-map('n', '-', ':Oil --float<CR>', opts)
+map('n', '-', ':Oil<CR>', opts)
 map('n', '<leader>u', ':lua require("fzf-lua").buffers()<CR>', opts) -- cmd-l
 kmap('n', 'Ï', ':lua require("fzf-lua").live_grep()<CR>', opts) -- cmd-f
 kmap('n', '<leader>f', ':GrugFar<CR>', opts) -- cmd-f
@@ -353,6 +353,7 @@ require('lazy').setup({
   {
     'saghen/blink.cmp',
     dependencies = { 'rafamadriz/friendly-snippets' },
+    event = 'InsertEnter',
     version = '1.*',
 
     opts = {
@@ -1961,17 +1962,13 @@ api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
   callback = disable_treesitter_for_large_files,
 })
 
-api.nvim_create_autocmd("BufReadPost", {
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "log", "txt" },
   callback = function()
-    if not vim.b.already_read then
-      vim.b.already_read = true
-      local file_type = vim.bo.filetype
-      if (file_type == 'log' or file_type == 'txt') then
-        vim.cmd('syntax off')
-        vim.notify("Syntax highlighting disabled for filetype "..file_type, vim.log.levels.INFO)
-      end
-    end
-  end
+    -- buffer-local disable
+    vim.cmd("setlocal syntax=OFF")
+    vim.notify("Syntax highlighting disabled for filetype "..vim.bo.filetype, vim.log.levels.INFO)
+  end,
 })
 
 local uv = vim.loop
