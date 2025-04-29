@@ -45,7 +45,7 @@ set.title = true
 set.ttyfast = true
 set.lazyredraw = true
 set.redrawtime = 1500
-set.synmaxcol = 320
+set.synmaxcol = 600
 set.syntax = 'on'
 set.foldmethod = 'expr'
 set.foldexpr = 'nvim_treesitter#foldexpr()'
@@ -114,12 +114,6 @@ g.closetag_filetypes = 'html,xhtml,jsx,js,tsx,vue,php'
 g.closetag_xhtml_filetypes = 'html,xhtml,jsx,js,tsx,vue,php'
 
 vim.cmd([[
-  autocmd TermEnter term://*toggleterm#* tnoremap <silent>≤ <Cmd>exe v:count1 . "ToggleTerm"<CR>
-
-  " By applying the mappings this way you can pass a count to your mapping to open a specific window.
-  " For example: 2<C-t> will open terminal 2
-  nnoremap <silent>≤ <Cmd>exe v:count1 . "ToggleTerm"<CR>
-
   command! Neo Neogit
   command! Notes Neorg index
 ]])
@@ -863,31 +857,20 @@ require('lazy').setup({
     end
   },
 
-  { 'folke/todo-comments.nvim', event = "BufReadPost" },
-
-  -- use {
-  --   "zbirenbaum/neodim",
-  --   event = "LspAttach",
-  --   branch = "v2",
-  --   config = function ()
-  --     require("neodim").setup({
-  --       refresh_delay = 75, -- time in ms to wait after typing before refresh diagnostics
-  --       alpha = .75,
-  --       blend_color = "#000000",
-  --       hide = { underline = true, virtual_text = true, signs = true },
-  --       priority = 100, -- priority of dim highlights (increasing may interfere with semantic tokens!!)
-  --       disable = {}, -- table of filetypes to disable neodim
+  -- {
+  --   "vague2k/vague.nvim",
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     -- NOTE: you do not need to call setup if you don't want to.
+  --     require("vague").setup({
+  --       -- optional configuration here
   --     })
-  --   end,
-  -- }
+  --     vim.cmd([[colorscheme vague]])
+  --   end
+  -- },
 
-  {
-    'akinsho/toggleterm.nvim',
-    version = '*',
-    config = function()
-      require('toggleterm').setup()
-    end
-  },
+  { 'folke/todo-comments.nvim', event = "BufReadPost" },
 
   {
     'folke/flash.nvim',
@@ -1380,6 +1363,7 @@ require('mini.indentscope').setup({
 })
 
 require('nvim-autopairs').setup({
+  map_cr = false,
   disable_filetype = { 'TelescopePrompt' }
 })
 
