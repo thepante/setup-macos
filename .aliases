@@ -65,3 +65,32 @@ ht() {
     static-web-server -d . -p "808$port"
 }
 
+
+scan-rows() {
+  input="${1:-.}"
+  dir="$(cd "$input" && pwd)"
+
+  if [ ! -d "$dir" ]; then
+    echo "Error! Directory '$dir' does not exist." >&2
+    return 1
+  fi
+
+  dir="$(realpath "$input")"
+  echo "Analizando $dir"
+
+  total=0
+  for f in $dir/*.xlsx; do
+    rows=$(
+      ssconvert \
+        --export-type=Gnumeric_stf:stf_csv \
+        "$f" fd://1 2>/dev/null \
+        | grep -v '^$' \
+        | wc -l \
+        | xargs
+      )
+    echo "$(basename "$f") -> $rows"
+    total=$((total + rows))
+  done
+  echo "Total de filas: $total"
+}
+

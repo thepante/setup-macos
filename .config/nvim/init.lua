@@ -55,6 +55,16 @@ set.foldlevel = 99
 set.completeopt = 'noinsert,menuone,noselect'
 set.inccommand = 'split'
 set.background = 'dark'
+set.wildmenu = true
+
+vim.diagnostic.config({
+  virtual_text = false,
+  virtual_lines = false,
+  signs = true,
+  underline = true,
+  update_in_insert = false,
+  severity_sort = true,
+})
 
 -- vim.o.wildignore = '*~,*.o,*.a,*/*.min.*,*/*.jpg,*/*.jpeg,*/*.gif,*/*.png,*/*.pdf,*/dist,*/docs,*/node_modules/,*/tmp,*/target/debug,*/target/CACHED*,*/.git,.DS_Store'
 vim.o.wildignore = [[
