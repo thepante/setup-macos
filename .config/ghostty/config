@@ -21,7 +21,8 @@ font-style-bold = ExtraBold
 #adjust-cell-height = 9
 adjust-cell-height = 6
 # background = 191724
-background = 15141B
+# background = 15141B
+background = 040404
 bold-is-bright = true
 cursor-color = #5FF1FE
 cursor-style = bar
@@ -53,6 +54,8 @@ keybind = global:cmd+shift+enter=toggle_quick_terminal
 macos-icon = xray
 window-width = 130
 window-height = 55
+window-colorspace = display-p3
+minimum-contrast = 1
 
 quick-terminal-position = top
 quick-terminal-animation-duration = 0.146
