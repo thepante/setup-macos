@@ -27,10 +27,16 @@
     hunk-header-line-number-style = "orange"
     hunk-header-style = file line-number syntax
 
+[push]
+    default = current  # push only current branch by default
+
 [merge]
 	conflictstyle = diff3
 
 [diff]
+	context = 3
+	renames = copies
+	interHunkContext = 5
 	colorMoved = default
 
 [alias]
@@ -57,4 +63,15 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+
+[status]
+	branch = true
+	showStash = true
+	showUntrackedFiles = all
+
+[url "git@github.com:dott-uy/"]
+	insteadOf = "dott:"
+
+[url "git@github.com:"]
+	insteadOf = "gh:"
 

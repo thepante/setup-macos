@@ -1,0 +1,219 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run the `open default settings` command
+// from the command palette or from `Zed` application menu.
+{
+  "context_servers": {
+    "Multi_Fetch": {
+      "source": "custom",
+      "enabled": true,
+      "command": "bunx",
+      "args": [
+        "-y",
+        "@lmcc-dev/mult-fetch-mcp-server"
+      ],
+      "env": {
+        "MCP_LANG": "en"
+      }
+    },
+    "MySQL_Server": {
+      "source": "custom",
+      "enabled": true,
+      "command": "bunx",
+      "args": [
+        "--from",
+        "@f4ww4z/mcp-mysql-server"
+      ],
+      "env": {
+        "MYSQL_PASSWORD": "test",
+        "MYSQL_PORT": "3306",
+        "MYSQL_DATABASE": "test",
+        "MYSQL_HOST": "test",
+        "MYSQL_USER": "astrogo"
+      }
+    },
+    "Filesystem": {
+      "env": {},
+      "source": "custom",
+      "enabled": true,
+      "command": "bunx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/fabian/Projects",
+        "/Users/fabian/Downloads/marketing-dashboard"
+      ]
+    },
+    "Playwright": {
+      "source": "custom",
+      "enabled": true,
+      "command": "bunx",
+      "args": [
+        "-y",
+        "@executeautomation/playwright-mcp-server"
+      ],
+      "env": {}
+    },
+    "File_Context_Server": {
+      "source": "custom",
+      "enabled": false,
+      "command": "bunx",
+      "args": [
+        "@modelcontextprotocol/server-filesystem"
+      ],
+      "env": {
+        "MAX_FILE_SIZE": "1048576",
+        "CACHE_TTL": "3600000",
+        "MAX_CACHE_SIZE": "1000"
+      }
+    },
+    "mcp-server-context7": {
+      "source": "extension",
+      "enabled": true,
+      "settings": {
+        "default_minimum_tokens": "10000"
+      }
+    }
+  },
+  "git_panel": {
+    "dock": "left"
+  },
+  "ssh_connections": [
+    {
+      "host": "192.168.0.100",
+      "username": "pante",
+      "projects": [
+        {
+          "paths": [
+            "/home/pante"
+          ]
+        }
+      ]
+    },
+    {
+      "host": "adonis",
+      "username": "fabian",
+      "projects": [
+        {
+          "paths": [
+            "/home/desarrollo"
+          ]
+        },
+      ]
+    },
+  ],
+  "base_keymap": "VSCode",
+  "edit_predictions": {
+    "mode": "eager",
+    "copilot": {
+      "proxy": null,
+      "proxy_no_verify": null,
+      "enterprise_uri": null
+    },
+    "enabled_in_text_threads": false
+  },
+  "show_edit_predictions": true,
+  "terminal": {
+    "dock": "bottom"
+  },
+  "debugger": {
+    "dock": "right"
+  },
+  "icon_theme": "Colored Zed Icons Theme Light",
+  "theme": "Cursor Dark",
+  "confirm_quit": true,
+  "telemetry": {
+    "metrics": false
+  },
+  "buffer_font_features": {
+    "ligatures": true
+  },
+  "ui_font_size": 14,
+  "buffer_font_size": 14, // 13
+  // "ui_font_size": 20,
+  // "buffer_font_size": 20,
+  "ui_font_family": "IBM Plex Sans",
+  "buffer_font_family": "JetBrains Mono",
+  "buffer_line_height": "comfortable",
+  // "format_on_save": "language_server",
+  "format_on_save": "off",
+  "hard_tabs": false,
+  "tab_bar": {
+    "show": false,
+    "show_nav_history_buttons": false
+  },
+  // "editor_font_family": "Hack",
+  "always_treat_brackets_as_autoclosed": true,
+  "vim_mode": true,
+  "vim": {
+    "use_system_clipboard": "always",
+    // "use_multiline_find": true,
+    "use_smartcase_find": true,
+  },
+  "notification_panel": {
+    "button": false
+  },
+  "agent": {
+    "always_allow_tool_actions": true,
+    "default_profile": "write",
+    "play_sound_when_agent_done": true,
+    "default_model": {
+      "provider": "zed.dev",
+      "model": "claude-sonnet-4"
+    },
+    // "provider": {
+    //   "default_model": "claude-3-5-sonnet",
+    //   "name": "claude",
+    // },
+    // "button": false
+  },
+  "project_panel": {
+    "button": false
+  },
+  "diagnostics": {
+    "button": false
+  },
+  "collaboration_panel": {
+    "button": false
+  },
+  "chat_panel": {
+    "button": "never"
+  },
+  "features": {
+    // "edit_prediction_provider": "zed"
+    "edit_prediction_provider": "supermaven"
+  },
+  "languages": {
+    "PHP": {
+      "language_servers": [
+        "intelephense",
+        "!phpactor",
+        "..."
+      ]
+    },
+    "LOG": {
+      "show_edit_predictions": false
+    }
+  },
+  "git": {
+    "git_gutter": "tracked_files",
+    "gutter_debounce": null,
+    "inline_blame": {
+      "enabled": false
+    },
+    "hunk_style": null
+  },
+  "inlay_hints": {
+    "enabled": true
+  },
+  "current_line_highlight": "all",
+  "experimental.theme_overrides": {
+    "version_control.added": "#79c1aa",
+    "version_control.deleted": "#D77171",
+    // "version_control.modified": "#363c4a"
+  }
+}

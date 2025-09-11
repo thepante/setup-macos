@@ -1,0 +1,153 @@
+[
+  {
+    "context": "Editor && mode == full",
+    "bindings": {
+      "cmd-o": "outline::Toggle",
+      "cmd-p": "file_finder::Toggle",
+      "cmd-shift-g": "go_to_line::Toggle",
+      "ctrl-g": "go_to_line::Toggle",
+      "cmd-a": "pane::ActivatePreviousItem",
+      "cmd-d": "pane::ActivateNextItem"
+    }
+  },
+  {
+    "context": "Editor && (vim_mode == normal || vim_mode == visual) && !VimWaiting && !menu",
+    "bindings": {
+      // put key-bindings here if you want them to work in normal & visual mode
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal && !VimWaiting && !menu",
+    "bindings": {
+      // put key-bindings here if you want them to work only in normal mode
+      "ctrl-e": [
+        "workspace::SendKeystrokes",
+        "ctrl-e ctrl-e ctrl-e ctrl-e ctr-e ctrl-e ctrl-e"
+      ],
+      "ctrl-y": [
+        "workspace::SendKeystrokes",
+        "ctrl-y ctrl-y ctrl-y ctrl-y ctr-y ctrl-y ctrl-y"
+      ],
+      // "down": ["workspace::SendKeystrokes", "4 j"],
+      // "up": ["workspace::SendKeystrokes", "4 k"]
+    }
+  },
+  {
+    "context": "Editor && vim_mode == visual && !VimWaiting && !menu",
+    "bindings": {
+      // visual, visual line & visual block modes
+    }
+  },
+  {
+    "context": "Editor && vim_mode == insert && !menu",
+    "bindings": {
+      "k j": "vim::NormalBefore",
+      "kj": "vim::NormalBefore"
+    }
+  },
+  {
+    "context": "(VimControl && !menu)",
+    "bindings": {
+      "tab": "vim::Matching"
+    }
+  },
+  {
+    "context": "(MessageEditor && !Picker) > (Editor && !use_modifier_to_send)",
+    "bindings": {
+      "cmd-enter": null
+    }
+  },
+  {
+    "context": "Pane",
+    "bindings": {
+      "ctrl-tab": "pane::ActivateNextItem",
+      "ctrl-shift-tab": "pane::ActivatePreviousItem"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-p": "file_finder::Toggle",
+      "cmd-.": "terminal_panel::ToggleFocus",
+      "alt-h": "workspace::ActivatePaneLeft",
+      "alt-l": "workspace::ActivatePaneRight",
+      "alt-k": "workspace::ActivatePaneUp",
+      "alt-j": "workspace::ActivatePaneDown",
+    }
+  },
+  {
+    "bindings": {
+      "alt-cmd-h": null,
+      "cmd-h": "workspace::ActivatePaneLeft",
+      // "cmd-;": "workspace::ToggleRightDock",
+      "cmd-;": "tab_switcher::ToggleAll",
+      "cmd-l": "tab_switcher::Toggle",
+      "cmd-m": null,
+      // "cmd-e": "project_panel::RevealInFileManager",
+      "cmd-g": "workspace::ToggleRightDock",
+    }
+  },
+  {
+     "context": "Editor && vim_mode == insert && !menu",
+     "bindings": {
+       "k j": ["workspace::SendKeystrokes", "escape"]
+     }
+  },
+  {
+    "context": "(Editor && vim_mode == normal)",
+    "bindings": {
+      "cmd-h": "git::ToggleStaged"
+    }
+  },
+  {
+    "context": "(Editor && !agent_diff)",
+    "bindings": {
+      "alt-n": "git::StageAndNext"
+    }
+  },
+  {
+    "context": "(Editor && mode == full)",
+    "bindings": {
+      "cmd-shift-e": [
+        "buffer_search::Deploy",
+        {
+          "focus": false
+        }
+      ]
+    }
+  },
+  {
+    "context": "Editor && mode == full && vim_mode == normal",
+    "bindings": {
+      "space o": "editor::ToggleSelectedDiffHunks",
+      "space f": "editor::ToggleSelectedDiffHunks",
+    }
+  },
+  {
+    "context": "Editor && mode == full && !agent_diff",
+    "bindings": {
+      "space u": "git::UnstageAndNext"
+    }
+  },
+  {
+    "context": "Editor && mode == full",
+    "bindings": {
+      "space s": "git::StageRange"
+    }
+  },
+  {
+    "context": "Editor && mode == full && VimControl && !VimWaiting && !menu",
+    "bindings": {
+      "g i": "editor::FindAllReferences",
+      "g a": "editor::ToggleCodeActions",
+      "g r": "editor::Rename",
+      "space w": "workspace::Save",
+    }
+  },
+  {
+    "context": "Workspace && mode == full",
+    "bindings": {
+      "space g g": ["task::Spawn", { "task": "Open lazygit" }]
+    }
+  },
+]
