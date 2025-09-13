@@ -68,7 +68,6 @@
     "context": "Workspace",
     "bindings": {
       "cmd-p": "file_finder::Toggle",
-      "cmd-.": "terminal_panel::ToggleFocus",
       "alt-h": "workspace::ActivatePaneLeft",
       "alt-l": "workspace::ActivatePaneRight",
       "alt-k": "workspace::ActivatePaneUp",
@@ -78,9 +77,11 @@
   {
     "bindings": {
       "alt-cmd-h": null,
+      "cmd-.": "terminal_panel::ToggleFocus",
+      "cmd->": "workspace::NewCenterTerminal",
       "cmd-h": "workspace::ActivatePaneLeft",
-      // "cmd-;": "workspace::ToggleRightDock",
-      "cmd-;": "tab_switcher::ToggleAll",
+      "cmd-;": "workspace::ToggleRightDock",
+      "cmd-j": "tab_switcher::ToggleAll",
       "cmd-l": "tab_switcher::Toggle",
       "cmd-m": null,
       // "cmd-e": "project_panel::RevealInFileManager",
@@ -96,14 +97,14 @@
   {
     "context": "(Editor && vim_mode == normal)",
     "bindings": {
-      "cmd-h": "git::ToggleStaged"
-    }
+      "_": "git::ToggleStaged",
+    },
   },
   {
     "context": "(Editor && !agent_diff)",
     "bindings": {
-      "alt-n": "git::StageAndNext"
-    }
+      "alt-n": "git::StageAndNext",
+    },
   },
   {
     "context": "(Editor && mode == full)",
@@ -119,18 +120,18 @@
   {
     "context": "Editor && mode == full && vim_mode == normal",
     "bindings": {
-      "space o": "editor::ToggleSelectedDiffHunks",
+      "-": "editor::ToggleSelectedDiffHunks",
       "space f": "editor::ToggleSelectedDiffHunks",
     }
   },
   {
-    "context": "Editor && mode == full && !agent_diff",
+    "context": "Editor && mode == full && !agent_diff && vim_model == visual",
     "bindings": {
       "space u": "git::UnstageAndNext"
     }
   },
   {
-    "context": "Editor && mode == full",
+    "context": "Editor && mode == full && vim_mode == visual",
     "bindings": {
       "space s": "git::StageRange"
     }
@@ -150,4 +151,18 @@
       "space g g": ["task::Spawn", { "task": "Open lazygit" }]
     }
   },
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "down": "editor::MoveLineDown",
+      "up": "editor::MoveLineUp"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == visual",
+    "bindings": {
+      "down": "editor::MoveLineDown",
+      "up": "editor::MoveLineUp"
+    }
+  }
 ]

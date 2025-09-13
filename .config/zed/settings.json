@@ -199,6 +199,9 @@
       "show_edit_predictions": false
     }
   },
+  "file_types": {
+    "JavaScript": ["js", "mjs", "cjs", "jsx", "gs"]
+  },
   "git": {
     "git_gutter": "tracked_files",
     "gutter_debounce": null,
