@@ -166,6 +166,7 @@
   "ssh_connections": [
     {
       "host": "192.168.0.100",
+      "nickname": "linux",
       "username": "pante",
       "args": [],
       "projects": [
@@ -175,72 +176,7 @@
           ]
         }
       ],
-      "nickname": "DigitalOcean"
     },
-    {
-      "host": "adonis",
-      "username": "fabian",
-      "args": [],
-      "projects": [
-        {
-          "paths": [
-            "/home/desarrollo"
-          ]
-        },
-        {
-          "paths": [
-            "/home/desarrollo/devneo/dev_neoogilvy_uy/fucerep.banking"
-          ]
-        },
-        {
-          "paths": [
-            "/home/desarrollo/devneo/dev_neoogilvy_uy/fucerep.banking.web"
-          ]
-        }
-      ]
-    },
-    {
-      "host": "107.170.19.53",
-      "username": "root",
-      "args": [],
-      "projects": [
-        {
-          "paths": [
-            "/home/neoogilvy"
-          ]
-        },
-        {
-          "paths": [
-            "/root"
-          ]
-        }
-      ]
-    },
-    {
-      "host": "clientes.neoogilvy.uy",
-      "username": "clientesneoogilv",
-      "args": [],
-      "projects": [
-        {
-          "paths": [
-            "/home/clientesneoogilv/pwc_web/"
-          ]
-        }
-      ]
-    },
-    {
-      "host": "192.168.32.66",
-      "username": "webuser",
-      "args": [],
-      "projects": [
-        {
-          "paths": [
-            "/home/webuser/fucerep.banking/./"
-          ]
-        }
-      ],
-      "nickname": "Fucerep eBanking"
-    }
   ],
   "base_keymap": "VSCode",
   "edit_predictions": {
