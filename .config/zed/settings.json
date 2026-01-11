@@ -6,10 +6,93 @@
 // To see all of Zed's default settings without changing your
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
+//
+		// base16 mountain
+		// base16 chalk
+		// vitesse refined dark
+		// msun dark netherite
+		// 0x96f
+		// kanagawa
 {
+  "hover_popover_enabled": false,
+  "minimum_contrast_for_highlights": 65.0,
+  "agent_ui_font_size": 16.0,
+  "agent_buffer_font_size": 14.0,
+  "ui_font_weight": 400.0,
+  "buffer_font_weight": 400.0,
+  "completions": {
+    "words": "enabled",
+    "lsp": true,
+    "words_min_length": 2,
+  },
+  "show_whitespaces": "all",
+  "toolbar": {
+    "code_actions": false,
+    "agent_review": true,
+    "selections_menu": true,
+    "quick_actions": true,
+    "breadcrumbs": true
+  },
+  "file_finder": {
+    "skip_focus_for_active_in_search": false,
+    "modal_max_width": "small",
+    "file_icons": true,
+    "git_status": true,
+    "include_ignored": "smart",
+  },
+  "use_smartcase_search": true,
+  "zoomed_padding": true,
+  "active_pane_modifiers": {
+    "border_size": 0.0
+  },
+  "bottom_dock_layout": "right_aligned",
+  "preview_tabs": {
+    "enable_preview_from_file_finder": false
+  },
+  "tabs": {
+    "file_icons": true,
+    "git_status": true
+  },
+  "title_bar": {
+    "show_menus": false,
+    "show_user_picture": true,
+    "show_branch_icon": false
+  },
+  "search": {
+    "regex": true,
+    "button": false,
+    "center_on_match": false,
+    "include_ignored": false,
+  },
+  "indent_guides": {
+    "enabled": true,
+    "background_coloring": "disabled",
+    "coloring": "fixed",
+    "active_line_width": 2,
+    "line_width": 1
+  },
+  "status_bar": {
+    "cursor_position_button": true,
+    "line_endings_button": true,
+    "active_language_button": true,
+  },
+  "global_lsp_settings": {
+	  "button": true,
+  },
+  "outline_panel": {
+    "git_status": true,
+    "folder_icons": true,
+    "file_icons": true,
+    "button": true,
+  },
+  "audio": {
+    "experimental.rodio_audio": true
+  },
+  "calls": {
+    "mute_on_join": true,
+  },
   "context_servers": {
     "Multi_Fetch": {
-      "source": "custom",
       "enabled": true,
       "command": "bunx",
       "args": [
@@ -21,24 +104,22 @@
       }
     },
     "MySQL_Server": {
-      "source": "custom",
-      "enabled": true,
+      "enabled": false,
       "command": "bunx",
       "args": [
         "--from",
         "@f4ww4z/mcp-mysql-server"
       ],
       "env": {
-        "MYSQL_PASSWORD": "test",
+        "MYSQL_PASSWORD": "astrogo345",
         "MYSQL_PORT": "3306",
-        "MYSQL_DATABASE": "test",
-        "MYSQL_HOST": "test",
+        "MYSQL_DATABASE": "astrogo",
+        "MYSQL_HOST": "localhost",
         "MYSQL_USER": "astrogo"
       }
     },
     "Filesystem": {
       "env": {},
-      "source": "custom",
       "enabled": true,
       "command": "bunx",
       "args": [
@@ -49,8 +130,7 @@
       ]
     },
     "Playwright": {
-      "source": "custom",
-      "enabled": true,
+      "enabled": false,
       "command": "bunx",
       "args": [
         "-y",
@@ -59,7 +139,6 @@
       "env": {}
     },
     "File_Context_Server": {
-      "source": "custom",
       "enabled": false,
       "command": "bunx",
       "args": [
@@ -72,7 +151,6 @@
       }
     },
     "mcp-server-context7": {
-      "source": "extension",
       "enabled": true,
       "settings": {
         "default_minimum_tokens": "10000"
@@ -80,60 +158,131 @@
     }
   },
   "git_panel": {
+    "collapse_untracked_diff": false,
+    "sort_by_path": false,
+    "status_style": "label_color",
     "dock": "left"
   },
   "ssh_connections": [
     {
       "host": "192.168.0.100",
       "username": "pante",
+      "args": [],
       "projects": [
         {
           "paths": [
             "/home/pante"
           ]
         }
-      ]
+      ],
+      "nickname": "DigitalOcean"
     },
     {
       "host": "adonis",
       "username": "fabian",
+      "args": [],
       "projects": [
         {
           "paths": [
             "/home/desarrollo"
           ]
         },
+        {
+          "paths": [
+            "/home/desarrollo/devneo/dev_neoogilvy_uy/fucerep.banking"
+          ]
+        },
+        {
+          "paths": [
+            "/home/desarrollo/devneo/dev_neoogilvy_uy/fucerep.banking.web"
+          ]
+        }
       ]
     },
+    {
+      "host": "107.170.19.53",
+      "username": "root",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/neoogilvy"
+          ]
+        },
+        {
+          "paths": [
+            "/root"
+          ]
+        }
+      ]
+    },
+    {
+      "host": "clientes.neoogilvy.uy",
+      "username": "clientesneoogilv",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/clientesneoogilv/pwc_web/"
+          ]
+        }
+      ]
+    },
+    {
+      "host": "192.168.32.66",
+      "username": "webuser",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/webuser/fucerep.banking/./"
+          ]
+        }
+      ],
+      "nickname": "Fucerep eBanking"
+    }
   ],
   "base_keymap": "VSCode",
   "edit_predictions": {
+    "disabled_globs": [
+	    "*.log*"
+    ],
     "mode": "eager",
     "copilot": {
       "proxy": null,
       "proxy_no_verify": null,
       "enterprise_uri": null
     },
+    "codestral": {
+      "api_url": "https://codestral.mistral.ai",
+      "model": "codestral-latest",
+      "max_tokens": 150
+    },
     "enabled_in_text_threads": false
   },
   "show_edit_predictions": true,
   "terminal": {
-    "dock": "bottom"
+    "blinking": "on",
+    "dock": "bottom",
+    "cursor_shape": "bar",
   },
   "debugger": {
     "dock": "right"
   },
   "icon_theme": "Colored Zed Icons Theme Light",
-  "theme": "Cursor Dark",
+  "theme": "Vitesse Refined Dark",
+  // "theme": "Base16 Gruvbox Material Dark, Hard",
   "confirm_quit": true,
   "telemetry": {
-    "metrics": false
+    "metrics": true
   },
   "buffer_font_features": {
     "ligatures": true
   },
-  "ui_font_size": 14,
+  "ui_font_size": 15,
   "buffer_font_size": 14, // 13
+  // "ui_font_size": 18,
+  // "buffer_font_size": 18,
   // "ui_font_size": 20,
   // "buffer_font_size": 20,
   "ui_font_family": "IBM Plex Sans",
@@ -141,10 +290,10 @@
   "buffer_line_height": "comfortable",
   // "format_on_save": "language_server",
   "format_on_save": "off",
-  "hard_tabs": false,
+  "hard_tabs": true,
   "tab_bar": {
     "show": false,
-    "show_nav_history_buttons": false
+    "show_nav_history_buttons": false,
   },
   // "editor_font_family": "Hack",
   "always_treat_brackets_as_autoclosed": true,
@@ -155,15 +304,16 @@
     "use_smartcase_find": true,
   },
   "notification_panel": {
-    "button": false
+    "button": false,
   },
   "agent": {
+    "enable_feedback": false,
     "always_allow_tool_actions": true,
-    "default_profile": "write",
+    "default_profile": "ask",
     "play_sound_when_agent_done": true,
     "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-sonnet-4"
+      "provider": "google",
+      "model": "gemini-2.5-flash"
     },
     // "provider": {
     //   "default_model": "claude-3-5-sonnet",
@@ -172,27 +322,59 @@
     // "button": false
   },
   "project_panel": {
-    "button": false
+    "hide_hidden": false,
+    "hide_root": true,
+    "indent_guides": {
+      "show": "always",
+    },
+    "git_status": true,
+    "folder_icons": true,
+    "file_icons": true,
+    "entry_spacing": "standard",
+    "button": true,
   },
   "diagnostics": {
-    "button": false
+    "button": false,
   },
   "collaboration_panel": {
-    "button": false
-  },
-  "chat_panel": {
-    "button": "never"
+    "button": false,
   },
   "features": {
     // "edit_prediction_provider": "zed"
     "edit_prediction_provider": "supermaven"
+    // "edit_prediction_provider": "codestral"
   },
   "languages": {
+    "JavaScript": {
+      "completions": {
+        "words": "enabled"
+      },
+      "show_whitespaces": "all",
+      "indent_guides": {
+        "background_coloring": "disabled"
+      },
+      "hard_tabs": true
+    },
     "PHP": {
+      "inlay_hints": {
+        "show_background": false
+      },
+      "indent_guides": {
+        "background_coloring": "disabled",
+        "coloring": "fixed",
+        "active_line_width": 1,
+        "line_width": 1
+      },
+      "hard_tabs": true,
+      "show_whitespaces": "all",
+      "completions": {
+        "words": "enabled"
+      },
       "language_servers": [
         "intelephense",
         "!phpactor",
-        "..."
+        "!tailwindcss-language-server",
+        "!emmet-language-server",
       ]
     },
     "LOG": {
@@ -208,7 +390,7 @@
     "inline_blame": {
       "enabled": false
     },
-    "hunk_style": null
+    "hunk_style": "staged_hollow"
   },
   "inlay_hints": {
     "enabled": true
@@ -218,5 +400,17 @@
     "version_control.added": "#79c1aa",
     "version_control.deleted": "#D77171",
     // "version_control.modified": "#363c4a"
-  }
+  },
+  "scrollbar": {
+    "diagnostics": "error",
+    "show": "system",
+    "axes": {
+      "horizontal": false,
+      "vertical": true
+    }
+  },
+  "whitespace_map": {
+     	"space": "–",
+			"tab": ">",
+  },
 }

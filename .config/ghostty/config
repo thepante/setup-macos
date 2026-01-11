@@ -6,10 +6,11 @@ macos-titlebar-proxy-icon = hidden
 shell-integration = none
 title = " "
 
-# # custom-shader = ghostty-shaders/negative.glsl
-# # custom-shader = ghostty-shaders/in-game-crt.glsl
-# # custom-shader = ghostty-shaders/test.glsl
+# custom-shader = ghostty-shaders/negative.glsl
+# custom-shader = ghostty-shaders/in-game-crt.glsl
+# custom-shader = ghostty-shaders/test.glsl
 # custom-shader = ghostty-shaders/test-2.glsl
+# custom-shader = ghostty-shaders/test-3.glsl
 # # custom-shader = ghostty-shaders/glitchy.glsl
 # # custom-shader = ghostty-shaders/retro-terminal.glsl
 
@@ -18,8 +19,9 @@ font-family = 'JetBrainsMono Nerd Font'
 font-size = 14
 font-style = Medium
 font-style-bold = ExtraBold
+# font-thicken = true
 #adjust-cell-height = 9
-adjust-cell-height = 6
+adjust-cell-height = 7
 # background = 191724
 # background = 15141B
 background = 040404
@@ -54,7 +56,8 @@ keybind = global:cmd+shift+enter=toggle_quick_terminal
 macos-icon = xray
 window-width = 130
 window-height = 55
-window-colorspace = display-p3
+#window-colorspace = display-p3
+window-colorspace = srgb
 minimum-contrast = 1
 
 quick-terminal-position = top
@@ -63,5 +66,5 @@ quick-terminal-animation-duration = 0.146
 # esto supuestamente si no está activado puede generar problemas y crashear
 window-vsync = false
 
-initial-command = "/bin/bash -l -i -c '/opt/homebrew/bin/tmux attach || /opt/homebrew/bin/tmux'"
-
+#initial-command = "/bin/bash -l -i -c '/opt/homebrew/bin/tmux attach || /opt/homebrew/bin/tmux'"
+initial-command = /opt/homebrew/bin/tmux new-session -A -s main

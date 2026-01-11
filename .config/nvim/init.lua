@@ -109,7 +109,19 @@ require('lazy').setup({
         event = "VeryLazy",
         config = function()
             require('mini.pairs').setup()
-            require('mini.surround').setup()
+            require('mini.surround').setup({
+                mappings = {
+                    add = 'ca', -- Add surrounding in Normal and Visual modes
+                    delete = 'cd', -- Delete surrounding
+                    find = 'cf', -- Find surrounding (to the right)
+                    find_left = 'cF', -- Find surrounding (to the left)
+                    highlight = 'ch', -- Highlight surrounding
+                    replace = 'cr', -- Replace surrounding
+                    update_n_lines = 'cn', -- Update `n_lines`
+                    suffix_last = 'l', -- Suffix to search with "prev" method
+                    suffix_next = 'n', -- Suffix to search with "next" method
+                },
+            })
             require('mini.comment').setup()
             require('mini.indentscope').setup({
                 symbol = "│",
@@ -417,6 +429,8 @@ local opts = { silent = true }
 map('n', '<Esc>', '<cmd>nohlsearch<CR>', opts)
 map('n', '<leader>w', '<cmd>w<CR>', opts)
 map('n', '<leader>q', '<cmd>q<CR>', opts)
+map('n', '<Tab>', '%', opts)
+map('v', '<Tab>', '%', opts)
 map('n', 'x', '"_x', opts) -- Do not yank on x
 
 -- Navigation
