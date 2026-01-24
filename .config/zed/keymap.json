@@ -1,77 +1,5 @@
 [
-	{
-		"bindings": {
-			"ctrl-p": [ // Or `ctrl-p`
-				"task::Spawn",
-				{ "task_name": "Television File Finder", "reveal_target": "center" },
-			],
-		},
-	},
-  {
-    "context": "Editor && mode == full",
-    "bindings": {
-      "cmd-o": "outline::Toggle",
-      "cmd-p": "file_finder::Toggle",
-      "cmd-shift-g": "go_to_line::Toggle",
-      "ctrl-g": "go_to_line::Toggle",
-      "cmd-a": "pane::ActivatePreviousItem",
-      "cmd-d": "pane::ActivateNextItem"
-    }
-  },
-  {
-    "context": "Editor && (vim_mode == normal || vim_mode == visual) && !VimWaiting && !menu",
-    "bindings": {
-      // put key-bindings here if you want them to work in normal & visual mode
-    }
-  },
-  {
-    "context": "Editor && vim_mode == normal && !VimWaiting && !menu",
-    "bindings": {
-      // put key-bindings here if you want them to work only in normal mode
-      "ctrl-e": [
-        "workspace::SendKeystrokes",
-        "ctrl-e ctrl-e ctrl-e ctrl-e ctr-e ctrl-e ctrl-e"
-      ],
-      "ctrl-y": [
-        "workspace::SendKeystrokes",
-        "ctrl-y ctrl-y ctrl-y ctrl-y ctr-y ctrl-y ctrl-y"
-      ],
-      // "down": ["workspace::SendKeystrokes", "4 j"],
-      // "up": ["workspace::SendKeystrokes", "4 k"]
-    }
-  },
-  {
-    "context": "Editor && vim_mode == visual && !VimWaiting && !menu",
-    "bindings": {
-      // visual, visual line & visual block modes
-    }
-  },
-  {
-    "context": "Editor && vim_mode == insert && !menu",
-    "bindings": {
-      "k j": "vim::NormalBefore",
-      "kj": "vim::NormalBefore"
-    }
-  },
-  {
-    "context": "(VimControl && !menu)",
-    "bindings": {
-      "tab": "vim::Matching"
-    }
-  },
-  {
-    "context": "(MessageEditor && !Picker) > (Editor && !use_modifier_to_send)",
-    "bindings": {
-      "cmd-enter": null
-    }
-  },
-  {
-    "context": "Pane",
-    "bindings": {
-      "ctrl-tab": "pane::ActivateNextItem",
-      "ctrl-shift-tab": "pane::ActivatePreviousItem"
-    }
-  },
+  // --- Global / Workspace Bindings ---
   {
     "context": "Workspace",
     "bindings": {
@@ -80,82 +8,12 @@
       "alt-l": "workspace::ActivatePaneRight",
       "alt-k": "workspace::ActivatePaneUp",
       "alt-j": "workspace::ActivatePaneDown",
-    }
-  },
-  {
-    "bindings": {
-      "alt-cmd-h": null,
-      "cmd-.": "terminal_panel::ToggleFocus",
-      "cmd->": "workspace::NewCenterTerminal",
-      "cmd-h": "workspace::ActivatePaneLeft",
-      "cmd-;": "workspace::ToggleRightDock",
-      "cmd-j": "tab_switcher::ToggleAll",
-      "cmd-l": "tab_switcher::Toggle",
-      "cmd-m": null,
-      // "cmd-e": "project_panel::RevealInFileManager",
-    }
-  },
-  {
-     "context": "Editor && vim_mode == insert && !menu",
-     "bindings": {
-       "k j": ["workspace::SendKeystrokes", "escape"]
-     }
-  },
-  {
-    "context": "(Editor && vim_mode == normal)",
-    "bindings": {
-      "_": "git::ToggleStaged",
-    },
-  },
-  {
-    "context": "(Editor && vim_mode == normal)",
-    "bindings": {
-      "cmd-shift-s": "git::ToggleStaged",
-    },
-  },
-  {
-    "context": "(Editor && !agent_diff)",
-    "bindings": {
-      "alt-n": "git::StageAndNext",
-    },
-  },
-  {
-    "context": "(Editor && mode == full)",
-    "bindings": {
-      "cmd-shift-e": [
-        "buffer_search::Deploy",
-        {
-          "focus": false
-        }
-      ]
-    }
-  },
-  {
-    "context": "Editor && mode == full && vim_mode == normal",
-    "bindings": {
-      "-": "editor::ToggleSelectedDiffHunks",
-      "space f": "editor::ToggleSelectedDiffHunks",
-    }
-  },
-  {
-    "context": "Editor && mode == full && !agent_diff && vim_model == visual",
-    "bindings": {
-      "space u": "git::UnstageAndNext"
-    }
-  },
-  {
-    "context": "Editor",
-    "bindings": {
-      "cmd-shift-s": "git::StageRange"
-    }
-  },
-  {
-    "context": "Editor && mode == full && VimControl && !VimWaiting && !menu",
-    "bindings": {
-      "g i": "editor::FindAllReferences",
-      "g a": "editor::ToggleCodeActions",
-      "g r": "editor::Rename",
-      "space w": "workspace::Save",
+      "alt-shift-s": "workspace::SaveAs",
+      "ctrl-cmd-4": "workspace::ToggleRightDock",
+      "cmd-_": "workspace::ToggleRightDock",
+      "cmd-shift-s": null,
+      "alt-cmd-b": null,
+      "cmd-m": null
     }
   },
   {
@@ -164,71 +22,120 @@
       "space g g": ["task::Spawn", { "task": "Open lazygit" }]
     }
   },
+
+  // --- Pane & Navigation ---
   {
-    "context": "Editor && vim_mode == normal",
+    "context": "Pane",
     "bindings": {
-      "down": "editor::MoveLineDown",
-      "up": "editor::MoveLineUp"
+      "ctrl-tab": "pane::ActivateNextItem",
+      "ctrl-shift-tab": "pane::ActivatePreviousItem"
     }
   },
-  {
-    "context": "Editor && vim_mode == visual",
-    "bindings": {
-      "down": "editor::MoveLineDown",
-      "up": "editor::MoveLineUp"
-    }
-  },
-  {
-    "context": "(Editor && mode == full)",
-    "bindings": {
-      "cmd-h": [
-        "buffer_search::Deploy",
-        {
-          "focus": false
-        }
-      ]
-    }
-  },
-  {
-    "context": "(Editor && mode == full)",
-    "bindings": {
-      "cmd-e": null
-    }
-  },
-  {
-    "context": "Workspace",
-    "bindings": {
-      "cmd-g": "git_panel::ToggleFocus"
-    }
-  },
+
+  // --- General Editor Bindings ---
   {
     "context": "Editor",
     "bindings": {
-      "ctrl-n": "search::SelectNextMatch"
+      "cmd-a": "agent::ToggleFocus",
+      "cmd-s": "workspace::Save",
+      "cmd-g": "git_panel::ToggleFocus",
+      "cmd-shift-s": "git::StageRange",
+      "ctrl-n": "search::SelectNextMatch",
+      "ctrl-d": "search::SelectNextMatch",
+      "alt-n": "git::StageAndNext"
     }
   },
   {
-    "context": "ContextEditor > Editor",
+    "context": "Editor && mode == full",
     "bindings": {
-      "ctrl-n": "search::SelectNextMatch"
+      "cmd-o": "outline::Toggle",
+      "cmd-p": "file_finder::Toggle",
+      "cmd-shift-g": "go_to_line::Toggle",
+      "ctrl-g": "go_to_line::Toggle",
+      // "cmd-a": "pane::ActivatePreviousItem",
+      // "cmd-d": "pane::ActivateNextItem",
+      "cmd-e": null,
+      "cmd-h": ["buffer_search::Deploy", { "focus": false }],
+      "cmd-shift-e": ["buffer_search::Deploy", { "focus": false }]
+    }
+  },
+
+  // --- Vim: Global / Shared Modes ---
+  {
+    "context": "vim_mode == normal || vim_mode == visual",
+    "bindings": {
+      "s": "vim::PushSneak",
+      "shift-s": "vim::PushSneakBackward"
+    }
+  },
+
+  // --- Vim: Normal Mode ---
+  {
+    "context": "Editor && vim_mode == normal && !VimWaiting && !menu",
+    "bindings": {
+      // Navigation & Movement
+      "down": "editor::MoveLineDown",
+      "up": "editor::MoveLineUp",
+      "ctrl-e": ["workspace::SendKeystrokes", "ctrl-e ctrl-e ctrl-e ctrl-e ctrl-e ctrl-e ctrl-e"],
+      "ctrl-y": ["workspace::SendKeystrokes", "ctrl-y ctrl-y ctrl-y ctrl-y ctrl-y ctrl-y ctrl-y"],
+
+      // Git Operations
+      "_": "git::ToggleStaged",
+      "cmd-shift-s": "git::ToggleStaged",
+      "-": "editor::ToggleSelectedDiffHunks",
+      "space f": "editor::ToggleSelectedDiffHunks",
+
+      // LSP / Coding
+      "g i": "editor::FindAllReferences",
+      "g a": "editor::ToggleCodeActions",
+      "g r": "editor::Rename",
+      "space w": "workspace::Save"
+    }
+  },
+
+  // --- Vim: Visual Mode ---
+  {
+    "context": "Editor && vim_mode == visual && !VimWaiting && !menu",
+    "bindings": {
+      "down": "editor::MoveLineDown",
+      "up": "editor::MoveLineUp",
+      "space u": "git::UnstageAndNext"
+    }
+  },
+
+  // --- Vim: Insert Mode ---
+  {
+    "context": "Editor && vim_mode == insert && !menu",
+    "bindings": {
+      "k j": "vim::NormalBefore",
+      "kj": "vim::NormalBefore"
+    }
+  },
+
+  // --- Other Panels & Overrides ---
+  {
+    "context": "VimControl && !menu",
+    "bindings": {
+      "tab": "vim::Matching"
     }
   },
   {
-    "context": "Editor",
+    "context": "EditorParent",
     "bindings": {
-      "ctrl-d": "search::SelectNextMatch"
+      "cmd-r": "agent::ToggleFocus"
     }
   },
   {
-    "context": "Workspace",
     "bindings": {
-      "cmd-e": "project_panel::ToggleFocus"
-    }
-  },
-  {
-    "context": "Workspace",
-    "bindings": {
-      "alt-shift-s": "workspace::SaveAs"
+      "ctrl-p": ["task::Spawn", { "task_name": "Television File Finder", "reveal_target": "center" }],
+      "cmd-.": "terminal_panel::ToggleFocus",
+      "cmd->": "workspace::NewCenterTerminal",
+      "cmd-h": "workspace::ActivatePaneLeft",
+      "cmd-;": "workspace::ToggleRightDock",
+      "cmd-j": "tab_switcher::ToggleAll",
+      "cmd-l": "tab_switcher::Toggle",
+      "cmd-e": "project_panel::ToggleFocus",
+      "alt-cmd-h": null
     }
   },
   {
@@ -238,16 +145,9 @@
     }
   },
   {
-    "context": "Workspace",
+    "context": "(MessageEditor && !Picker) > (Editor && !use_modifier_to_send)",
     "bindings": {
-      "cmd-shift-s": null
-    }
-  },
-  {
-    "context": "vim_mode == normal || vim_mode == visual",
-    "bindings": {
-      "s": "vim::PushSneak",
-      "shift-s": "vim::PushSneakBackward"
+      "cmd-enter": null
     }
   }
 ]

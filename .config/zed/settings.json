@@ -14,6 +14,19 @@
 		// 0x96f
 		// kanagawa
 {
+  "agent_servers": {
+    "opencode": {
+      "type": "extension",
+      "favorite_models": [
+        "opencode/big-pickle",
+        "opencode/grok-code",
+        "opencode/minimax-m2.1-free",
+        "opencode/gpt-5-nano"
+      ],
+      "default_config_options": {},
+      "favorite_config_option_values": {}
+    }
+  },
   "hover_popover_enabled": false,
   "minimum_contrast_for_highlights": 65.0,
   "agent_ui_font_size": 16.0,
@@ -45,7 +58,7 @@
   "active_pane_modifiers": {
     "border_size": 0.0
   },
-  "bottom_dock_layout": "right_aligned",
+  "bottom_dock_layout": "full",
   "preview_tabs": {
     "enable_preview_from_file_finder": false
   },
@@ -72,6 +85,7 @@
     "line_width": 1
   },
   "status_bar": {
+    "active_encoding_button": "non_utf8",
     "cursor_position_button": true,
     "line_endings_button": true,
     "active_language_button": true,
@@ -158,10 +172,11 @@
     }
   },
   "git_panel": {
+    "tree_view": true,
     "collapse_untracked_diff": false,
     "sort_by_path": false,
     "status_style": "label_color",
-    "dock": "left"
+    "dock": "right"
   },
   "ssh_connections": [
     {
@@ -243,6 +258,7 @@
     "button": false,
   },
   "agent": {
+    "show_turn_stats": true,
     "enable_feedback": false,
     "always_allow_tool_actions": true,
     "default_profile": "ask",
