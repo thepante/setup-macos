@@ -25,7 +25,10 @@
       ],
       "default_config_options": {},
       "favorite_config_option_values": {}
-    }
+    },
+    "gemini": {
+      "args": ["--model", "gemini-3-flash"]
+    },
   },
   "hover_popover_enabled": false,
   "minimum_contrast_for_highlights": 65.0,
@@ -38,7 +41,6 @@
     "lsp": true,
     "words_min_length": 2,
   },
-  "show_whitespaces": "all",
   "toolbar": {
     "code_actions": false,
     "agent_review": true,
@@ -58,7 +60,7 @@
   "active_pane_modifiers": {
     "border_size": 0.0
   },
-  "bottom_dock_layout": "full",
+  "bottom_dock_layout": "left_aligned",
   "preview_tabs": {
     "enable_preview_from_file_finder": false
   },
@@ -76,13 +78,6 @@
     "button": false,
     "center_on_match": false,
     "include_ignored": false,
-  },
-  "indent_guides": {
-    "enabled": true,
-    "background_coloring": "disabled",
-    "coloring": "fixed",
-    "active_line_width": 2,
-    "line_width": 1
   },
   "status_bar": {
     "active_encoding_button": "non_utf8",
@@ -106,6 +101,11 @@
     "mute_on_join": true,
   },
   "context_servers": {
+    "mcp-server-sequential-thinking": {
+      "enabled": false,
+      "remote": false,
+      "settings": {}
+    },
     "Multi_Fetch": {
       "enabled": true,
       "command": "bunx",
@@ -172,29 +172,36 @@
     }
   },
   "git_panel": {
+    "fallback_branch_name": "master",
     "tree_view": true,
-    "collapse_untracked_diff": false,
+    "collapse_untracked_diff": true,
     "sort_by_path": false,
     "status_style": "label_color",
-    "dock": "right"
+    "dock": "left"
   },
   "ssh_connections": [
     {
       "host": "192.168.0.100",
-      "nickname": "linux",
       "username": "pante",
       "args": [],
       "projects": [
+        {
+          "paths": [
+            "/home/fabian"
+          ]
+        },
         {
           "paths": [
             "/home/pante"
           ]
         }
       ],
+      "nickname": "linux"
     },
   ],
   "base_keymap": "VSCode",
   "edit_predictions": {
+    "provider": "supermaven",
     "disabled_globs": [
 	    "*.log*"
     ],
@@ -241,7 +248,6 @@
   "buffer_line_height": "comfortable",
   // "format_on_save": "language_server",
   "format_on_save": "off",
-  "hard_tabs": true,
   "tab_bar": {
     "show": false,
     "show_nav_history_buttons": false,
@@ -255,17 +261,27 @@
     "use_smartcase_find": true,
   },
   "notification_panel": {
-    "button": false,
+    "button": true,
   },
   "agent": {
+    "favorite_models": [
+      {
+        "provider": "google",
+        "model": "gemini-2.5-flash"
+      },
+      {
+        "provider": "google",
+        "model": "gemini-3-pro-preview"
+      }
+    ],
     "show_turn_stats": true,
     "enable_feedback": false,
     "always_allow_tool_actions": true,
-    "default_profile": "ask",
+    "default_profile": "write",
     "play_sound_when_agent_done": true,
     "default_model": {
       "provider": "google",
-      "model": "gemini-2.5-flash"
+      "model": "gemini-3-pro-preview"
     },
     // "provider": {
     //   "default_model": "claude-3-5-sonnet",
@@ -291,36 +307,33 @@
   "collaboration_panel": {
     "button": false,
   },
-  "features": {
-    // "edit_prediction_provider": "zed"
-    "edit_prediction_provider": "supermaven"
-    // "edit_prediction_provider": "codestral"
+  "hard_tabs": true,
+  "formatter": "language_server",
+  "show_whitespaces": "all",
+  "indent_guides": {
+    "enabled": true,
+    "background_coloring": "disabled",
+    "coloring": "fixed",
+    "active_line_width": 2,
+    "line_width": 1
   },
   "languages": {
     "JavaScript": {
+	    "formatter": "language_server",
       "completions": {
         "words": "enabled"
       },
-      "show_whitespaces": "all",
-      "indent_guides": {
-        "background_coloring": "disabled"
+    },
+    "TypeScript": {
+	    "formatter": "language_server",
+      "completions": {
+        "words": "enabled"
       },
-      "hard_tabs": true
     },
     "PHP": {
+	    "formatter": "language_server",
       "inlay_hints": {
         "show_background": false
-      },
-      "indent_guides": {
-        "background_coloring": "disabled",
-        "coloring": "fixed",
-        "active_line_width": 1,
-        "line_width": 1
-      },
-      "hard_tabs": true,
-      "show_whitespaces": "all",
-      "completions": {
-        "words": "enabled"
       },
       "language_servers": [
         "intelephense",
@@ -330,8 +343,8 @@
       ]
     },
     "LOG": {
-      "show_edit_predictions": false
-    }
+      "show_edit_predictions": false,
+    },
   },
   "file_types": {
     "JavaScript": ["js", "mjs", "cjs", "jsx", "gs"]

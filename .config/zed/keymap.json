@@ -1,6 +1,35 @@
 [
   // --- Global / Workspace Bindings ---
   {
+    "bindings": {
+      "cmd-a": "agent::ToggleFocus",
+      "cmd-g": "git_panel::ToggleFocus",
+      "cmd-e": "project_panel::ToggleFocus",
+    }
+  },
+
+  // --- Panel Context Overrides (Enables "Toggle to Close" when focused) ---
+  {
+    "context": "ProjectPanel",
+    "bindings": {
+      "cmd-e": "project_panel::ToggleFocus"
+    }
+  },
+  {
+    "context": "GitPanel",
+    "bindings": {
+      "cmd-g": "git_panel::ToggleFocus"
+    }
+  },
+  {
+    "context": "AssistantPanel",
+    "bindings": {
+      "cmd-a": "agent::ToggleFocus"
+    }
+  },
+
+  // --- Workspace Context ---
+  {
     "context": "Workspace",
     "bindings": {
       "cmd-p": "file_finder::Toggle",
@@ -10,7 +39,7 @@
       "alt-j": "workspace::ActivatePaneDown",
       "alt-shift-s": "workspace::SaveAs",
       "ctrl-cmd-4": "workspace::ToggleRightDock",
-      "cmd-_": "workspace::ToggleRightDock",
+      // "cmd-_": "workspace::ToggleRightDock",
       "cmd-shift-s": null,
       "alt-cmd-b": null,
       "cmd-m": null
@@ -36,13 +65,13 @@
   {
     "context": "Editor",
     "bindings": {
-      "cmd-a": "agent::ToggleFocus",
       "cmd-s": "workspace::Save",
-      "cmd-g": "git_panel::ToggleFocus",
       "cmd-shift-s": "git::StageRange",
       "ctrl-n": "search::SelectNextMatch",
       "ctrl-d": "search::SelectNextMatch",
-      "alt-n": "git::StageAndNext"
+      "alt-n": "git::StageAndNext",
+      "∂": "agent::ToggleFocus",
+      "©": "git_panel::ToggleFocus"
     }
   },
   {
@@ -54,7 +83,6 @@
       "ctrl-g": "go_to_line::Toggle",
       // "cmd-a": "pane::ActivatePreviousItem",
       // "cmd-d": "pane::ActivateNextItem",
-      "cmd-e": null,
       "cmd-h": ["buffer_search::Deploy", { "focus": false }],
       "cmd-shift-e": ["buffer_search::Deploy", { "focus": false }]
     }
@@ -120,7 +148,7 @@
     }
   },
   {
-    "context": "EditorParent",
+    "context": "EditorParent || Terminal",
     "bindings": {
       "cmd-r": "agent::ToggleFocus"
     }
@@ -128,13 +156,16 @@
   {
     "bindings": {
       "ctrl-p": ["task::Spawn", { "task_name": "Television File Finder", "reveal_target": "center" }],
-      "cmd-.": "terminal_panel::ToggleFocus",
+      // "cmd-.": "terminal_panel::ToggleFocus",
+      "ƒ": "terminal_panel::ToggleFocus",
+      // "†": "terminal_panel::ToggleFocus",
       "cmd->": "workspace::NewCenterTerminal",
       "cmd-h": "workspace::ActivatePaneLeft",
       "cmd-;": "workspace::ToggleRightDock",
       "cmd-j": "tab_switcher::ToggleAll",
       "cmd-l": "tab_switcher::Toggle",
-      "cmd-e": "project_panel::ToggleFocus",
+      "cmd-k": "tab_switcher::CloseSelectedItem",
+      // "cmd-e": "project_panel::ToggleFocus",
       "alt-cmd-h": null
     }
   },
@@ -148,6 +179,12 @@
     "context": "(MessageEditor && !Picker) > (Editor && !use_modifier_to_send)",
     "bindings": {
       "cmd-enter": null
+    }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "cmd-s": "pane::SplitDown"
     }
   }
 ]
