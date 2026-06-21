@@ -2,10 +2,12 @@
   // --- Global / Workspace Bindings ---
   {
     "bindings": {
-      "cmd-a": "agent::ToggleFocus",
+      // "cmd-a": "agent::ToggleFocus",
       "cmd-g": "git_panel::ToggleFocus",
       "cmd-e": "project_panel::ToggleFocus",
-    }
+      "å": "agent::ToggleFocus",
+      "©": "git_panel::ToggleFocus",
+    },
   },
 
   // --- Panel Context Overrides (Enables "Toggle to Close" when focused) ---
@@ -18,15 +20,15 @@
   {
     "context": "GitPanel",
     "bindings": {
-      "cmd-g": "git_panel::ToggleFocus"
+      "cmd-g": "git_panel::ToggleFocus",
     }
   },
-  {
-    "context": "AssistantPanel",
-    "bindings": {
-      "cmd-a": "agent::ToggleFocus"
-    }
-  },
+  // {
+  //   "context": "AssistantPanel",
+  //   "bindings": {
+  //     "cmd-a": "agent::ToggleFocus"
+  //   }
+  // },
 
   // --- Workspace Context ---
   {
@@ -70,8 +72,8 @@
       "ctrl-n": "search::SelectNextMatch",
       "ctrl-d": "search::SelectNextMatch",
       "alt-n": "git::StageAndNext",
-      "∂": "agent::ToggleFocus",
-      "©": "git_panel::ToggleFocus"
+      "å": "agent::ToggleFocus",
+      "©": "git_panel::ToggleFocus",
     }
   },
   {
@@ -93,7 +95,7 @@
     "context": "vim_mode == normal || vim_mode == visual",
     "bindings": {
       "s": "vim::PushSneak",
-      "shift-s": "vim::PushSneakBackward"
+      "shift-s": "vim::PushSneakBackward",
     }
   },
 
@@ -111,13 +113,20 @@
       "_": "git::ToggleStaged",
       "cmd-shift-s": "git::ToggleStaged",
       "-": "editor::ToggleSelectedDiffHunks",
+      "backspace": "editor::ToggleSelectedDiffHunks",
       "space f": "editor::ToggleSelectedDiffHunks",
 
       // LSP / Coding
       "g i": "editor::FindAllReferences",
       "g a": "editor::ToggleCodeActions",
       "g r": "editor::Rename",
-      "space w": "workspace::Save"
+      "space w": "workspace::Save",
+      "cmd-Enter": [
+	      "task::Spawn", {
+		      "task_name": "Oil",
+		      "reveal_target": "center",
+	      },
+      ],
     }
   },
 
@@ -150,7 +159,8 @@
   {
     "context": "EditorParent || Terminal",
     "bindings": {
-      "cmd-r": "agent::ToggleFocus"
+      "cmd-r": "agent::ToggleFocus",
+      "å": "agent::ToggleFocus"
     }
   },
   {

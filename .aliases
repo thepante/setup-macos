@@ -2,9 +2,10 @@
 alias ..='smartcd'
 alias c='clear'
 alias cdg='cd $(git rev-parse --show-toplevel)'
-alias cat='bat'
+#alias cat='bat'
 alias nv='nvim'
 alias hq='htmlq'
+alias npm='pnpm'
 alias ls='ls -G'
 alias la='ls -lahG'
 alias -g grep='grep --color=auto'
@@ -66,6 +67,33 @@ ht() {
     static-web-server -d . -p "808$port"
 }
 
+cnt() {
+  if [ -z "$SERVER_WEB_KEY" ]; then
+    echo "Sin KEY especificada: configurá bien el .envrc"
+    return 1
+  fi
+
+  if [ -z "$SSH_ADDRESS" ]; then
+    echo "Sin ssh url: configurá bien el .envrc"
+    return 1
+  fi
+
+  if ! command -v infisical &> /dev/null; then
+      echo "infisical no está instalado. Instalando...";
+      brew install infisical/get-cli/infisical
+  fi
+
+  if ! command -v sshpass &> /dev/null; then
+      echo "sshpass no está instalado. Instalando...";
+      brew install sshpass
+  fi
+
+  echo "Obteniendo info..."
+  server_password=$(infisical secrets get "$SERVER_WEB_KEY" --plain)
+
+  echo "Conectando..."
+  sshpass -p "$server_password" ssh $SSH_ADDRESS;
+}
 
 scan-rows() {
   input="${1:-.}"

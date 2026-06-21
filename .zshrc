@@ -5,6 +5,10 @@ if [ "$TERM_PROGRAM" != "Apple_Terminal" ] && [ "$TERM_PROGRAM" != "WarpTerminal
   eval "$(oh-my-posh init zsh --config ~/.zsh/theme.omp.json)"
 fi
 
+# case "$TERM" in
+#     xterm-color|*-256color|xterm-ghostty) color_prompt=yes;;
+# esac
+
 autoload -U select-word-style
 select-word-style bash
 
