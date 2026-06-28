@@ -150,7 +150,7 @@
 				"opencode/gpt-5-nano"
 			],
 			"default_config_options": {
-				"mode": "build",
+				"mode": "plan",
 				"effort": "medium",
 				"model": "google/gemini-3.1-pro-preview"
 			},
@@ -198,7 +198,7 @@
 	},
 	"bottom_dock_layout": "left_aligned",
 	"preview_tabs": {
-		"enable_preview_from_file_finder": false
+		"enable_preview_from_file_finder": true
 	},
 	"tabs": {
 		"file_icons": true,

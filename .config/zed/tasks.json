@@ -1,6 +1,13 @@
 // Project tasks configuration. See https://zed.dev/docs/tasks for documentation.
 //
 [
+	{
+    "label": "Oil",
+    "command": "nvim -u ~/.config/nvim/init-minimal-oil.lua \"$(dirname \"$ZED_FILE\" 2>/dev/null || echo \"$ZED_WORKTREE_ROOT\")\"",
+    "use_new_terminal": true,
+    "reveal": "always",
+    "hide": "on_success",
+  },
   {
     "label": "LazyGit",
     "command": "lazygit",

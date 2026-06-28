@@ -86,8 +86,12 @@
       // "cmd-a": "pane::ActivatePreviousItem",
       // "cmd-d": "pane::ActivateNextItem",
       "cmd-h": ["buffer_search::Deploy", { "focus": false }],
-      "cmd-shift-e": ["buffer_search::Deploy", { "focus": false }]
-    }
+      "cmd-shift-e": ["buffer_search::Deploy", { "focus": false }],
+      "cmd-i": "project_symbols::Toggle",
+    },
+    "unbind": {
+	    "cmd-t": "project_symbols::Toggle",
+    },
   },
 
   // --- Vim: Global / Shared Modes ---
@@ -196,5 +200,5 @@
     "bindings": {
       "cmd-s": "pane::SplitDown"
     }
-  }
+  },
 ]
