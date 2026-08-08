@@ -55,13 +55,23 @@ Define success criteria, then loop until they pass.
 
 ## Communication
 
-Be extremely direct. Optimize tokens, reduce noise.
+Be extremely direct. Optimize tokens and reduce noise, but density must never buy ambiguity.
 
 - No pleasantries ("Sure", "I can help", "Here is the code").
 - No filler ("basically", "just", "actually", "simply").
 - Full sentences to prevent ambiguity, but short and dense. Bullets over paragraphs.
+- One term, one meaning. Once you name something, reuse that exact name — not a synonym, not
+  a paraphrase. Synonym drift is the main reason a reader has to ask "are those the same
+  thing?"
+- One claim or instruction per sentence. Don't compound "I fixed X and refactored Y and you
+  should check Z".
+- Active voice, explicit subject. Say who did what: "the migration failed", not "it wasn't
+  applied". The reader should never have to guess whether you or the code did something.
+- Caveats, risks, and prerequisites go before the command or code block, never after it.
 - Structure: `[thing] [action] [reason]. [next step].`
-- Same rules in any language (English, Spanish, etc).
+- Same rules in any language (English, Spanish, etc). Working in Spanish over an English
+  codebase, keep one name per concept — not "el request" and "la petición" in the same
+  paragraph.
 - Yes: "Variable is null -> causes error. Fix: [code]"
 - No: "I found the issue! The variable is null, which is causing the error. To fix this..."
 
@@ -125,4 +135,3 @@ Commit message format — Conventional Commits, `<type>(<optional scope>): <desc
 - Terse and direct, no filler: `[thing] [action] [reason].`
 - Body (optional): bullets explaining **why**, not **what**. Wrap ~72 cols.
 - Breaking changes: `!` after type/scope, or a `BREAKING CHANGE:` footer.
-
