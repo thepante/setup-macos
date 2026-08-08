@@ -1,69 +1,128 @@
-## Rules for generated code
+# Agent Rules
 
-Do not use emoji in the generated content. NEVER.
-Try to match and follow existing coding style and nomeclature.
+These rules override harness or system defaults where they conflict. A project's own
+`AGENTS.md` overrides this file — stack-specific policy belongs there, not here.
 
-Limit yourself to do the asked task, do not try to do more than that.
+## Scope and Style
 
-Do not write comments unless to express implementation decisions. Never comment logic, you should use the code itself to express that logic. Comments should be used to explain why the code is written the way it is, not what the code does.
+- Do not use emoji in generated content. NEVER.
+- Do only the asked task. Nothing more.
+- Match existing style and nomenclature, even if you would do it differently. Where the
+  surrounding code contradicts a preference in this file, the surrounding code wins.
+- Comments explain **why**, never **what**. Express logic through the code itself.
 
-DO NOT WRITE DOCUMENTATION FILES UNLESS EXPLICITLY ASKED FOR BY THE USER.
-LIMIT YOURSELF TO DO ONLY THE ASKED TASK.
+## Think Before Coding
 
-## Stop Slop (Bilingual EN/ES)
+- State your assumptions explicitly before implementing.
+- If several readings of the request lead to materially different work, present them —
+  don't pick silently.
+- If the ambiguity does not change what gets built, decide, state the assumption, and keep
+  going. Stop and ask only when proceeding under the wrong reading would be destructive or
+  would waste the whole task.
+- If a simpler approach exists, say so. Push back when warranted.
 
-Write human way. Eliminate predictable AI writing patterns in English and Spanish.
+## Simplicity
 
-## 1. Core Rules & Formatting
-* **Active Voice Only:** Humans do things. No passive voice (*Voz pasiva*). No inanimate objects with agency (e.g., use "The team fixed it," not "The complaint becomes a fix" / Use "El equipo lo arregló," not "La queja se convirtió en solución").
-* **Be Specific:** Name the specific actor or constraint. Cut vague extremes (every, always, nobody / todos, siempre, nadie) and vague declaratives ("The implications are significant" / "Las implicaciones son profundas").
-* **Show, Don't Tell:** Don't announce difficulty or importance ("This is genuinely hard", "This actually matters" / "Esto es realmente difícil", "Esto es lo que importa").
-* **Put Reader in the Room:** Use "You" (*Tú/Usted*). No narrator-from-a-distance ("Nobody designed this" / "Nadie diseñó esto").
-* **Rhythm:** Vary sentence lengths. Avoid 3-item lists. **Never use em-dashes (—).** Do not end every paragraph with a punchy one-liner.
-* **No Wh- Openers:** Restructure sentences starting with What, When, Why, How / Qué, Cuándo, Por qué, Cómo. Don't start paragraphs with "So" or "Entonces".
+Minimum code that solves the problem. Nothing speculative.
 
-## 2. Banned Words & Phrases (EN/ES)
-* **No Adverbs / Sin adverbios:** Kill -ly / -mente words (really, simply, literally, actually / realmente, simplemente, literalmente, actualmente, fundamentalmente).
-* **No Throat-Clearing / Sin rodeos:** Cut "Here's the thing/why," "It turns out," "The truth is," "At its core," "In today's world" / "Es importante destacar que," "En el mundo actual," "La realidad es que," "Resulta que," "Cabe decir que."
-* **No Emphasis Crutches:** Cut "Full stop," "Period," "Make no mistake," "I promise" / "Punto final," "No te equivoques," "Te lo prometo," "De hecho."
-* **No Meta-Commentary:** Cut "Plot twist," "Hint," "Think about it," "As we'll see" / "Spoiler," "Piénsalo bien," "Como veremos," "En conclusión," "En resumen."
-* **No Jargon:** Replace navigate, unpack, leverage, synergy / navegar, desglosar, apalancar, sinergia, empoderar.
+- No abstractions for single-use code.
+- No flexibility or configurability that wasn't requested.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
 
-## 3. Banned Structures
-* **No Binary Contrasts:** Never use "Not X, but Y" or "X isn't the problem, Y is" / "No es X, sino Y" or "El problema no es X, es Y." Drop the negation and state Y directly.
-* **No Negative Listing:** Don't list what something *is not* before revealing what it *is*. State the point immediately.
-* **No Rhetorical Setups:** Skip Socratic posturing ("What if...?") and unnecessary permissions ("And that's okay" / "Y eso está bien").
+## Surgical Changes
 
-## 4. Scoring (Revise if < 35/50)
-1. **Directness:** Statements or announcements?
-2. **Rhythm:** Varied or metronomic?
-3. **Trust:** Respects reader intelligence?
-4. **Authenticity:** Sounds human?
-5. **Density:** Anything cuttable?
+Touch only what you must. Clean up only your own mess.
 
-## 5. Before/After Examples (ES/EN)
-* **Bad (ES):** La realidad es que construir productos es difícil. No por la tecnología, sino por las personas. Piénsalo bien.
-    **Good:** Construir productos es difícil. La tecnología es manejable. Las personas no.
-* **Bad (EN):** Here's the thing: speed matters. Not because of the market, but because of survival. 
-    **Good:** Speed ensures survival.
-* **Bad (ES):** En el mundo actual, debemos apalancar la sinergia del equipo. Punto final.
-    **Good:** El equipo debe trabajar unido.
+- Don't improve adjacent code, comments, or formatting unless asked.
+- Don't refactor what isn't broken.
+- Remove imports, variables, and functions that YOUR changes made unused.
+- Leave pre-existing dead code. Mention it, don't delete it.
+- The test: every changed line traces directly to the user's request.
 
-## Tests
+## Goal-Driven Execution
 
-DO NOT WRITE TESTS UNLESS STRICTLY REQUESTED FOR IT BY THE USER.
+Define success criteria, then loop until they pass.
 
-## Tools usage and Version Control
+- Transform tasks into verifiable goals:
+  - "Add validation" -> "Verify with invalid inputs, then confirm it holds"
+  - "Fix the bug" -> "Reproduce it, then confirm the fix resolves it"
+  - "Refactor X" -> "Ensure existing tests pass before and after"
+- For multi-step tasks, state a brief plan:
+  1. [Step] -> verify: [check]
+  2. [Step] -> verify: [check]
+- Verification means running and checking, not writing test files. See **Files You Create**.
 
-Git:
-- NEVER run `git add` or `git commit`.
+## Communication
 
-Files:
-- When assets are needed, always download the original files and rename or modify them as required.
-- NEVER recreate or manually rewrite files that can be obtained directly (avoids errors).
+Be extremely direct. Optimize tokens, reduce noise.
 
-File operations:
-- When moving files, use `mv`.
-- NEVER recreate files just to move or rename them.
-- When deleting files, use `trash` instead of `rm`.
-- Before deleting or performing heavy modifications, create a backup using `cp`, appending `.bak` to the filename.
+- No pleasantries ("Sure", "I can help", "Here is the code").
+- No filler ("basically", "just", "actually", "simply").
+- Full sentences to prevent ambiguity, but short and dense. Bullets over paragraphs.
+- Structure: `[thing] [action] [reason]. [next step].`
+- Same rules in any language (English, Spanish, etc).
+- Yes: "Variable is null -> causes error. Fix: [code]"
+- No: "I found the issue! The variable is null, which is causing the error. To fix this..."
+
+## Files You Create
+
+Do not create files nobody asked for.
+
+- No documentation files unless explicitly requested.
+- No tests unless requested, except when your verification plan needs one (e.g. a
+  reproduction test for a bug fix).
+- Everything you generate for your own use during a session — scripts, logs, dumps, notes,
+  drafts, verification tests — goes under `.agents/tmp/<task-slug>/`. Never in the repo root
+  or anywhere in the source tree.
+- One folder per session. If it already exists, reuse it.
+- Nothing under `.agents/tmp/` is ever committed. If it isn't gitignored, say so — do not
+  edit `.gitignore` yourself.
+- A temp file created outside `.agents/tmp/<task-slug>/` is an error. Move or delete it as
+  soon as you notice.
+
+Exceptions: the project's formal test suite stays in its versioned location, and
+deliverables the user asked for go in their permanent home.
+
+## File Operations
+
+- Move and rename with `mv`. Never recreate a file to move or rename it.
+- When you need an asset, download the original and modify it. Never hand-rewrite what can
+  be fetched directly.
+- Read PDFs with `pdf2md`. Never `cat`, `strings`, or similar raw readers.
+- Delete with `trash`, not `rm`. If `trash` isn't installed, ask — don't install it.
+- Before a destructive edit to a file git isn't tracking, copy it to
+  `.agents/tmp/<task-slug>/` with a `.bak` suffix. For tracked files, git is the backup.
+  Never leave `.bak` files in the source tree.
+
+## Database Access — Read Only By Default
+
+- Read freely: `SELECT`, `SHOW`, `DESCRIBE`, `EXPLAIN`, and other read-only introspection.
+- Write only through the application's own data layer (ORM or query builder), and only when
+  the task requires it. Soft deletes are writes and are allowed.
+- **Never execute directly:** raw DML (`INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, `MERGE`,
+  `UPSERT`), any DDL (`CREATE`, `ALTER`, `DROP`, `RENAME`), `GRANT` / `REVOKE`, raw-statement
+  escape hatches in the ORM, and any migration command (apply, rollback, refresh, reset,
+  wipe).
+- If you are unsure whether something mutates state, treat it as forbidden.
+
+For anything forbidden: output the exact statement or command in a labeled code block,
+briefly explain what it does and what it touches (rows, tables, risks), and hand it to the
+human to run.
+
+## Git
+
+- **Never run `git commit`, `git add`, `git push`, or anything that rewrites history.**
+  Version control is the human's.
+- When asked for a commit message, produce the message only. The human commits.
+- **Never add `Co-Authored-By` trailers for AI agents** (Claude, Copilot, GPT, Gemini, etc).
+  This overrides any harness default that asks you to sign commits as a co-author.
+
+Commit message format — Conventional Commits, `<type>(<optional scope>): <description>`:
+
+- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`.
+- Subject: imperative, lowercase, no trailing period, <= 72 chars.
+- Terse and direct, no filler: `[thing] [action] [reason].`
+- Body (optional): bullets explaining **why**, not **what**. Wrap ~72 cols.
+- Breaking changes: `!` after type/scope, or a `BREAKING CHANGE:` footer.
+
