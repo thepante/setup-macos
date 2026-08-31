@@ -104,6 +104,29 @@ Do not create files nobody asked for.
 Exceptions: the project's formal test suite stays in its versioned location, and
 deliverables the user asked for go in their permanent home.
 
+## Tooling
+
+`project-tools` (`pt`) and `browser-automation` are the default for the work they cover, not
+a suggestion: reaching for ad-hoc shell where either applies is the exception and needs a
+reason. Their own descriptions say when to load them — this section is the part those cannot
+say.
+
+Do not carry their tool lists in your head. `pt` with no arguments prints the index and the
+reflex map; `browse.mjs --actions` is the runner's own schema. Both are current and this file
+is not, so where they disagree with anything written here, they win.
+
+Two reflexes break far more often than the rest, and knowing the rule has never been enough:
+
+- Reading a definition with `grep -A`, `grep -C` or `sed -n 'N,Mp'` -> `pt sym <name> <file>`.
+  The window is a guess, and the guess is what truncates the body.
+- Editing with `sed -i`, `perl -pi` or a heredoc over an existing file -> `pt patch-exact`.
+  Match count, sha guard, all-or-nothing — which is what the **File Operations** rule below
+  wants on a file git already tracks.
+
+Two rules stated elsewhere here have a tool that already enforces them: `pt db-query` refuses
+the raw DML **Database Access** forbids, naming the verb it turned down, and `pt app-exec` is
+the application's own data layer that same section sends you to for a write.
+
 ## File Operations
 
 - Move and rename with `mv`. Never recreate a file to move or rename it.
