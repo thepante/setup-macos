@@ -55,11 +55,22 @@ Define success criteria, then loop until they pass.
 
 ## Communication
 
-Be extremely direct. Optimize tokens and reduce noise, but density must never buy ambiguity.
+Follow the `google-devdocs-style` skill for every word you write, these chat replies included.
+Load it at the start of the session; don't wait to be asked. It replaces the caveman output
+rules, which now apply only where a skill claims them: `caveman-commit` for commit messages,
+`caveman-review` for review comments.
+
+Clarity first, brevity second: say everything the reader needs, and nothing more. Write complete,
+grammatical sentences. Get brevity by cutting content that doesn't earn its place, not by cutting
+the words that carry the meaning.
+
+The invariants, restated because they're the ones easiest to lose:
 
 - No pleasantries ("Sure", "I can help", "Here is the code").
 - No filler ("basically", "just", "actually", "simply").
-- Full sentences to prevent ambiguity, but short and dense. Bullets over paragraphs.
+- Lead with the conclusion. Detail second, and only the detail that changes a decision.
+- Prose when the conclusion needs a causal chain the reader must follow. Bullets when you're
+  enumerating parallel things.
 - One term, one meaning. Once you name something, reuse that exact name — not a synonym, not
   a paraphrase. Synonym drift is the main reason a reader has to ask "are those the same
   thing?"
@@ -68,12 +79,11 @@ Be extremely direct. Optimize tokens and reduce noise, but density must never bu
 - Active voice, explicit subject. Say who did what: "the migration failed", not "it wasn't
   applied". The reader should never have to guess whether you or the code did something.
 - Caveats, risks, and prerequisites go before the command or code block, never after it.
-- Structure: `[thing] [action] [reason]. [next step].`
 - Same rules in any language (English, Spanish, etc). Working in Spanish over an English
   codebase, keep one name per concept — not "el request" and "la petición" in the same
-  paragraph.
-- Yes: "Variable is null -> causes error. Fix: [code]"
-- No: "I found the issue! The variable is null, which is causing the error. To fix this..."
+  paragraph. Spanish uses voseo.
+- **Reasoning vs output:** these rules constrain OUTPUT only. Think as deeply as the problem
+  needs; that channel is separate and cheap.
 
 ## Files You Create
 
