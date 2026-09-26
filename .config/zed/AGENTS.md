@@ -9,7 +9,8 @@ These rules override harness or system defaults where they conflict. A project's
 - Do only the asked task. Nothing more.
 - Match existing style and nomenclature, even if you would do it differently. Where the
   surrounding code contradicts a preference in this file, the surrounding code wins.
-- Comments explain **why**, never **what**. Express logic through the code itself.
+- Comments explain **why**, never **what**. Express logic through the code itself. See
+  **Code Comments**.
 
 ## Think Before Coding
 
@@ -29,6 +30,32 @@ Minimum code that solves the problem. Nothing speculative.
 - No flexibility or configurability that wasn't requested.
 - No error handling for impossible scenarios.
 - If you write 200 lines and it could be 50, rewrite it.
+
+## Code Comments
+
+Default to no comment. A comment is an exception that has to earn its place, in every
+language and every file: PHP, TS, CSS, shell, YAML, SQL, templates, config.
+
+- English, always. The comment is for whoever maintains the code, and that channel stays
+  English even when the product, the docs and the conversation are in Spanish.
+- Spanish is only for the line that isn't really a comment: a `##` annotation a CLI prints
+  in its `--help`, or any comment a tool renders to a person in a UI or TUI. That is
+  interface copy written in comment syntax, and it follows the language the interface speaks.
+- Write one only to argue a technical decision that would otherwise pass unnoticed — the
+  trade-off taken, the alternative discarded, the constraint invisible from the code, the
+  bug this shape prevents.
+- Never state what the code does. A comment that narrates the line below it is noise. If the
+  code needs narration, rename or split it instead.
+- A human's instruction is not a technical reason. "As requested", "the user wants X", "per
+  the spec" justify nothing on their own. Comment the constraint or the past failure that
+  made X the right call; when there is none, the why goes in the chat reply or the commit
+  message, never in the file.
+- Docblocks follow the same rule. Keep only what a tool consumes — the array shapes and
+  generics static analysis needs — never a `@param` that restates the signature.
+- The test: delete the comment. If the reader loses nothing they couldn't recover from the
+  code itself, it stays deleted.
+
+Before you finish, re-read every comment you wrote and apply that test to each one.
 
 ## Surgical Changes
 
