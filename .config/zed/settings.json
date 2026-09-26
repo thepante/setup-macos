@@ -31,10 +31,18 @@
 						"maxTsServerMemory": 4096
 					},
 					"inlayHints": {
-						"parameterNames": { "enabled": "literals" },
-						"variableTypes": { "enabled": false },
-						"propertyDeclarationTypes": { "enabled": true },
-						"functionLikeReturnTypes": { "enabled": false }
+						"parameterNames": {
+							"enabled": "literals"
+						},
+						"variableTypes": {
+							"enabled": false
+						},
+						"propertyDeclarationTypes": {
+							"enabled": true
+						},
+						"functionLikeReturnTypes": {
+							"enabled": false
+						}
 					}
 				},
 				"javascript": {
@@ -53,7 +61,10 @@
 				"intelephense": {
 					"files": {
 						"maxSize": 5000000,
-						"associations": ["*.php", "*.blade.php"],
+						"associations": [
+							"*.php",
+							"*.blade.php"
+						],
 						"exclude": [
 							"**/.git/**",
 							"**/node_modules/**",
@@ -84,13 +95,52 @@
 						"enable": false
 					},
 					"stubs": [
-						"apache", "bcmath", "bz2", "calendar", "Core", "ctype", "curl",
-						"date", "dom", "fileinfo", "filter", "gd", "gettext", "hash",
-						"iconv", "imap", "intl", "json", "libxml", "mbstring", "mcrypt",
-						"mysql", "mysqli", "pcntl", "pcre", "PDO", "pdo_mysql", "Phar",
-						"readline", "redis", "regex", "session", "SimpleXML", "soap",
-						"sockets", "sodium", "standard", "superglobals", "tokenizer",
-						"xml", "xdebug", "xmlreader", "xmlwriter", "yaml", "zip", "zlib"
+						"apache",
+						"bcmath",
+						"bz2",
+						"calendar",
+						"Core",
+						"ctype",
+						"curl",
+						"date",
+						"dom",
+						"fileinfo",
+						"filter",
+						"gd",
+						"gettext",
+						"hash",
+						"iconv",
+						"imap",
+						"intl",
+						"json",
+						"libxml",
+						"mbstring",
+						"mcrypt",
+						"mysql",
+						"mysqli",
+						"pcntl",
+						"pcre",
+						"PDO",
+						"pdo_mysql",
+						"Phar",
+						"readline",
+						"redis",
+						"regex",
+						"session",
+						"SimpleXML",
+						"soap",
+						"sockets",
+						"sodium",
+						"standard",
+						"superglobals",
+						"tokenizer",
+						"xml",
+						"xdebug",
+						"xmlreader",
+						"xmlwriter",
+						"yaml",
+						"zip",
+						"zlib"
 					]
 				}
 			}
@@ -130,11 +180,15 @@
 	"cli_default_open_behavior": "new_window",
 	"use_system_window_tabs": false,
 	"agent_servers": {
-		"pi-acp": {
-			"default_mode": "medium",
-			"type": "registry"
-		},
-		"qwen-code": {
+		"claude-acp": {
+   "default_config_options": {
+    "mode": "auto",
+    "effort": "xhigh",
+    "model": "opus[1m]"
+   },
+   "type": "registry"
+  },
+  "qwen-code": {
 			"default_config_options": {
 				"mode": "plan",
 				"model": "coder-model(qwen-oauth)"
@@ -207,7 +261,8 @@
 	"title_bar": {
 		"show_branch_status_icon": false,
 		"show_menus": false,
-		"show_user_picture": true
+		"show_user_picture": true,
+		"show_worktree_name": true,
 	},
 	"search": {
 		"regex": true,
@@ -221,6 +276,9 @@
 		"cursor_position_button": true,
 		"line_endings_button": true,
 		"active_language_button": true
+	},
+	"cursor_animation": {
+		"enabled": true
 	},
 	"global_lsp_settings": {
 		"button": true
@@ -240,9 +298,14 @@
 	},
 	"context_servers": {
 		"mcp-server-playwright": {
-			"enabled": false,
+			"enabled": true,
 			"remote": false,
-			"settings": {}
+			"settings": {
+				"output_dir": "output_playwright/",
+				"viewport_size": "1280x720",
+				"headless": false,
+				"browser": "chromium"
+			}
 		},
 		"chrome-devtools-mcp-zed": {
 			"enabled": false,
@@ -269,7 +332,7 @@
 			}
 		},
 		"mcp-server-figma": {
-			"enabled": false,
+			"enabled": true,
 			"remote": false,
 			"settings": {
 				"figma_api_key": "YOUR_FIGMA_ACCESS_TOKEN"
@@ -346,6 +409,11 @@
 		}
 	},
 	"git_panel": {
+		"show_count_badge": false,
+  "folder_indicator": "chevron",
+  "file_icons": true,
+  "group_by": "none",
+		"entry_primary_click_action": "view_file",
 		"fallback_branch_name": "master",
 		"tree_view": true,
 		"collapse_untracked_diff": true,
@@ -553,19 +621,72 @@
 		"button": true
 	},
 	"agent": {
+		"sandbox_permissions": {
+			"allow_all_hosts": true
+		},
+		"single_file_review": true,
+		"show_turn_stats": true,
+		"thinking_display": "auto",
+		"auto_compact": {
+			"threshold": "90%"
+		},
+		"play_sound_when_agent_done": "always",
+		"enable_feedback": false,
 		"sidebar_side": "right",
 		"flexible": false,
 		"dock": "right",
-		"default_profile": "ask",
+		"default_profile": "write",
 		"default_model": {
-			"provider": "lmstudio",
-			"model": "qwen/qwen3.5-9b",
-			"enable_thinking": false
+			"effort": "high",
+			"provider": "google",
+			"model": "gemini-3.1-pro-preview",
+			"enable_thinking": true
 		},
-		"favorite_models": [],
+		// "commit_message_model": {
+		// 	"provider": "zed",
+		// 	"model": "gemini",
+		// 	// "effort": "high"
+		// },
+		"favorite_models": [
+			{
+				"provider": "google",
+				"model": "gemini-3.1-pro-preview",
+				"enable_thinking": true,
+				"effort": "high"
+			},
+			{
+				"provider": "google",
+				"model": "gemini-3-flash-preview",
+				"enable_thinking": true,
+				"effort": "medium"
+			}
+		],
 		"model_parameters": [],
 		"tool_permissions": {
 			"tools": {
+				"mcp:mcp-server-context7:query-docs": {
+					"default": "allow"
+				},
+				"mcp:Filesystem:read_multiple_files": {
+					"default": "allow"
+				},
+				"mcp:Filesystem:read_file": {
+					"default": "allow"
+				},
+				"fetch": {
+					"default": "allow",
+					"always_allow": [
+						{
+							"pattern": "^https?://localhost"
+						},
+						{
+							"pattern": "^https?://127\\.0\\.0\\.1"
+						}
+					]
+				},
+				"skill": {
+					"default": "allow"
+				},
 				"save_file": {
 					"default": "allow"
 				},
@@ -809,6 +930,9 @@
 		"line_width": 1
 	},
 	"languages": {
+		"Markdown": {
+			"tab_size": 6
+		},
 		"JavaScript": {
 			"formatter": "language_server",
 			"completions": {
@@ -841,6 +965,13 @@
 				"words": "enabled"
 			}
 		},
+		"HTML": {
+			"formatter": "auto",
+			"prettier": {
+				"printWidth": 120,
+				"htmlWhitespaceSensitivity": "ignore"
+			}
+		},
 		"PHP": {
 			"formatter": "language_server",
 			"inlay_hints": {
@@ -856,6 +987,13 @@
 		},
 		"Blade": {
 			"formatter": "language_server",
+			/*"formatter": {
+			"external": {
+			"command": "blade-formatter",
+			"arguments": ["--stdin"]
+			}
+			},*/
+			"format_on_save": "on",
 			"inlay_hints": {
 				"show_background": false
 			},
@@ -896,7 +1034,11 @@
 			"formatter": {
 				"external": {
 					"command": "shfmt",
-					"arguments": ["-i", "2", "-ci"]
+					"arguments": [
+						"-i",
+						"2",
+						"-ci"
+					]
 				}
 			}
 		},
@@ -910,23 +1052,26 @@
 			"mjs",
 			"cjs",
 			"jsx",
-			"gs"
+			"gs",
 		],
 		"Blade": [
-			"blade.php"
+			"blade.php",
 		],
 		"MDX": [
-			"mdx"
+			"mdx",
 		],
 		"Dockerfile": [
 			"Dockerfile",
 			"Dockerfile.*",
-			"dockerfile"
+			"dockerfile",
 		],
 		"YAML": [
 			"yml",
-			"yaml"
-		]
+			"yaml",
+		],
+		"Haskell": [
+			"pq",
+		],
 	},
 	"git": {
 		"git_gutter": "tracked_files",
@@ -986,24 +1131,28 @@
 		}
 	],
 	"language_models": {
-		"lmstudio": {
-			"api_url": "http://127.0.0.1:1234/v1"
-		},
-		"openai_compatible": {
-			"Cerebras": {
-				"api_url": "https://api.cerebras.ai/v1",
+		"anthropic_compatible": {
+			"MLX Core": {
+				"api_url": "http://0.0.0.0:11234",
 				"available_models": [
 					{
-						"name": "llama3.1-8b",
-						"max_tokens": 8192
-					},
-					{
-						"name": "llama-3.3-70b",
-						"max_tokens": 8192
+						"name": "gemma-4-12B-coder-fable5-composer2.5-v1-mxfp4-mlx",
+						"max_tokens": 200000,
+						"max_output_tokens": 32000,
+						"extra_beta_headers": [],
+						"capabilities": {
+							"tools": true,
+							"images": false,
+							"prompt_caching": false
+						}
 					}
 				]
 			}
-		}
+		},
+		"lmstudio": {
+			"api_url": "http://127.0.0.1:1234/v1"
+		},
+		"openai_compatible": {}
 	},
 	"file_scan_exclusions": [
 		"**/.git",
