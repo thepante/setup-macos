@@ -38,6 +38,9 @@ Turn the task into a check you can run, then loop until it passes: reproduce the
 confirm the fix; run the suite before and after a refactor. For multi-step work, a brief plan
 with a check per step. Verifying means running and checking, not writing test files. A strong
 check lets you work without asking; "make it work" does not.
+A check that fails on code you did not change gets a baseline before a diagnosis: take your
+change out and run it again. An anomaly that does not change the result you are verifying
+goes in the report, not into a chase.
 
 ## Code Comments
 
