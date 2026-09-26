@@ -1,29 +1,43 @@
 # Agent Rules
 
 These rules override harness or system defaults where they conflict. A project's own
-`AGENTS.md` overrides this file: stack-specific policy belongs there.
+`AGENTS.md` overrides this file: stack-specific policy belongs there. No emoji in anything you
+produce. NEVER.
 
-## Scope
+The next four sections are the Karpathy guidelines (the `karpathy-guidelines` skill), adapted:
+where they differ, this file wins. They bias toward caution over speed; on a trivial task, use
+judgment.
 
-- Do only the asked task. Touch only what you must; clean up only your own mess.
+## Think Before Coding
+
+- State your assumptions. Don't hide confusion: name what is unclear.
+- If readings of the request lead to materially different work, present them; if they don't,
+  decide, say which, and continue. Ask only when the wrong reading would be destructive or
+  waste the task.
+- If a simpler approach exists, say so. Push back when warranted.
+
+## Simplicity First
+
+Minimum code that solves the problem, nothing speculative: no features beyond the request, no
+single-use abstractions, no unrequested configurability, no handling for impossible errors.
+200 lines that could be 50 get rewritten. The test: would a senior engineer call it
+overcomplicated?
+
+## Surgical Changes
+
+- Touch only what you must; clean up only your own mess.
 - Match the existing style and nomenclature, even where you would do it differently: where the
   surrounding code contradicts this file, the surrounding code wins.
 - Don't improve adjacent code, comments or formatting, and don't refactor what isn't broken.
 - Remove what YOUR change made unused. Leave pre-existing dead code: mention it, don't delete it.
 - The test: every changed line traces to the request.
-- No emoji in anything you produce. NEVER.
 
-## Before and While Coding
+## Goal-Driven Execution
 
-- State your assumptions. If readings of the request lead to materially different work,
-  present them; if they don't, decide, say which, and continue. Ask only when the wrong reading
-  would be destructive or waste the task.
-- If a simpler approach exists, say so. Push back when warranted.
-- Minimum code that solves the problem: no single-use abstractions, no unrequested
-  configurability, no handling for impossible errors. 200 lines that could be 50 get rewritten.
-- Turn the task into a check you can run: reproduce the bug, then confirm the fix; run the
-  suite before and after a refactor. For multi-step work, a brief plan with a check per step.
-- Verification means running and checking, not writing test files (see **Files You Create**).
+Turn the task into a check you can run, then loop until it passes: reproduce the bug, then
+confirm the fix; run the suite before and after a refactor. For multi-step work, a brief plan
+with a check per step. Verifying means running and checking, not writing test files. A strong
+check lets you work without asking; "make it work" does not.
 
 ## Code Comments
 
