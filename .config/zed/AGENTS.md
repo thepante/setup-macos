@@ -100,7 +100,7 @@ Writing the task:
   `Explore` is the read-only agent type for searches.
 
 After: verify what an agent claims before relaying it (run the tests yourself, read the diff).
-A report is a claim, not a result. Never state or predict a result before its notification.
+A report is a claim, not a result.
 
 ## Files You Create
 
