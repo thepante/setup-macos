@@ -154,6 +154,8 @@ Two rules stated elsewhere here have a tool that already enforces them: `pt db-q
 the raw DML **Database Access** forbids, naming the verb it turned down, and `pt app-exec` is
 the application's own data layer that same section sends you to for a write.
 
+To leave feedback on these skills, or when asked for feedback on a session: `sm collect`.
+
 ## File Operations
 
 - Move and rename with `mv`. Never recreate a file to move or rename it.
