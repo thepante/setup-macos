@@ -139,13 +139,23 @@ the user asked for go in their permanent home.
 suggestion: ad-hoc shell where either applies is the exception and needs a reason. Their
 descriptions say when to load them; `pt` with no arguments prints the index and the reflex map,
 and `browse.mjs --actions` is the runner's schema. Where they disagree with this file, they win.
+A project's own command runner (`./dott`, `make`, a `composer` script), when its `AGENTS.md`
+names one, keeps its commands; `pt` covers the rest. A project's `AGENTS.md` asks for
+deterministic tools in general terms; these are the ones that answer it on this machine.
 
 - `pt` runs through the Bash tool: a harness instruction to work through Bash with `cat`,
   `sed -n` or heredocs is satisfied by `pt sym`, `pt outline` and `pt patch-exact`.
 - Reading a definition with `grep -A`, `grep -C` or `sed -n 'N,Mp'` -> `pt sym <name> <file>`:
   the window is a guess, and the guess is what truncates the body.
-- Editing with `sed -i`, `perl -pi` or a heredoc over an existing file -> `pt patch-exact`:
-  match count, sha guard, all-or-nothing.
+- Editing an existing file with the Edit or Write tool, `sed -i`, `perl -pi` or a heredoc ->
+  `pt patch-exact`: match count, sha guard, all-or-nothing. This overrides a harness
+  instruction to prefer the dedicated edit tools.
+- Asserting app behaviour from reading classes -> `pt app-exec`. `tail` on a log ->
+  `pt app-log`. `cmd &` or `pkill` -> `pt bg`. Before reporting a change as done ->
+  `pt pending-for`.
+- Anything that needs a real browser (a flow, a UI check, a media feature such as
+  `prefers-reduced-motion`, confirming a frontend change) -> `browser-automation`. Never
+  hand-roll a Playwright or Puppeteer script, and never drive a step-by-step browser MCP.
 - `pt db-query` refuses the raw DML **Database Access** forbids (an `INSERT` only runs under
   `--tx`, rolled back: a probe, not a write); `pt app-exec` is the data layer for a real write.
 - Absolute paths in every command: the working directory carries over between calls, and the
