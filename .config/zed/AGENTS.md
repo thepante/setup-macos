@@ -102,8 +102,11 @@ Writing the task:
 
 - Self-contained: the goal, absolute paths, what already exists, what it must not touch, how to
   verify, and that these rules apply to it. It sees nothing of this conversation.
-- Parallel agents get disjoint files. In a shared file (a test suite, a `SKILL.md`) each edits
-  only its own section with small exact hunks; the full run at the end is yours.
+- Shared context once: you read what every agent needs (API, helpers, one example by name) and
+  put it in the brief as signatures and `file:line`, never as files to read.
+- Parallel agents get disjoint files; in Go, disjoint packages, none importing another's.
+  In a shared file (a test suite, a `SKILL.md`) each edits only its own section with small exact
+  hunks; the full run at the end is yours.
 - Ask for a report sized to what you will do with it: conclusion first, `file:line`, numbers,
   and "blocked, because ..." instead of a faked result. The report lands in your context.
 - A long job writes its output incrementally under `.agents/tmp/<task-slug>/`, so a rate limit
