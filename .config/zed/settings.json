@@ -181,14 +181,14 @@
 	"use_system_window_tabs": false,
 	"agent_servers": {
 		"claude-acp": {
-   "default_config_options": {
-    "mode": "auto",
-    "effort": "xhigh",
-    "model": "opus[1m]"
-   },
-   "type": "registry"
-  },
-  "qwen-code": {
+			"default_config_options": {
+				"mode": "auto",
+				"effort": "high",
+				"model": "opus"
+			},
+			"type": "registry"
+		},
+		"qwen-code": {
 			"default_config_options": {
 				"mode": "plan",
 				"model": "coder-model(qwen-oauth)"
@@ -250,7 +250,7 @@
 	"active_pane_modifiers": {
 		"border_size": 0.0
 	},
-	"bottom_dock_layout": "left_aligned",
+	"bottom_dock_layout": "full",
 	"preview_tabs": {
 		"enable_preview_from_file_finder": true
 	},
@@ -284,9 +284,9 @@
 		"button": true
 	},
 	"outline_panel": {
+		"folder_indicator": "icon",
 		"dock": "left",
 		"git_status": true,
-		"folder_icons": true,
 		"file_icons": true,
 		"button": true
 	},
@@ -406,13 +406,28 @@
 			"settings": {
 				"default_minimum_tokens": "10000"
 			}
+		},
+		"linear": {
+			"enabled": false,
+			"command": "npx",
+			"args": [
+				"-y",
+				"mcp-remote",
+				"https://mcp.linear.app/mcp"
+			],
+			"env": {},
+			"settings": {}
+		},
+		"posthog": {
+			"enabled": false,
+			"url": "https://mcp.posthog.com/mcp"
 		}
 	},
 	"git_panel": {
 		"show_count_badge": false,
-  "folder_indicator": "chevron",
-  "file_icons": true,
-  "group_by": "none",
+		"folder_indicator": "chevron",
+		"file_icons": true,
+		"group_by": "none",
 		"entry_primary_click_action": "view_file",
 		"fallback_branch_name": "master",
 		"tree_view": true,
@@ -533,11 +548,8 @@
 	],
 	"base_keymap": "VSCode",
 	"edit_predictions": {
-		// "provider": "supermaven",
-		// "provider": "sweep",
-		// "provider": "zed",
+		"provider": "none",
 		"allow_data_collection": "no",
-		"provider": "zed",
 		"disabled_globs": [
 			"*.log*",
 			"**/vendor/**",
@@ -545,25 +557,9 @@
 			"**/storage/framework/**",
 			"**/.phpunit.cache/**",
 			"**/dist/**",
-			"**/build/**"
+			"**/build/**",
 		],
 		"mode": "eager",
-		"copilot": {
-			"proxy": null,
-			"proxy_no_verify": null,
-			"enterprise_uri": null
-		},
-		"codestral": {
-			"api_url": "https://codestral.mistral.ai",
-			"model": "codestral-latest",
-			"max_tokens": 150
-		},
-		"open_ai_compatible_api": {
-			"api_url": "https://openrouter.ai/api/v1",
-			"model": "llama3.1-8b",
-			"max_output_tokens": 64,
-			"prompt_format": "star_coder"
-		},
 		"enabled_in_text_threads": false
 	},
 	"show_edit_predictions": true,
@@ -621,21 +617,26 @@
 		"button": true
 	},
 	"agent": {
+		"notify_when_agent_waiting": "all_screens",
+		"threads_sidebar": {
+			"position": "right"
+		},
+		"max_idle_retained_threads": 6,
+		"terminal_init_command": "",
 		"sandbox_permissions": {
 			"allow_all_hosts": true
 		},
 		"single_file_review": true,
 		"show_turn_stats": true,
-		"thinking_display": "auto",
+		"thinking_display": "preview",
 		"auto_compact": {
 			"threshold": "90%"
 		},
 		"play_sound_when_agent_done": "always",
 		"enable_feedback": false,
-		"sidebar_side": "right",
 		"flexible": false,
 		"dock": "right",
-		"default_profile": "write",
+		"default_profile": "ask",
 		"default_model": {
 			"effort": "high",
 			"provider": "google",
@@ -892,11 +893,17 @@
 							"pattern": "^php\\s+artisan\\b"
 						}
 					]
+				},
+				"profiles": {
+					"claude": {
+						"command": "claude-agent-acp"
+					}
 				}
 			}
 		}
 	},
 	"project_panel": {
+		"folder_indicator": "icon",
 		"bold_folder_labels": false,
 		"auto_reveal_entries": false,
 		"dock": "left",
@@ -907,7 +914,6 @@
 			"show": "always"
 		},
 		"git_status": true,
-		"folder_icons": true,
 		"file_icons": true,
 		"entry_spacing": "comfortable",
 		"button": true
@@ -916,7 +922,7 @@
 		"button": false
 	},
 	"collaboration_panel": {
-		"dock": "right",
+		"dock": "left",
 		"button": false
 	},
 	"hard_tabs": true,
@@ -1157,14 +1163,14 @@
 	"file_scan_exclusions": [
 		"**/.git",
 		"**/node_modules",
-		"**/vendor",
+		// "**/vendor",
 		"**/storage/framework",
-		"**/storage/logs",
 		"**/bootstrap/cache",
 		"**/.phpunit.cache",
 		"**/dist",
-		"**/build",
 		"**/.next",
-		"**/public/build"
+		"**/public/build",
+		"/build",
+		"public/build"
 	]
 }
