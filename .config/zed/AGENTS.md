@@ -200,6 +200,8 @@ and what it touches (rows, tables, risks), and hand it to the human to run.
 Commit messages: Conventional Commits, `<type>(<optional scope>): <description>`, written with
 `caveman-commit`.
 
+- Asked for the commits, or a commit message, for work done here → `commit-handoff`;
+  `caveman-commit` alone is for a message with no staging.
 - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`.
 - Subject: imperative, lowercase, no trailing period, 50 characters or fewer (72 at most).
 - Body (optional): bullets explaining **why**, not **what**, wrapped at about 72 columns.
