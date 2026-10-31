@@ -29,6 +29,8 @@ rex.bind("ctrl+e", scroll_claude("\27[<65;1;1M"))
 
 rex.bind("alt+shift+down", "client.tab.next")
 rex.bind("alt+shift+up", "client.tab.previous")
+rex.bind("alt+a", "client.tab.move.backward")
+rex.bind("alt+d", "client.tab.move.forward")
 rex.bind("ctrl+t", "client.tab.new")
 
 rex.mode("prefix", { exclusive = true })
