@@ -3,10 +3,10 @@ rex.bind("alt+j", "pane.focus.down")
 rex.bind("alt+k", "pane.focus.up")
 rex.bind("alt+l", "pane.focus.right")
 
-rex.bind("alt+down", "pane.resize", { direction = "down", amount = 5 })
-rex.bind("alt+up", "pane.resize", { direction = "up", amount = 5 })
-rex.bind("alt+left", "pane.resize", { direction = "left", amount = 5 })
-rex.bind("alt+right", "pane.resize", { direction = "right", amount = 5 })
+rex.bind("shift+left", "pane.resize", { direction = "left", amount = 5 })
+rex.bind("shift+down", "pane.resize", { direction = "down", amount = 5 })
+rex.bind("shift+up", "pane.resize", { direction = "up", amount = 5 })
+rex.bind("shift+right", "pane.resize", { direction = "right", amount = 5 })
 
 local function scroll_claude(seq)
   return function(ctx)
@@ -25,10 +25,18 @@ rex.bind("ctrl+d", scroll_claude("\27[6~"))
 rex.bind("ctrl+y", scroll_claude(string.rep("\27[<64;1;1M", 3)))
 rex.bind("ctrl+e", scroll_claude(string.rep("\27[<65;1;1M", 3)))
 
-rex.bind("cmd+backspace", function(ctx)
-  rex.block.call("com.superlogical.terminal", "write", { block_id = ctx.block_id, data = "\21" })
-  return true
-end)
+local function write_key(data)
+  return function(ctx)
+    rex.block.call("com.superlogical.terminal", "write", { block_id = ctx.block_id, data = data })
+    return true
+  end
+end
+
+rex.bind("cmd+backspace", write_key("\21"))
+rex.bind("cmd+left", write_key("\1"))
+rex.bind("cmd+right", write_key("\5"))
+rex.bind("cmd+h", write_key("\1"))
+rex.bind("cmd+l", write_key("\5"))
 
 rex.bind("alt+shift+down", "client.tab.next")
 rex.bind("alt+shift+up", "client.tab.previous")
