@@ -22,14 +22,23 @@ end
 
 rex.bind("ctrl+u", scroll_claude("\27[5~"))
 rex.bind("ctrl+d", scroll_claude("\27[6~"))
-rex.bind("ctrl+y", scroll_claude("\27[<64;1;1M"))
-rex.bind("ctrl+e", scroll_claude("\27[<65;1;1M"))
+rex.bind("ctrl+y", scroll_claude(string.rep("\27[<64;1;1M", 3)))
+rex.bind("ctrl+e", scroll_claude(string.rep("\27[<65;1;1M", 3)))
+
+rex.bind("cmd+backspace", function(ctx)
+  rex.block.call("com.superlogical.terminal", "write", { block_id = ctx.block_id, data = "\21" })
+  return true
+end)
 
 rex.bind("alt+shift+down", "client.tab.next")
 rex.bind("alt+shift+up", "client.tab.previous")
 rex.bind("alt+a", "client.tab.move.backward")
 rex.bind("alt+d", "client.tab.move.forward")
 rex.bind("ctrl+t", "client.tab.new")
+
+rex.bind("cmd+shift+j", "session.next")
+rex.bind("cmd+shift+k", "session.previous")
+rex.bind("cmd+k", "session.switch")
 
 rex.mode("prefix", { exclusive = true })
 rex.bind("ctrl+a", "client.mode.enter", { name = "prefix", once = true })
