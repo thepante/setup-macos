@@ -3,4 +3,7 @@
 **/prompts/*
 **/conversations/*
 **/embeddings/*
-
+.agents/tmp/
+*.zip
+*.log
+*.zip

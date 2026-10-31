@@ -33,7 +33,7 @@ setopt nosharehistory
 setopt noextendedhistory
 setopt histfindnodups
 
-
+export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.bun/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 export RIPGREP_CONFIG_PATH=~/.ripgreprc
@@ -82,14 +82,16 @@ export FZF_DIRS_COMMAND='fd -HLI -t d . '$fzf_excluded
 
 # # PATH=$PATH:/opt/homebrew/opt/gradle@7/bin/
 
-PATH=$PATH:"$ANDROID_HOME"platform-tools
-PATH=$PATH:"$ANDROID_HOME"tools
+# PATH=$PATH:"$ANDROID_HOME"platform-tools
+# PATH=$PATH:"$ANDROID_HOME"tools
 # export ANDROID_HOME=/Users/$USER/Library/Android/sdk
 # export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
-# export JAVA_HOME="$(/usr/libexec/java_home)"
-# export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-1.8.jdk/Contents/Home
-# export PATH=${JAVA_HOME}/bin:$PATH
+# # export JAVA_HOME="$(/usr/libexec/java_home)"
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home"
+export PATH=${JAVA_HOME}/bin:$PATH
+
+# export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
 
 # Tmux plugins
 export PATH=$HOME/.tmux/plugins/t-smart-tmux-session-manager/bin:$PATH
@@ -128,13 +130,13 @@ export SDKMAN_DIR="$HOME/.sdkman"
 # echo "sourced ok .zshrc" >> /tmp/git-autofetch.log
 
 tmux-window-name() {($TMUX_PLUGIN_MANAGER_PATH/tmux-window-name/scripts/rename_session_windows.py &)}
-add-zsh-hook chpwd tmux-window-name
+[[ -n $TMUX ]] && add-zsh-hook chpwd tmux-window-name
 
 tmux-git-autofetch() {(/Users/fabian/.tmux/plugins/tmux-git-autofetch/git-autofetch.tmux --current &)}
-add-zsh-hook chpwd tmux-git-autofetch
+[[ -n $TMUX ]] && add-zsh-hook chpwd tmux-git-autofetch
 
 tmux-refresh-status-bar() {(tmux refresh-client -S &)}
-add-zsh-hook chpwd tmux-refresh-status-bar
+[[ -n $TMUX ]] && add-zsh-hook chpwd tmux-refresh-status-bar
 
 function y() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd

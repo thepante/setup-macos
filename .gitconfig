@@ -2,12 +2,14 @@
 [core]
 	excludesfile = /Users/fabian/.gitignore_global
 	; pager = delta
-    pager   = less
+	; pager   = less
+    pager   = cat
+	hooksPath = /Users/fabian/.git-hooks
 
-[pager]
-    diff    = LESS=c delta
-    show    = LESS=c delta
-    reflog  = LESS=c delta
+; [pager]
+	; diff    = LESS=c delta
+	; show    = LESS=c delta
+	; reflog  = LESS=c delta
 
 [interactive]
 	diffFilter = delta --diff-so-fancy
