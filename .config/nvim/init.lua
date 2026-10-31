@@ -558,6 +558,11 @@ autocmd("BufReadPost", {
     end,
 })
 
+-- Reload files changed on disk without waiting for focus
+vim.uv.new_timer():start(1000, 1000, vim.schedule_wrap(function()
+    vim.cmd("silent! checktime")
+end))
+
 -- Auto-create missing directories on save
 autocmd({ "BufWritePre" }, {
     callback = function(event)
