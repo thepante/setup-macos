@@ -50,6 +50,7 @@ rex.bind("cmd+k", "session.switch")
 
 rex.mode("prefix", { exclusive = true })
 rex.bind("ctrl+a", "client.mode.enter", { name = "prefix", once = true })
+
 rex.action({
   name = "send_prefix",
   title = "Send Prefix",
@@ -58,9 +59,11 @@ rex.action({
     return true
   end,
 })
+
 rex.bind("prefix/ctrl+a", "send_prefix")
 rex.bind("prefix/=", "pane.split.right")
 rex.bind("prefix/-", "pane.split.down")
 rex.bind("prefix/ctrl+x", "pane.close")
 rex.bind("prefix/r", "client.tab.rename")
 rex.bind("prefix/shift+r", "session.rename")
+
