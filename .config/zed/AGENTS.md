@@ -114,10 +114,18 @@ Writing the task:
   session limit together.
 - Subagents don't commit, don't mark work done in trackers, and don't load
   `google-devdocs-style` unless the human reads their output.
-- Model: the Agent tool takes `model` per call. `haiku` for mechanical, bounded work (listing,
-  grep-style surveys, format conversion); `sonnet` for extraction, summaries and routine
-  implementation; omit it (the session's model) for design, hard debugging and reviews.
-  `Explore` is the read-only agent type for searches.
+- Model: the agent file pins it; you choose the work class, not the model.
+  | Work | Claude Code | opencode |
+  |---|---|---|
+  | Mechanical edit, read-only survey | `sonnet` | `deepseek-v4.1-flash` |
+  | Implementation with judgment | `sonnet` | `deepseek-v4-pro` |
+  | Design, review, hard debugging | `opus` | `deepseek-v4-pro` |
+
+  Agents: `mechanical`, `scout`, `implementer`, `design-review`; `reviewer` stays on the strong
+  tier. A session that is mostly UI polish or mechanical edits starts on `sonnet` (`ui-polish` in
+  opencode), never on `opus`.
+- Delegate at three tool calls or more; below that, inline: a subagent starts with 10-30K of its
+  own context and a one-command change does not repay it.
 
 After: verify what an agent claims before relaying it (run the tests yourself, read the diff).
 A report is a claim, not a result.
