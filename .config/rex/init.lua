@@ -8,11 +8,12 @@ rex.bind("shift+down", "pane.resize", { direction = "down", amount = 5 })
 rex.bind("shift+up", "pane.resize", { direction = "up", amount = 5 })
 rex.bind("shift+right", "pane.resize", { direction = "right", amount = 5 })
 
-local function scroll_claude(seq)
+local function scroll_app(seqs)
   return function(ctx)
     local terminal = "com.superlogical.terminal"
     local p = rex.block.call(terminal, "process", { block_id = ctx.block_id })
-    if not (p and p.foreground and p.foreground.name == "claude") then
+    local seq = seqs[p and p.foreground and p.foreground.name]
+    if not seq then
       return false
     end
     rex.block.call(terminal, "write", { block_id = ctx.block_id, data = seq })
@@ -20,10 +21,13 @@ local function scroll_claude(seq)
   end
 end
 
-rex.bind("ctrl+u", scroll_claude("\27[5~"))
-rex.bind("ctrl+d", scroll_claude("\27[6~"))
-rex.bind("ctrl+y", scroll_claude(string.rep("\27[<64;1;1M", 3)))
-rex.bind("ctrl+e", scroll_claude(string.rep("\27[<65;1;1M", 3)))
+local line_up = string.rep("\27[<64;1;1M", 3)
+local line_down = string.rep("\27[<65;1;1M", 3)
+
+rex.bind("ctrl+u", scroll_app({ claude = line_up, opencode = string.rep("\21", 3) }))
+rex.bind("ctrl+d", scroll_app({ claude = line_down, opencode = string.rep("\4", 3) }))
+rex.bind("ctrl+b", scroll_app({ claude = "\27[5~" }))
+rex.bind("ctrl+f", scroll_app({ claude = "\27[6~" }))
 
 local function write_key(data)
   return function(ctx)
