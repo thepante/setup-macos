@@ -44,17 +44,17 @@
       }
     ],
     "Stop": [
-    {
-      "hooks": [
-        {
-          "type": "command",
-          "command": "/Users/fabian/.claude/hooks/context-guard",
-          "timeout": 10
-        }
-      ]
-    }
-  ],
-  "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/fabian/.claude/hooks/context-guard",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
       {
         "hooks": [
           {

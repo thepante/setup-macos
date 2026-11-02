@@ -6,17 +6,26 @@
   "compaction": {
     "auto": true,
     "buffer": "30%",
-    "keep": { "tokens": 15000 }
+    "keep": {
+      "tokens": 15000
+    }
   },
   "tool_output": {
     "max_lines": 1000,
     "max_bytes": 32000
   },
   "plugins": [
-    { "package": "opencode-claude-memory", "options": { "readOnly": true } }
+    {
+      "package": "opencode-claude-memory",
+      "options": {
+        "readOnly": true
+      }
+    }
   ],
   "agents": {
-    "opencode-memory-recall": { "model": "opencode-go/claude-haiku-5-5" },
+    "opencode-memory-recall": {
+      "model": "opencode-go/claude-haiku-5-5"
+    },
     "ui-polish": {
       "description": "Session profile for UI polish and visual adjustments: same tools, a cheaper model.",
       "mode": "primary",
