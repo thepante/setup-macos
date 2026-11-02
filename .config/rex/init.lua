@@ -44,8 +44,8 @@ rex.bind("alt+a", "client.tab.move.backward")
 rex.bind("alt+d", "client.tab.move.forward")
 rex.bind("ctrl+t", "client.tab.new")
 
-rex.bind("cmd+shift+j", "session.next")
-rex.bind("cmd+shift+k", "session.previous")
+rex.bind("cmd+down", "session.next")
+rex.bind("cmd+up", "session.previous")
 rex.bind("cmd+k", "session.switch")
 
 rex.mode("prefix", { exclusive = true })
