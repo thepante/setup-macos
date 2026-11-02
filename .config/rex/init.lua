@@ -71,6 +71,11 @@ rex.bind("prefix/ctrl+x", "pane.close")
 rex.bind("prefix/r", "client.tab.rename")
 rex.bind("prefix/shift+r", "session.rename")
 
+require("agent_fork").setup()
+
+rex.bind("prefix/f", "fork_agent")
+rex.bind("prefix/i", "copy_agent_session_id")
+
 local SCRATCH_LABEL = "scratch"
 
 local function scratch_layer(view)

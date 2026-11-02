@@ -66,6 +66,11 @@
             "type": "command",
             "command": "/Users/fabian/.claude/hooks/rexurrect-report-claude",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "/Users/fabian/.config/rex/agent-session record claude-code",
+            "timeout": 5
           }
         ]
       }

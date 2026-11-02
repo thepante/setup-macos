@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+id=$1
+[ -n "$id" ] || { echo "usage: opencode-fork SESSION" >&2; exit 2; }
+
+new=$(opencode api post "/api/session/$id/fork" --data '{}' | jq -r '.data.id')
+[ -n "$new" ] && [ "$new" != "null" ] || { echo "opencode-fork: fork failed" >&2; exit 1; }
+
+exec opencode --session "$new"
