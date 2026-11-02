@@ -12,6 +12,9 @@
   "session": {
     "sidebar": "hide"
   },
+  "tabs": {
+    "mode": "off"
+  },
   "keybinds": {
     "session.line.up": "ctrl+u,super+y,ctrl+alt+y",
     "session.line.down": "ctrl+d,super+e,ctrl+alt+e",
