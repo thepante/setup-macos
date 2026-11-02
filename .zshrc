@@ -18,8 +18,6 @@ SAVEHIST=3000
 HISTDUP=erase
 ZSHZ_CASE=ignore
 
-ZVM_VI_INSERT_ESCAPE_BINDKEY=kj
-
 setopt NO_nomatch # avoid noglob issue
 
 setopt HIST_EXPIRE_DUPS_FIRST
