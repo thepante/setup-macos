@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+"""Stop hook: warns the human when the session context crosses a threshold.
+
+Reads the hook payload on stdin, takes the last assistant usage from the
+transcript, and prints a systemMessage once per 100K band. Never exits non-zero:
+a broken hook must not break the session.
+"""
+
+import json
+import os
+import sys
+
+THRESHOLD = int(os.environ.get("CONTEXT_GUARD_THRESHOLD", "350000"))
+BAND = 100_000
+FAST_BYTES = 131_072
+TAIL_BYTES = 2_000_000
+
+
+def scan_tail(path, window):
+    try:
+        size = os.path.getsize(path)
+        with open(path, "rb") as f:
+            f.seek(max(0, size - window))
+            tail = f.read().decode("utf-8", "ignore")
+    except OSError:
+        return None
+    for line in reversed(tail.splitlines()):
+        if '"usage"' not in line:
+            continue
+        try:
+            record = json.loads(line)
+        except ValueError:
+            continue
+        if record.get("type") != "assistant":
+            continue
+        usage = (record.get("message") or {}).get("usage")
+        if not usage:
+            continue
+        return (
+            usage.get("input_tokens", 0)
+            + usage.get("cache_read_input_tokens", 0)
+            + usage.get("cache_creation_input_tokens", 0)
+        )
+    return None
+
+
+def context_tokens(path):
+    for window in (FAST_BYTES, TAIL_BYTES):
+        tokens = scan_tail(path, window)
+        if tokens is not None:
+            return tokens
+    return None
+
+
+def main():
+    try:
+        payload = json.load(sys.stdin)
+    except ValueError:
+        return
+    path = payload.get("transcript_path") or ""
+    session = str(payload.get("session_id") or "unknown")
+    tokens = context_tokens(path) if path else None
+    if not tokens or tokens < THRESHOLD:
+        return
+
+    band = tokens // BAND
+    state_dir = os.path.expanduser("~/.local/state/claude-context-guard")
+    os.makedirs(state_dir, exist_ok=True)
+    state_path = os.path.join(state_dir, "".join(c if c.isalnum() or c in "-_" else "_" for c in session))
+    try:
+        with open(state_path) as f:
+            last_band = int(f.read().strip() or 0)
+    except (OSError, ValueError):
+        last_band = 0
+    if band <= last_band:
+        return
+    try:
+        with open(state_path, "w") as f:
+            f.write(str(band))
+    except OSError:
+        return
+
+    print(json.dumps({
+        "systemMessage": (
+            f"Contexto en {tokens // 1000}K. Cerrá el ítem en curso y compactá "
+            f"(/compact) antes de empezar el próximo."
+        )
+    }))
+
+
+try:
+    main()
+except Exception:
+    pass
+sys.exit(0)
