@@ -97,6 +97,7 @@ export PATH=$HOME/.config/tmux/plugins/t-smart-tmux-session-manager/bin:$PATH
 
 source ~/.aliases
 source ~/.aliases-priv
+source /opt/homebrew/share/rexurrect/rexurrect.plugin.zsh
 
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh

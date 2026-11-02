@@ -112,6 +112,7 @@ require('lazy').setup({
 
     -- UTILS
     { 'nvim-lua/plenary.nvim', lazy = true },
+    { 'folke/persistence.nvim', lazy = false, opts = {} },
     { 'folke/todo-comments.nvim', event = "BufReadPost", opts = { signs = false } },
     {
         'echasnovski/mini.nvim',

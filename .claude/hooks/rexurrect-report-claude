@@ -1,0 +1,7 @@
+#!/bin/sh
+
+REXURRECT_STATE_DIR=/Users/fabian/.local/state/rexurrect
+REXURRECT_CONFIG=/Users/fabian/.config/rexurrect/config.toml
+export REXURRECT_STATE_DIR REXURRECT_CONFIG
+
+exec /opt/homebrew/bin/rexurrect report claude

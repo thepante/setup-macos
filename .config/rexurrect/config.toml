@@ -1,0 +1,10 @@
+keep = 30
+auto_resume = ["claude", "nvim", "opencode"]
+
+[programs.nvim]
+resume = "nvim -c 'lua require(\"persistence\").load()'"
+requires_file = ""
+
+[programs.opencode]
+state = "none"
+resume = "opencode --continue"
