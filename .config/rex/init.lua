@@ -71,3 +71,60 @@ rex.bind("prefix/ctrl+x", "pane.close")
 rex.bind("prefix/r", "client.tab.rename")
 rex.bind("prefix/shift+r", "session.rename")
 
+local SCRATCH_LABEL = "scratch"
+
+local function scratch_layer(view)
+  for _, window in ipairs(view.windows or {}) do
+    for _, layer in ipairs(window.layers or {}) do
+      if layer.kind == "floating" then
+        for _, block in ipairs(layer.blocks or {}) do
+          if block.label == SCRATCH_LABEL then
+            return layer
+          end
+        end
+      end
+    end
+  end
+end
+
+rex.action({
+  name = "toggle_scratch",
+  title = "Toggle Scratch Terminal",
+  description = "Opens a floating terminal, or hides and shows it.",
+  keywords = "scratch floating terminal popup",
+  run = function(ctx)
+    local view, view_err = rex.session.view({})
+    if not view then
+      rex.log("warn", "toggle_scratch: " .. tostring(view_err))
+      return
+    end
+    local layer = scratch_layer(view)
+    if layer then
+      local show = layer.state == "minimized"
+      local _, err = rex.call("session.set_layer_state", {
+        session_id = ctx.session_id,
+        layer_id = layer.layer_id,
+        state = show and "normal" or "minimized",
+        focus = show,
+      })
+      if err then
+        rex.log("warn", "toggle_scratch: " .. tostring(err))
+      end
+      return
+    end
+    local _, err = rex.session.new_layer({
+      bounds = { 0.08, 0.08, 0.84, 0.84 },
+      focus = true,
+      layout = rex.layout.block({
+        flavor = "com.superlogical.terminal.shell",
+        label = SCRATCH_LABEL,
+      }),
+    })
+    if err then
+      rex.log("warn", "toggle_scratch: " .. tostring(err))
+    end
+  end,
+})
+
+rex.bind("alt+f", "toggle_scratch")
+
