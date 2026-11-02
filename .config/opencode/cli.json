@@ -1,0 +1,19 @@
+{
+  "$schema": "https://opencode.ai/v2/cli.json",
+  "theme": {
+    "mode": "system",
+    "name": "vesper"
+  },
+  "animations": true,
+  "mouse": false,
+  "scroll": {
+    "acceleration": true
+  },
+  "session": {
+    "sidebar": "hide"
+  },
+  "keybinds": {
+    "session.line.up": "super+y,ctrl+alt+y",
+    "session.line.down": "super+e,ctrl+alt+e"
+  }
+}
