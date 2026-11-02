@@ -5,7 +5,7 @@
     "name": "vesper"
   },
   "animations": true,
-  "mouse": false,
+  "mouse": true,
   "scroll": {
     "acceleration": true
   },
@@ -13,7 +13,13 @@
     "sidebar": "hide"
   },
   "keybinds": {
-    "session.line.up": "super+y,ctrl+alt+y",
-    "session.line.down": "super+e,ctrl+alt+e"
+    "session.line.up": "ctrl+u,super+y,ctrl+alt+y",
+    "session.line.down": "ctrl+d,super+e,ctrl+alt+e",
+    "session.page.up": "ctrl+b,ctrl+alt+b",
+    "session.page.down": "ctrl+f,ctrl+alt+f",
+    "input.delete.to.line.start": "none",
+    "input.delete": "none",
+    "input.move.left": "none",
+    "input.move.right": "none"
   }
 }
