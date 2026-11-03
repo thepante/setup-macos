@@ -80,11 +80,13 @@ local SCRATCH_LABEL = "scratch"
 
 local function scratch_layer(view)
   for _, window in ipairs(view.windows or {}) do
-    for _, layer in ipairs(window.layers or {}) do
-      if layer.kind == "floating" then
-        for _, block in ipairs(layer.blocks or {}) do
-          if block.label == SCRATCH_LABEL then
-            return layer
+    if window.window_id == view.active_window_id then
+      for _, layer in ipairs(window.layers or {}) do
+        if layer.kind == "floating" then
+          for _, block in ipairs(layer.blocks or {}) do
+            if block.label == SCRATCH_LABEL then
+              return layer
+            end
           end
         end
       end
