@@ -28,6 +28,17 @@ local agents = {
   opencode        = { name = "OpenCode",    status_id = true, fork = function(id) return opencode_fork .. " " .. id end },
 }
 
+local function opencode_tab_id(cwd)
+  local state = os.getenv("XDG_STATE_HOME") or (os.getenv("HOME") .. "/.local/state")
+  local f = io.open(state .. "/opencode/latest/tui/tabs.json", "r")
+  if not f then return nil end
+  local text = f:read("*a")
+  f:close()
+  local data = rex.json.decode(text)
+  local tabs = data and data.cwd and data.cwd[cwd] and data.cwd[cwd].tabs
+  return tabs and tabs[#tabs] and tabs[#tabs].sessionID
+end
+
 -- The pane's agent and recorded session, from agent-session on this server's host
 local function lookup(ctx)
   local status = rex.block.call(terminal, "program_status", { block_id = ctx.block_id }) or {}
@@ -46,7 +57,14 @@ local function lookup(ctx)
       end
     end
   end
-  return { error = "No Claude Code, Codex, pi or OpenCode session in this pane" }
+  local proc = rex.block.call(terminal, "process", { block_id = ctx.block_id }) or {}
+  local foreground = proc.foreground or {}
+  if foreground.name == "opencode" and foreground.cwd then
+    local id = opencode_tab_id(foreground.cwd)
+    if id then return { app = "opencode", id = id } end
+    return { error = "OpenCode is running in this pane but hasn't reported its session yet. Send it a prompt and try again." }
+  end
+  return { error = "No agent session in this pane (" .. (foreground.name or "an empty pane") .. "). Focus the pane running Claude Code, Codex, pi or OpenCode." }
 end
 
 -- For a remote host's session, the Mac app runs these actions on the Mac's server with ctx.server
