@@ -44,6 +44,8 @@ rex.bind("cmd+l", write_key("\5"))
 
 rex.bind("alt+shift+down", "client.tab.next")
 rex.bind("alt+shift+up", "client.tab.previous")
+rex.bind("cmd+a", "client.tab.previous")
+rex.bind("cmd+d", "client.tab.next")
 rex.bind("alt+a", "client.tab.move.backward")
 rex.bind("alt+d", "client.tab.move.forward")
 rex.bind("ctrl+t", "client.tab.new")
