@@ -104,6 +104,9 @@ source ~/.zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 source ~/.script-kill-apps.sh
 
+# API keys live outside this repo, in ~/.env
+[ -f "$HOME/.env" ] && source "$HOME/.env"
+
 # # TODO ARREGLAR ESTO!
 # # better command history
 # autoload -U history-search-end
