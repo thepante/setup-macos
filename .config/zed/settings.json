@@ -312,12 +312,10 @@
 				"extra_args": []
 			}
 		},
-		"mcp-server-figma": {
+		"figma": {
 			"enabled": false,
-			"remote": false,
-			"settings": {
-				"figma_api_key": "YOUR_FIGMA_ACCESS_TOKEN"
-			}
+			"command": "/Users/fabian/.local/bin/figma-mcp",
+			"args": []
 		},
 		"mcp-server-sequential-thinking": {
 			"enabled": false,
