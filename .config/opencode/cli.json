@@ -23,6 +23,7 @@
     "input.delete.to.line.start": "none",
     "input.delete": "none",
     "input.move.left": "none",
-    "input.move.right": "none"
+    "input.move.right": "none",
+    "messages.copy": "none"
   }
 }
