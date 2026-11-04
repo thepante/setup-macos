@@ -142,6 +142,88 @@ rex.action({
 
 rex.bind("alt+f", "toggle_scratch")
 
+local TAB_HISTORY = os.getenv("HOME") .. "/.local/state/rex-tab-history/state"
+
+local function previous_active_tab(session_id)
+  local file = io.open(TAB_HISTORY, "r")
+  if not file then return nil end
+  local window_id
+  for line in file:lines() do
+    local sid, prev = line:match("^(%S+)\t([^\t]*)\t")
+    if sid == session_id then window_id = prev end
+  end
+  file:close()
+  if window_id == "" then return nil end
+  return window_id
+end
+
+rex.action({
+  name = "last_active_tab",
+  title = "Back to Last Active Tab",
+  description = "Switch to the tab you were on before this one, not the adjacent one.",
+  keywords = "tab last previous active back history mru",
+  run = function(ctx)
+    local window_id = previous_active_tab(ctx.session_id)
+    if not window_id then return false end
+    local _, err = rex.session.focus_window({ window_id = window_id })
+    if err then rex.log("warn", "last_active_tab: " .. tostring(err)) end
+    return true
+  end,
+})
+
+rex.bind("prefix/n", "last_active_tab")
+
+do
+  local dir = os.getenv("HOME") .. "/.local/state/rex-tab-history"
+  local script = os.getenv("HOME") .. "/.config/rex/last_active_tab.lua"
+  local pid_file = dir .. "/pid"
+
+  local function rex_cli()
+    local candidates = {
+      os.getenv("HOME") .. "/Library/Application Support/com.superlogical.rex/RexServer/Versions/Current/Rex Server.app/Contents/MacOS/rex",
+      "/Applications/Rex.app/Contents/MacOS/rex",
+      "/usr/local/bin/rex",
+      "/opt/homebrew/bin/rex",
+    }
+    for _, path in ipairs(candidates) do
+      local file = io.open(path, "r")
+      if file then
+        file:close()
+        return path
+      end
+    end
+    return "rex"
+  end
+
+  local function tracker_pid()
+    local file = io.open(pid_file, "r")
+    if not file then return nil end
+    local pid = tonumber(file:read("*l"))
+    file:close()
+    return pid
+  end
+
+  local function tracker_running(pid)
+    local r = rex.exec({ "ps", "-p", tostring(pid), "-ww", "-o", "command=" })
+    return r ~= nil and r.stdout ~= nil and r.stdout:find("last_active_tab.lua", 1, true) ~= nil
+  end
+
+  rex.exec({ "mkdir", "-p", dir })
+  local pid = tracker_pid()
+  if not (pid and tracker_running(pid)) then
+    local handle, err = rex.exec.start({ rex_cli(), "do", script, "--all" }, { detach = true })
+    if not handle then
+      rex.log("warn", "last_active_tab tracker: " .. tostring(err))
+    else
+      local file = io.open(pid_file, "w")
+      if file then
+        file:write(tostring(handle.pid))
+        file:close()
+      end
+    end
+  end
+end
+
 do
   local r = rex.exec(
     { [[/opt/homebrew/bin/rexurrect]], "auto-restore" },
