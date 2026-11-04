@@ -1,0 +1,82 @@
+#!/bin/bash
+# Fetches the git repos open in Rex panes, each repo at most once every FREQUENCY_MINS:
+#   git-autofetch --scan-paths  the repo of every pane (cron, every minute)
+#   git-autofetch --current     the repo of the current directory (zsh chpwd hook)
+
+PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+
+SCAN_PATHS="^$HOME/Projects/|/probandoski(/|$)"
+SKIP_PATHS=""
+FREQUENCY_MINS=3
+
+REX=$(command -v rex || echo "$HOME/Library/Application Support/com.superlogical.rex/RexServer/Versions/Current/Rex Server.app/Contents/MacOS/rex")
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/rex/git-autofetch"
+
+# Nobody can answer a prompt here: under cron there is no terminal, and from the chpwd hook
+# the prompt would land in the middle of whatever the pane is doing. Fail instead.
+export GIT_TERMINAL_PROMPT=0
+
+# cron starts without SSH_AUTH_SOCK, so keys that AddKeysToAgent loaded into the launchd
+# agent are invisible to it unless the socket is found by hand.
+if [[ -z $SSH_AUTH_SOCK ]]; then
+  for sock in /private/var/run/com.apple.launchd.*/Listeners; do
+    [[ -S $sock && -O $sock ]] && export SSH_AUTH_SOCK=$sock && break
+  done
+fi
+
+rex() { "$REX" --autostart=false --timeout 5s "$@" 2>/dev/null; }
+
+pane_paths() {
+  rex session ls --json | jq -r '.sessions[].session_id' | while IFS= read -r session; do
+    rex block ls -s "$session" --json |
+      jq -r '.blocks[] | select(.creator_name == "com.superlogical.terminal") | .block_id'
+  done | while IFS= read -r block; do
+    rex block call process -b "$block" | jq -r '.foreground.cwd // empty'
+  done
+}
+
+# The common dir, not the worktree root: worktrees of one repo share their refs, and fetching
+# them as separate repos runs two fetches over the same refs at once.
+git_dir() { git -C "$1" rev-parse --path-format=absolute --git-common-dir 2>/dev/null; }
+
+wanted() {
+  [[ -n $SCAN_PATHS && ! $1 =~ $SCAN_PATHS ]] && return 1
+  [[ -n $SKIP_PATHS && $1 =~ $SKIP_PATHS ]] && return 1
+  return 0
+}
+
+# The stamp is touched before the fetch, so a run that starts while this one is still
+# fetching sees the repo as done and skips it.
+due() {
+  local stamp="$STATE/$(printf %s "$1" | shasum | cut -c1-40)"
+  [[ -e $stamp ]] && (($(date +%s) - $(stat -f %m "$stamp") < FREQUENCY_MINS * 60)) && return 1
+  mkdir -p "$STATE" && touch "$stamp"
+}
+
+fetch() {
+  GIT_SSH_COMMAND="$(git -C "$1" config core.sshCommand || echo ssh) -o BatchMode=yes -o ConnectTimeout=10" \
+    timeout -k 5 120 git -C "$1" fetch --quiet --all
+}
+
+update() { wanted "$1" && due "$1" && fetch "$1"; }
+
+case "$1" in
+  --scan-paths)
+    # With the Rex server stalled, the rex calls take longer than the minute between cron runs.
+    [[ -z $GIT_AUTOFETCH_LOCKED ]] && mkdir -p "$STATE" &&
+      GIT_AUTOFETCH_LOCKED=1 exec lockf -s -t 0 "$STATE/scan.lock" "$0" --scan-paths
+    pane_paths | sort -u | while IFS= read -r path; do
+      [[ -d $path ]] && git_dir "$path"
+    done | sort -u | {
+      while IFS= read -r dir; do update "$dir" & done
+      wait
+    }
+    ;;
+  --current)
+    dir=$(git_dir "$PWD") && update "$dir"
+    ;;
+  *)
+    echo "usage: git-autofetch --scan-paths | --current" >&2
+    exit 2
+    ;;
+esac

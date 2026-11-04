@@ -137,6 +137,9 @@ tmux-window-name() {($TMUX_PLUGIN_MANAGER_PATH/tmux-window-name/scripts/rename_s
 tmux-git-autofetch() {(/Users/fabian/.tmux/plugins/tmux-git-autofetch/git-autofetch.tmux --current &)}
 [[ -n $TMUX ]] && add-zsh-hook chpwd tmux-git-autofetch
 
+rex-git-autofetch() {(/Users/fabian/.config/rex/git-autofetch --current >/dev/null 2>&1 &)}
+[[ -n $REX_BLOCK ]] && add-zsh-hook chpwd rex-git-autofetch
+
 tmux-refresh-status-bar() {(tmux refresh-client -S &)}
 [[ -n $TMUX ]] && add-zsh-hook chpwd tmux-refresh-status-bar
 
