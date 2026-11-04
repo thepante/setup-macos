@@ -278,6 +278,11 @@
 		"mute_on_join": true
 	},
 	"context_servers": {
+		"perseus-dott": {
+			"enabled": true,
+			"command": "/Users/fabian/.local/bin/perseus-mcp",
+			"args": []
+		},
 		"mcp-server-playwright": {
 			"enabled": true,
 			"remote": false,
