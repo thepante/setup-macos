@@ -76,6 +76,10 @@
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "/Users/fabian/Documents/setup-macos/.claude/statusline"
+  },
   "spinnerVerbs": {
     "mode": "replace",
     "verbs": [

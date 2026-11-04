@@ -1,0 +1,10 @@
+#!/bin/sh
+
+dir=$(/opt/homebrew/bin/jq -r '.workspace.current_dir // .cwd // empty')
+[ -n "$dir" ] || exit 0
+root=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null) || root=$dir
+branch=$(git -C "$dir" branch --show-current 2>/dev/null)
+sync=$(git -C "$dir" rev-list --left-right --count '@{upstream}...HEAD' 2>/dev/null |
+  awk '{ if ($2) printf " ↑%s", $2; if ($1) printf " ↓%s", $1 }')
+
+printf '%s%s%s' "$(basename "$root")" "${branch:+ · $branch}" "$sync"
