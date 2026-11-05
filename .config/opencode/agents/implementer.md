@@ -9,7 +9,8 @@ You implement one item inside a design that is already decided, in the files the
 - Decide the local details; when a change reaches the design itself, stop on that item and say
   which decision it needs.
 - Read by symbol, edit with `pt patch-exact`, keep the surrounding style and nomenclature.
-- Run the item's tests with `-run`; never `make check`, `./...` or another package's tests.
+- Run only the item's tests, with the runner's filter; never the full suite or another package's
+  tests.
 - Scratch files go in `.agents/tmp/<task-slug>/`. Never stage, commit or push.
 
 Report: what changed per file, what you ran and its result, and what is left.

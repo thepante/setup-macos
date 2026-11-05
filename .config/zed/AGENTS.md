@@ -121,8 +121,8 @@ Writing the task:
   | Implementation with judgment | `sonnet` | `deepseek-v4-pro` |
   | Design, review, hard debugging | `opus` | `deepseek-v4-pro` |
 
-  Agents: `mechanical`, `scout`, `implementer`, `design-review`; `reviewer` stays on the strong
-  tier. A session that is mostly UI polish or mechanical edits starts on `sonnet` (`ui-polish` in
+  Agents: `mechanical`, `scout`, `implementer`, `reviewer`; `reviewer` stays on the strong tier.
+  A session that is mostly UI polish or mechanical edits starts on `sonnet` (`ui-polish` in
   opencode), never on `opus`.
 - Delegate at three tool calls or more; below that, inline: a subagent starts with 10-30K of its
   own context and a one-command change does not repay it.
