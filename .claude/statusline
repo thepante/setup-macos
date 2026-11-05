@@ -1,8 +1,17 @@
 #!/bin/sh
 
-dir=$(/opt/homebrew/bin/jq -r '.workspace.current_dir // .cwd // empty')
+input=$(cat)
+dir=$(printf '%s' "$input" | /opt/homebrew/bin/jq -r '.workspace.current_dir // .cwd // empty')
 [ -n "$dir" ] || exit 0
 root=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null) || root=$dir
+if [ -n "$REX_BLOCK" ]; then
+  # Claude runs the status line without a controlling terminal, so the title goes to the nearest ancestor's tty.
+  pid=$$
+  while tty=$(ps -o tty= -p "$pid" | tr -d ' ') && [ "$tty" = '??' ]; do pid=$(ps -o ppid= -p "$pid"); done
+  transcript=$(printf '%s' "$input" | /opt/homebrew/bin/jq -r '.transcript_path // empty')
+  topic=$(grep '^{"type":"ai-title"' "$transcript" 2>/dev/null | tail -1 | /opt/homebrew/bin/jq -r .aiTitle)
+  printf '\033]0;%s\007' "$(basename "$root")${topic:+ · $topic}" >"/dev/$tty"
+fi
 branch=$(git -C "$dir" branch --show-current 2>/dev/null)
 sync=$(git -C "$dir" rev-list --left-right --count '@{upstream}...HEAD' 2>/dev/null |
   awk '{ if ($2) printf " ↑%s", $2; if ($1) printf " ↓%s", $1 }')
