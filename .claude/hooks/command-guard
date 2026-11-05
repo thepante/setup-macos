@@ -1,0 +1,324 @@
+#!/usr/bin/env python3
+"""PreToolUse hook: denies or asks for the shell commands AGENTS.md reserves for the human.
+
+Permission rules match text, so `git -C * commit *` also blocks `git -C repo grep commit`. This
+splits the command into simple commands, skips wrappers and git's global options, and judges the
+subcommand itself. The plain-form rules in settings.json stay as the fallback when this hook fails.
+Never exits non-zero: a broken hook must not break the session.
+"""
+
+import json
+import os
+import re
+import shlex
+import sys
+
+SEPARATORS = set(";&|\n()")
+PROCESS_SUBSTITUTIONS = {"<(", ">("}
+HEREDOC = re.compile(r"(?<!<)<<-?(?!<)\s*\\?(['\"]?)([^\s'\"<>;&|()]+)\1")
+ENV_ASSIGNMENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
+DURATION = re.compile(r"^\d+(\.\d+)?[smhd]?$")
+REDIRECTION = re.compile(r"^[<>&]*[<>][<>&|]*$")
+LARGE_COMMAND = 100_000
+
+WRAPPERS = {
+    "caffeinate": {"-t", "-w"},
+    "command": set(),
+    "env": {"-C", "-S", "-u"},
+    "exec": {"-a"},
+    "nice": {"-n"},
+    "nohup": set(),
+    "gtimeout": {"-k", "-s"},
+    "sudo": {"-C", "-D", "-g", "-p", "-u"},
+    "time": set(),
+    "timeout": {"-k", "-s"},
+    "xargs": {"-E", "-I", "-J", "-L", "-P", "-R", "-a", "-d", "-n", "-s"},
+}
+FIND_EXEC = {"-exec", "-execdir", "-ok", "-okdir", "-x", "-X", "--exec", "--exec-batch"}
+KEYWORDS = {"!", "{", "do", "elif", "else", "if", "then", "until", "while"}
+SHELLS = {"bash", "sh", "zsh"}
+CONTAINERS = {"docker", "docker-compose", "podman"}
+GIT_VALUE_OPTIONS = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--attr-source", "--config-env"}
+GIT_DENY = {
+    "commit", "push", "rebase", "reset", "clean", "filter-branch", "filter-repo",
+    "am", "cherry-pick", "merge", "pull", "revert",
+}
+ARTISAN_RUNNERS = {"dott", "sail"}
+ARTISAN_DENY = {"migrate", "migrate:fresh", "migrate:refresh", "migrate:reset", "migrate:rollback", "db:wipe"}
+DOTT_DENY = {"db:fresh", "db:migrate", "migrate", "db:rollback", "migrate:rollback", "db:squash", "setup", "sync"}
+DB_CLIENTS = {"mysql", "mariadb", "psql"}
+
+GIT_REASON = "AGENTS.md reserves `git {}` for the human: give them the command instead of running it."
+STAGE_REASON = "Staging needs the human's confirmation (AGENTS.md, Git)."
+SCHEMA_REASON = "Migrations and schema changes are the human's (AGENTS.md, Database Access): output the exact command for them to run."
+RM_REASON = "Delete with `trash`, not `rm` (AGENTS.md, File Operations)."
+DB_REASON = "A direct database client needs the human's confirmation; read with `pt db-query` instead."
+
+
+def quoted_at(line, end):
+    quote, i = None, 0
+    while i < end:
+        if line[i] == "\\" and quote != "'":
+            i += 2
+            continue
+        if line[i] in "'\"" and quote in (None, line[i]):
+            quote = None if quote else line[i]
+        i += 1
+    return quote is not None
+
+
+def strip_heredocs(command):
+    # A heredoc body is data, not commands, and its apostrophes would break shlex. The bodies go
+    # back to verdict(): a shell runs its body, and an unquoted one still runs $(...) and backticks.
+    lines, heredocs, body = [], [], None
+    for line in command.split("\n"):
+        if body is not None:
+            if line.strip() == delimiter:
+                body = None
+            else:
+                body.append(line)
+            continue
+        lines.append(line)
+        match = next((m for m in HEREDOC.finditer(line) if not quoted_at(line, m.start())), None)
+        if match and "((" not in line[:match.start()]:
+            delimiter, body = match.group(2), []
+            heredocs.append((line[:match.start()], bool(match.group(1)) or "\\" in match.group(0), body))
+    return "\n".join(lines), heredocs
+
+
+def closing(text, start, opener, closer):
+    depth = 0
+    for i in range(start, len(text)):
+        depth += {opener: 1, closer: -1}.get(text[i], 0)
+        if depth == 0:
+            return i
+    return len(text)
+
+
+def scan(text):
+    # One pass over the quoting: drops comments, joins continued lines, and collects the bodies of
+    # $(...) and backticks, which run even inside double quotes, where shlex keeps them in one token.
+    out, nested, quote, i = [], [], None, 0
+    while i < len(text):
+        c = text[i]
+        if quote == "'":
+            quote = None if c == "'" else quote
+        elif c == "\\" and i + 1 < len(text):
+            out.append(" " if text[i + 1] == "\n" else text[i:i + 2])
+            i += 2
+            continue
+        elif c == "'" and quote is None:
+            quote = "'"
+        elif c == '"':
+            quote = None if quote == '"' else '"'
+        elif c == "#" and quote is None and (i == 0 or text[i - 1] in " \t\n;&|()"):
+            end = text.find("\n", i)
+            i = len(text) if end == -1 else end
+            continue
+        elif c == "`" or text.startswith("$(", i):
+            end = text.find("`", i + 1) if c == "`" else closing(text, i + 1, "(", ")")
+            end = len(text) if end == -1 else end
+            nested.append(text[i + (1 if c == "`" else 2):end])
+            out.append(text[i:end + 1])
+            i = end + 1
+            continue
+        out.append(c)
+        i += 1
+    return "".join(out), nested
+
+
+def tokenize(text):
+    if len(text) > LARGE_COMMAND:
+        return re.findall(r"[;&|\n()]+|[^\s;&|()]+", text)
+    try:
+        lexer = shlex.shlex(text, posix=True, punctuation_chars=";&|\n()<>")
+        lexer.whitespace = " \t\r"
+        lexer.whitespace_split = True
+        lexer.commenters = ""
+        return list(lexer)
+    except ValueError:
+        return re.findall(r"[;&|\n()]+|[^\s;&|()]+", text)
+
+
+def simple_commands(text):
+    text, nested = scan(text)
+    commands, argv = [], []
+    for token in tokenize(text):
+        if token in PROCESS_SUBSTITUTIONS or (token and set(token) <= SEPARATORS):
+            if argv:
+                commands.append(argv)
+            argv = []
+        else:
+            argv.append(token)
+    if argv:
+        commands.append(argv)
+    return commands, nested
+
+
+def unwrap(argv):
+    while argv:
+        name = os.path.basename(argv[0])
+        if ENV_ASSIGNMENT.match(argv[0]) or argv[0] in KEYWORDS:
+            argv = argv[1:]
+        elif REDIRECTION.match(argv[0]):
+            argv = argv[2:]
+        elif argv[0].isdigit() and argv[1:2] and REDIRECTION.match(argv[1]):
+            argv = argv[3:]
+        elif argv[0] == "function":
+            argv = argv[2:]
+        elif name == "command" and argv[1:2] in (["-v"], ["-V"]):
+            return []
+        elif name in WRAPPERS:
+            options = WRAPPERS[name]
+            argv = argv[1:]
+            while argv and (argv[0].startswith("-") or ENV_ASSIGNMENT.match(argv[0]) or DURATION.match(argv[0])):
+                argv = argv[2:] if argv[0] in options else argv[1:]
+        else:
+            return argv
+    return argv
+
+
+def git_subcommand(args):
+    i = 0
+    while i < len(args):
+        if args[i] in GIT_VALUE_OPTIONS:
+            i += 2
+        elif args[i].startswith("-"):
+            i += 1
+        else:
+            return args[i], args[i + 1:]
+    return None, []
+
+
+def artisan_command(argv):
+    name = os.path.basename(argv[0])
+    i = 1
+    if name == "php":
+        while i < len(argv) and argv[i].startswith("-"):
+            i += 2 if argv[i] in {"-c", "-d"} else 1
+    elif name == "artisan":
+        i = 0
+    elif name not in ARTISAN_RUNNERS:
+        return None, []
+    if i < len(argv) and os.path.basename(argv[i]) == "artisan":
+        j = i + 1
+        while j < len(argv) and argv[j].startswith("-"):
+            j += 2 if argv[j] == "--env" else 1
+        if j < len(argv):
+            return argv[j], argv[j + 1:]
+    return None, []
+
+
+def judge(argv):
+    argv = unwrap(argv)
+    if not argv:
+        return None
+    name = os.path.basename(argv[0])
+    args = argv[1:]
+
+    if name in SHELLS:
+        for i, token in enumerate(args[:-1]):
+            if re.match(r"^-[a-z]*c[a-z]*$", token) or token == "<<<":
+                return verdict(args[i + 1])
+        script = next((i for i, token in enumerate(args) if not token.startswith("-")), None)
+        return None if script is None else judge(args[script:])
+    if name == "eval":
+        return verdict(" ".join(args))
+    if name in CONTAINERS:
+        start = next((i + 1 for i, token in enumerate(argv) if token in {"exec", "run"}), len(argv))
+        return strongest(judge(argv[i:]) for i in range(start, len(argv)))
+    if name == "sail" and args[:1] != ["artisan"]:
+        return judge(args)
+    if name == "dott" and args[:1] == ["sail"]:
+        return judge(args)
+    if name == "dott" and args[:1] == ["server"]:
+        if args[2:3] == ["sql"]:
+            return "ask", DB_REASON
+        return judge(argv[:1] + args[2:])
+    if name in {"find", "fd"}:
+        if "-delete" in args:
+            return "deny", RM_REASON
+        return strongest(judge(args[i + 1:]) for i, token in enumerate(args) if token in FIND_EXEC)
+
+    if name == "git":
+        sub, rest = git_subcommand(args)
+        if sub in GIT_DENY:
+            return "deny", GIT_REASON.format(sub)
+        if (
+            sub in {"add", "restore", "rm", "stage"}
+            or (sub == "apply" and ("--cached" in rest or "--index" in rest) and "--check" not in rest)
+            or (sub == "checkout" and ("--" in rest or "." in rest))
+        ):
+            return "ask", STAGE_REASON
+        return None
+
+    command, rest = artisan_command(argv)
+    if command in ARTISAN_DENY or (command == "schema:dump" and "--prune" in rest):
+        return "deny", SCHEMA_REASON
+
+    if name == "dott" and args:
+        if args[0] in DOTT_DENY:
+            return "deny", SCHEMA_REASON
+        if args[0] == "db:sql":
+            return "ask", DB_REASON
+    if name == "make" and "migrate" in args:
+        return "deny", SCHEMA_REASON
+    if name == "go" and args[:1] == ["run"]:
+        positional = [token for token in args[1:] if not token.startswith("-")]
+        if "migrate" in positional[1:]:
+            return "deny", SCHEMA_REASON
+    if name == "rm":
+        return "deny", RM_REASON
+    if name in DB_CLIENTS:
+        return "ask", DB_REASON
+    return None
+
+
+def strongest(results):
+    results = [r for r in results if r]
+    for decision in ("deny", "ask"):
+        for r in results:
+            if r[0] == decision:
+                return r
+    return None
+
+
+def verdict(command):
+    text, heredocs = strip_heredocs(command)
+    commands, nested = simple_commands(text)
+    for opener, quoted, body in heredocs:
+        body = "\n".join(body)
+        if SHELLS & {os.path.basename(token) for token in opener.split()}:
+            nested.append(body)
+        elif not quoted:
+            # Quotes are literal in a heredoc body, but $(...) and backticks still run there.
+            nested += scan(body.replace("'", " ").replace('"', " "))[1]
+    return strongest([judge(argv) for argv in commands] + [verdict(inner) for inner in nested])
+
+
+def main():
+    try:
+        payload = json.load(sys.stdin)
+    except ValueError:
+        return
+    command = (payload.get("tool_input") or {}).get("command")
+    if not isinstance(command, str):
+        return
+    result = verdict(command)
+    if not result:
+        return
+    print(json.dumps({
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": result[0],
+            "permissionDecisionReason": result[1],
+        }
+    }))
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception:
+        pass
+    sys.exit(0)

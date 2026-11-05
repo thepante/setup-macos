@@ -27,7 +27,51 @@
       "mcp__claude_ai_Gmail__mark_message_spam",
       "mcp__claude_ai_Gmail__mark_thread_spam",
       "mcp__claude_ai_Gmail__unmark_message_spam",
-      "mcp__claude_ai_Gmail__unmark_thread_spam"
+      "mcp__claude_ai_Gmail__unmark_thread_spam",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git rebase *)",
+      "Bash(git reset *)",
+      "Bash(git clean *)",
+      "Bash(git filter-branch *)",
+      "Bash(git filter-repo *)",
+      "Bash(git am *)",
+      "Bash(git cherry-pick *)",
+      "Bash(git merge *)",
+      "Bash(git pull *)",
+      "Bash(git revert *)",
+      "Bash(php artisan migrate *)",
+      "Bash(php artisan migrate:fresh *)",
+      "Bash(php artisan migrate:refresh *)",
+      "Bash(php artisan migrate:reset *)",
+      "Bash(php artisan migrate:rollback *)",
+      "Bash(php artisan db:wipe *)",
+      "Bash(php artisan schema:dump *--prune*)",
+      "Bash(./dott db:fresh *)",
+      "Bash(./dott db:migrate *)",
+      "Bash(./dott db:rollback *)",
+      "Bash(./dott migrate:rollback *)",
+      "Bash(./dott db:squash *)",
+      "Bash(./dott migrate *)",
+      "Bash(./dott setup *)",
+      "Bash(./dott sync *)",
+      "Bash(./dott server * artisan migrate *)",
+      "Bash(make migrate *)",
+      "Bash(go run * migrate *)",
+      "Bash(rm *)"
+    ],
+    "ask": [
+      "Bash(git add *)",
+      "Bash(git apply --cached *)",
+      "Bash(git restore *)",
+      "Bash(git checkout -- *)",
+      "Bash(git rm *)",
+      "Bash(git stage *)",
+      "Bash(./dott db:sql *)",
+      "Bash(./dott server * sql *)",
+      "Bash(mysql *)",
+      "Bash(mariadb *)",
+      "Bash(psql *)"
     ]
   },
   "hooks": {
@@ -38,6 +82,16 @@
           {
             "type": "command",
             "command": "/Users/fabian/.agents/skills/project-tools/bin/read-notice",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Monitor",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/fabian/.claude/hooks/command-guard",
             "timeout": 5
           }
         ]

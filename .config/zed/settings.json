@@ -815,6 +815,23 @@
 				},
 				"terminal": {
 					"default": "allow",
+					"always_deny": [
+						{ "pattern": "^git(\\s+(-c\\s+(\"[^\"]*\"|'[^']*'|\\S+)|-[^c\\s]\\S*|--\\S+))*\\s+(commit|push|rebase|reset|clean|filter-branch|filter-repo|am|cherry-pick|merge|pull|revert)(\\s|$)" },
+						{ "pattern": "^(php(\\s+(-[cd]\\s+\\S+|-\\S+))*\\s+(\\S*/)?artisan|(\\S*/)?(dott|sail)\\s+(server\\s+\\S+\\s+|php\\s+|sail\\s+)?artisan|(\\S*/)?artisan)(\\s+-\\S+)*\\s+(migrate|migrate:(fresh|refresh|reset|rollback)|db:wipe)(\\s|$)" },
+						{ "pattern": "^(php(\\s+(-[cd]\\s+\\S+|-\\S+))*\\s+(\\S*/)?artisan|(\\S*/)?(dott|sail)\\s+(server\\s+\\S+\\s+|php\\s+|sail\\s+)?artisan|(\\S*/)?artisan)(\\s+-\\S+)*\\s+schema:dump(\\s+\\S+)*\\s+--prune(\\s|$)" },
+						{ "pattern": "^(\\S*/)?dott\\s+(db:(fresh|migrate|rollback|squash)|migrate(:rollback)?|setup|sync)(\\s|$)" },
+						{ "pattern": "^make(\\s+\\S+)*\\s+migrate(\\s|$)" },
+						{ "pattern": "^go\\s+run(\\s+-\\S+)*\\s+\\S+\\s+migrate(\\s|$)" },
+						{ "pattern": "^(\\S*/)?rm(\\s|$)" },
+						{ "pattern": "^find\\s(.*\\s)?-delete(\\s|$)" },
+						{ "pattern": "^(find|fd)\\s(.*\\s)?(-(exec|execdir|ok|okdir|x)|--exec(-batch)?)\\s+(\\S*/)?rm(\\s|$)" },
+						{ "pattern": "^xargs(\\s+(-[EIJLPRadns]\\s+\\S+|-\\S+))*\\s+(\\S*/)?rm(\\s|$)" }
+					],
+					"always_confirm": [
+						{ "pattern": "^git(\\s+(-c\\s+(\"[^\"]*\"|'[^']*'|\\S+)|-[^c\\s]\\S*|--\\S+))*\\s+(add|stage|restore|rm|apply(\\s+\\S+)*\\s+--(cached|index)|checkout(\\s+\\S+)*\\s+(--|\\.))(\\s|$)" },
+						{ "pattern": "^(\\S*/)?dott\\s+(db:sql|server\\s+\\S+\\s+sql)(\\s|$)" },
+						{ "pattern": "^(\\S*/)?(mysql|mariadb|psql)(\\s|$)" }
+					],
 					"always_allow": [
 						{
 							"pattern": "^(cat|file|grep|sed|find)\\b"
