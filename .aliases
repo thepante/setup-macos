@@ -66,6 +66,16 @@ smartcd() {
     cd "$dir" || return
 }
 
+md() {
+    if [[ $1 == -t ]]; then
+        shift
+        # glow caps the TUI width at the config width; a large value lets it follow the pane on resize
+        glow -t -w 1000 "$@"
+    else
+        glow -p -w "$(tput cols)" "$@"
+    fi
+}
+
 ht() {
     local port=${1:-0}
     static-web-server -d . -p "808$port"
