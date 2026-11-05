@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>com.thepante.rex-open-types</string>
+	<key>CFBundleName</key>
+	<string>Rex Open Types</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>LSBackgroundOnly</key>
+	<true/>
+	<key>UTImportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>org.golang.go-source</string>
+			<key>UTTypeDescription</key>
+			<string>Go source</string>
+			<key>UTTypeConformsTo</key>
+			<array><string>public.source-code</string><string>public.plain-text</string></array>
+			<key>UTTypeTagSpecification</key>
+			<dict><key>public.filename-extension</key><array><string>go</string></array></dict>
+		</dict>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>org.vuejs.vue-source</string>
+			<key>UTTypeDescription</key>
+			<string>Vue component</string>
+			<key>UTTypeConformsTo</key>
+			<array><string>public.source-code</string><string>public.plain-text</string></array>
+			<key>UTTypeTagSpecification</key>
+			<dict><key>public.filename-extension</key><array><string>vue</string></array></dict>
+		</dict>
+	</array>
+</dict>
+</plist>

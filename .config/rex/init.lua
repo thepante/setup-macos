@@ -173,6 +173,88 @@ rex.action({
 
 rex.bind("prefix/n", "last_active_tab")
 
+local function vim_escape(path)
+  return (path:gsub("[ %%#|\"'\\$*?%[{`!<]", "\\%0"))
+end
+
+local function active_tab_panes(view)
+  for _, window in ipairs(view.windows or {}) do
+    if window.window_id == view.active_window_id then
+      for _, layer in ipairs(window.layers or {}) do
+        for _, block in ipairs(layer.blocks or {}) do
+          local p = rex.block.call(terminal, "process", { block_id = block.block_id })
+          if p and p.foreground and p.foreground.name == "nvim" then
+            return block.block_id, window.focused_block_id
+          end
+        end
+      end
+      return nil, window.focused_block_id
+    end
+  end
+end
+
+local OPEN_FILE_QUEUE = os.getenv("HOME") .. "/.local/state/rex/open-file"
+
+local function open_file(ctx, path)
+  local view, view_err = rex.session.view({})
+  if not view then
+    rex.log("warn", "open_file: " .. tostring(view_err))
+    return
+  end
+  local nvim, focused = active_tab_panes(view)
+  local markdown = path:lower():match("%.md$") ~= nil
+  if nvim and not markdown then
+    -- ctrl+\ ctrl+n reaches normal mode from any mode, terminal mode included
+    rex.block.call(terminal, "write", { block_id = nvim, data = "\28\14:e " .. vim_escape(path) .. "\r" })
+    rex.call("session.focus_block", { session_id = ctx.session_id, block_id = nvim })
+    return
+  end
+  local _, err = rex.call("session.new_split", {
+    session_id = ctx.session_id,
+    anchor_id = focused,
+    direction = "horizontal",
+    side = "after",
+    focus = true,
+    layout = {
+      block = {
+        flavor = "com.superlogical.terminal.shell",
+        options = {
+          command = markdown and { "md", path } or { "nvim", path },
+          cwd = path:match("^(.*)/") or "/",
+          -- md is a function in ~/.aliases, which only interactive shells read
+          interactive = markdown,
+        },
+      },
+    },
+  })
+  if err then rex.log("warn", "open_file: " .. tostring(err)) end
+end
+
+-- The Rex Open app (open-file.applescript) queues the files macOS hands it and
+-- presses the key. Rex's API can't tell an outside process which tab is on
+-- screen, but a key binding runs with that tab as its context.
+rex.action({
+  name = "open_file",
+  title = "Open Queued Files",
+  description = "Opens the files Rex Open queued in this tab's nvim, or in nvim in a new pane on the right. Markdown opens with md.",
+  run = function(ctx)
+    local file = io.open(OPEN_FILE_QUEUE, "r")
+    if not file then return false end
+    local paths = {}
+    for line in file:lines() do
+      if line ~= "" then paths[#paths + 1] = line end
+    end
+    file:close()
+    os.remove(OPEN_FILE_QUEUE)
+    for _, path in ipairs(paths) do
+      open_file(ctx, path)
+    end
+    return true
+  end,
+})
+
+rex.bind("f18", "open_file")
+
 do
   local dir = os.getenv("HOME") .. "/.local/state/rex-tab-history"
   local script = os.getenv("HOME") .. "/.config/rex/last_active_tab.lua"
