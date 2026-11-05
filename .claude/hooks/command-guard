@@ -47,12 +47,25 @@ ARTISAN_RUNNERS = {"dott", "sail"}
 ARTISAN_DENY = {"migrate", "migrate:fresh", "migrate:refresh", "migrate:reset", "migrate:rollback", "db:wipe"}
 DOTT_DENY = {"db:fresh", "db:migrate", "migrate", "db:rollback", "migrate:rollback", "db:squash", "setup", "sync"}
 DB_CLIENTS = {"mysql", "mariadb", "psql"}
+READ_SQL = {"select", "show", "explain", "describe", "desc", "with", "table", "values"}
+# A read verb can still wrap a write: a writable CTE, EXPLAIN ANALYZE, SELECT INTO, or a function
+# that changes state. A match inside a string literal only costs a confirmation.
+SQL_WRITE = re.compile(
+    r"\b(insert|update|delete|merge|truncate|create|alter|drop|grant|revoke|into"
+    r"|setval|nextval|pg_terminate_backend|pg_cancel_backend|lo_\w+|dblink\w*|query_to_xml\w*)\b",
+    re.IGNORECASE,
+)
+PSQL_META = re.compile(r"\\(d[a-zA-Z+]*|l\+?)([ \t][^\\\n]*)?")
 
 GIT_REASON = "AGENTS.md reserves `git {}` for the human: give them the command instead of running it."
 STAGE_REASON = "Staging needs the human's confirmation (AGENTS.md, Git)."
 SCHEMA_REASON = "Migrations and schema changes are the human's (AGENTS.md, Database Access): output the exact command for them to run."
 RM_REASON = "Delete with `trash`, not `rm` (AGENTS.md, File Operations)."
 DB_REASON = "A direct database client needs the human's confirmation; read with `pt db-query` instead."
+SQL_REASON = (
+    "A database client needs the human's confirmation unless all its SQL is inline and read-only"
+    " (`psql -c`, `mysql -e`): pass the query that way, or use `pt db-query`."
+)
 
 
 def quoted_at(line, end):
@@ -209,6 +222,34 @@ def artisan_command(argv):
     return None, []
 
 
+def inline_sql(name, args):
+    # None when the client also reads a file, stdin or a prompt: that SQL is not in the command.
+    flag, option = ("c", "--command") if name == "psql" else ("e", "--execute")
+    sql, i = [], 0
+    while i < len(args):
+        token = args[i]
+        if (name == "psql" and re.match(r"^-[a-zA-Z]*f", token)) or token.startswith(("--file", "--init-command")):
+            return None
+        if token == option or re.match(rf"^-[a-zA-Z]*{flag}$", token):
+            sql.append(args[i + 1] if i + 1 < len(args) else "")
+            i += 2
+            continue
+        if token.startswith(option + "="):
+            sql.append(token[len(option) + 1:])
+        i += 1
+    return sql or None
+
+
+def read_only(name, sql):
+    for statement in filter(None, (s.strip() for s in sql.split(";"))):
+        verb = re.match(r"[a-zA-Z]*", statement).group().lower()
+        if SQL_WRITE.search(statement):
+            return False
+        if not (name == "psql" and PSQL_META.fullmatch(statement)) and (verb not in READ_SQL or "\\" in statement):
+            return False
+    return True
+
+
 def judge(argv):
     argv = unwrap(argv)
     if not argv:
@@ -270,7 +311,9 @@ def judge(argv):
     if name == "rm":
         return "deny", RM_REASON
     if name in DB_CLIENTS:
-        return "ask", DB_REASON
+        sql = inline_sql(name, args)
+        if sql is None or not all(read_only(name, s) for s in sql):
+            return "ask", SQL_REASON
     return None
 
 

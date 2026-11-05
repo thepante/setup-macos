@@ -49,10 +49,7 @@
     { "action": "shell", "resource": "git rm *", "effect": "ask" },
     { "action": "shell", "resource": "git stage *", "effect": "ask" },
     { "action": "shell", "resource": "./dott db:sql *", "effect": "ask" },
-    { "action": "shell", "resource": "./dott server * sql *", "effect": "ask" },
-    { "action": "shell", "resource": "mysql *", "effect": "ask" },
-    { "action": "shell", "resource": "mariadb *", "effect": "ask" },
-    { "action": "shell", "resource": "psql *", "effect": "ask" }
+    { "action": "shell", "resource": "./dott server * sql *", "effect": "ask" }
   ],
   "compaction": {
     "auto": true,

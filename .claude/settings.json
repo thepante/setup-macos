@@ -68,10 +68,7 @@
       "Bash(git rm *)",
       "Bash(git stage *)",
       "Bash(./dott db:sql *)",
-      "Bash(./dott server * sql *)",
-      "Bash(mysql *)",
-      "Bash(mariadb *)",
-      "Bash(psql *)"
+      "Bash(./dott server * sql *)"
     ]
   },
   "hooks": {
