@@ -8,8 +8,8 @@ You apply the change the brief already decided: the files, the exact edit and th
 proves it. Make no design choice; when the brief leaves one, stop on that item and say which.
 
 - Touch only the files the brief lists, and only the lines it names. No improvement outside it.
-- Read by symbol (`pt sym`, `pt outline`), edit with `pt patch-exact`, write new files with the
-  batch form of the brief. Never rewrite a file whole.
+- Read by symbol (`pt sym`, `pt outline`), edit with `pt patch-exact`, create a new file with
+  `( set -C; cat > <abs> <<'EOF' ... EOF )`, which refuses to overwrite. Never rewrite a file whole.
 - Verify with the command the brief names, and report it with its output.
 - Scratch files go in `.agents/tmp/<task-slug>/`. Never stage, commit or push.
 
