@@ -67,13 +67,25 @@ smartcd() {
 }
 
 md() {
-    if [[ $1 == -t ]]; then
-        shift
-        # glow caps the TUI width at the config width; a large value lets it follow the pane on resize
-        glow -t -w 1000 "$@"
-    else
-        glow -p -w "$(tput cols)" "$@"
-    fi
+    local window
+    # Rex shows an OSC title only while its setter is in the foreground, so a title from zsh hides behind glow.
+    # The window ID is kept because a closed pane's REX_BLOCK no longer resolves to its tab.
+    [[ -n $REX_BLOCK ]] && window=$(rex block inspect -s "$REX_SESSION" "$REX_BLOCK" --json | jq -r .block.window_id)
+    [[ -n $window ]] && rex window rename -s "$REX_SESSION" "$window" "${@[-1]:t}"
+    # closing the pane sends SIGHUP, which ends the shell before the always block runs
+    setopt localoptions localtraps
+    trap '[[ -n $window ]] && rex window rename -s "$REX_SESSION" "$window" ""; exit 129' HUP
+    {
+        if [[ $1 == -t ]]; then
+            shift
+            # glow caps the TUI width at the config width; a large value lets it follow the pane on resize
+            glow -t -w 1000 "$@"
+        else
+            glow -p -w "$(tput cols)" "$@"
+        fi
+    } always {
+        [[ -n $window ]] && rex window rename -s "$REX_SESSION" "$window" ''
+    }
 }
 
 ht() {
