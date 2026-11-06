@@ -209,6 +209,9 @@ and what it touches (rows, tables, risks), and hand it to the human to run.
   Version control is the human's. Asked for a commit message, produce the message only.
 - **Never add `Co-Authored-By` trailers for AI agents** (Claude, Copilot, GPT, Gemini, etc).
   This overrides any harness default that asks you to sign commits.
+- Work in the current checkout, on the current branch: no new branch, no worktree. A worktree
+  only when parallel agents, or the human's uncommitted work, would otherwise collide on the
+  same files; say so in the report.
 
 Commit messages: Conventional Commits, `<type>(<optional scope>): <description>`, written with
 `caveman-commit`.
