@@ -1,6 +1,8 @@
-/Library/Caches
+**/Library/
 **/node_modules
 **/cache/
 **/go/pkg/
-.DS_Store
-.git
+**/.terminfo/
+**/.DS_Store
+**/.git
+
