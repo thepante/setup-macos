@@ -373,24 +373,26 @@ require('lazy').setup({
 {
 	"nvim-treesitter/nvim-treesitter",
 	version = false,
+	lazy = false,
 	build = ":TSUpdate",
-	event = { "BufReadPost", "BufNewFile" },
 	dependencies = {
 		{ "nvim-treesitter/nvim-treesitter-textobjects" },
 		{ "windwp/nvim-ts-autotag", opts = {} },
 	},
 	config = function()
-		require('nvim-treesitter.install').prefer_git = true
+		require('nvim-treesitter').install({
+			"bash", "html", "javascript", "json", "lua",
+			"markdown", "markdown_inline", "python",
+			"tsx", "typescript", "php", "go", "rust", "css", "astro"
+		})
 
-		-- New API: vim.treesitter.language.* and per-parser configs
-		require('nvim-treesitter').setup({
-			ensure_installed = {
-				"bash", "html", "javascript", "json", "lua",
-				"markdown", "markdown_inline", "python",
-				"tsx", "typescript", "php", "go", "rust", "css", "astro"
-			},
-			highlight = { enable = true },
-			indent = { enable = true },
+		vim.api.nvim_create_autocmd('FileType', {
+			group = vim.api.nvim_create_augroup('UserTreesitter', {}),
+			callback = function(args)
+				if pcall(vim.treesitter.start, args.buf) then
+					vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				end
+			end,
 		})
 	end,
 },
@@ -458,7 +460,7 @@ require('lazy').setup({
             }
 
             require('mason').setup()
-            require('mason-lspconfig').setup({ ensure_installed = vim.tbl_keys(servers) })
+            require('mason-lspconfig').setup({ ensure_installed = vim.tbl_keys(servers), automatic_enable = false })
 
             -- Global LspAttach
             vim.api.nvim_create_autocmd('LspAttach', {
