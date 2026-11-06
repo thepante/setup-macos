@@ -560,7 +560,8 @@
 		"max_idle_retained_threads": 6,
 		"terminal_init_command": "",
 		"sandbox_permissions": {
-			"allow_all_hosts": true
+			"allow_unsandboxed": false,
+			"allow_all_hosts": false
 		},
 		"single_file_review": true,
 		"show_turn_stats": true,
