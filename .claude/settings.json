@@ -148,7 +148,7 @@
     "pr": ""
   },
   "includeGitInstructions": false,
-  "cleanupPeriodDays": 14,
+  "cleanupPeriodDays": 60,
   "tui": "default",
   "theme": "dark",
   "switchModelsOnFlag": true
