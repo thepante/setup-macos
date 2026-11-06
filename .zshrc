@@ -38,7 +38,7 @@ export RIPGREP_CONFIG_PATH=~/.ripgreprc
 export HOMEBREW_NO_AUTO_UPDATE=1
 export VISUAL=nvim
 export EDITOR=nvim
-export LANG="UTF-8"
+export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export DELTA_PAGER="less $LESS"
 
