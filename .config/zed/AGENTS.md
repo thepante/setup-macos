@@ -140,6 +140,11 @@ requested or needed to reproduce a bug.
   Never in the repo root or the source tree; a temp file anywhere else is an error to fix at once.
 - Nothing under `.agents/tmp/` is committed. If it isn't gitignored, say so; don't edit
   `.gitignore` yourself.
+- When a fixture under `.agents/tmp/` needs a copy of a real project, make it a `git worktree`
+  (removed with `git worktree remove` when done) or a folder that symlinks the project's
+  `vendor` and `node_modules`; never a copy or a clone with its dependencies. One copied
+  `copac.web` held 1.1 GB, and a weekly job (`agents-tmp-gc`) trashes only what had no write in
+  60 days.
 
 Exceptions: the project's formal test suite stays in its versioned location, and deliverables
 the user asked for go in their permanent home.

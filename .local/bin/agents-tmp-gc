@@ -1,0 +1,30 @@
+#!/bin/bash
+# Trashes the entries of every .agents/tmp/ that nothing wrote to in DAYS days:
+#   agents-tmp-gc            trash them (launchd, weekly)
+#   agents-tmp-gc --dry-run  list them
+#
+# Installed as copies (this file in ~/.local/bin, the plist in ~/Library/LaunchAgents), not
+# symlinks: macOS denies launchd any read under ~/Documents, this repo included. The same
+# wall is why ~/Documents is not a root.
+
+PATH="/opt/homebrew/bin:/usr/bin:/bin"
+
+ROOTS=("$HOME/Projects" "$HOME/.agents")
+DAYS=60
+
+dry_run=false
+[[ $1 == --dry-run ]] && dry_run=true
+
+while IFS= read -r -d '' tmp; do
+  while IFS= read -r -d '' entry; do
+    # Last write, not access: Spotlight and backups read files too, so atime would keep
+    # everything alive. A folder's own mtime only moves when a direct child is added or
+    # removed, so the newest write anywhere inside it decides.
+    [[ -n $(find "$entry" -mtime -"$DAYS" -print -quit) ]] && continue
+    if $dry_run; then
+      du -sh "$entry"
+    else
+      trash "$entry" && echo "$(date '+%F %T') trashed $entry"
+    fi
+  done < <(find "$tmp" -mindepth 1 -maxdepth 1 -print0)
+done < <(find "${ROOTS[@]}" -maxdepth 5 -type d -path '*/.agents/tmp' -prune -print0)
