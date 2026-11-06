@@ -145,6 +145,10 @@ requested or needed to reproduce a bug.
   `vendor` and `node_modules`; never a copy or a clone with its dependencies. One copied
   `copac.web` held 1.1 GB, and a weekly job (`agents-tmp-gc`) trashes only what had no write in
   60 days.
+- An HTML preview, mockup or report the user asks for is a local file under
+  `.agents/tmp/<task-slug>/`, opened with `open`. Publish it to claude.ai (the Artifact tool)
+  only when the user asks for an artifact or a link: this overrides the harness's guidance to
+  publish.
 
 Exceptions: the project's formal test suite stays in its versioned location, and deliverables
 the user asked for go in their permanent home.
