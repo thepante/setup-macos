@@ -31,6 +31,13 @@
 
 [push]
     default = current  # push only current branch by default
+	autoSetupRemote = true
+
+[fetch]
+	prune = true
+
+[rerere]
+	enabled = true
 
 [merge]
 	conflictstyle = diff3
@@ -77,3 +84,9 @@
 [url "git@github.com:"]
 	insteadOf = "gh:"
 
+[includeIf "hasconfig:remote.*.url:git@github.com:thepante/**"]
+	path = /Users/fabian/Documents/setup-macos/.gitconfig-personal
+[includeIf "hasconfig:remote.*.url:https://github.com/thepante/**"]
+	path = /Users/fabian/Documents/setup-macos/.gitconfig-personal
+[includeIf "hasconfig:remote.*.url:gh:thepante/**"]
+	path = /Users/fabian/Documents/setup-macos/.gitconfig-personal
