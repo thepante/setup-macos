@@ -46,7 +46,7 @@
 	rs= "!f(){ git fetch && git status -sb; }; f"
 	s = "status -sb --untracked-files=no"
 	u = "remote -v update"
-	p = "!f(){ git fetch && git stash && git pull && git stash pop; }; f"
+	p = pull --autostash
 	l = "log -10 --decorate --oneline --graph"
 	rl= "log --pretty=format:\"%C(yellow)%h%Creset %s %C(blue)[%aN]%Creset %Cgreen(%cr)%Creset\" --date=short HEAD..origin"
 
