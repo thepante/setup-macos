@@ -448,7 +448,7 @@ require('lazy').setup({
             local servers = {
                 lua_ls = { settings = { Lua = { workspace = { checkThirdParty = false } } } },
                 intelephense = {
-                    settings = { intelephense = { files = { maxSize = 5000000 }, stubs = { "bcmath", "date", "filter", "hash", "iconv", "json", "mbstring", "openssl", "pcre", "readline", "sockets", "sodium", "standard", "superglobals", "tokenizer", "xml", "zlib", "wordpress", "woocommerce" } } }
+                    settings = { intelephense = { files = { maxSize = 5000000 } } }
                 },
                 ts_ls = { single_file_support = true },
                 gopls = {},
