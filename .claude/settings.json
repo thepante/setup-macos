@@ -143,6 +143,12 @@
       "effortLevel": "high"
     }
   },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "includeGitInstructions": false,
+  "cleanupPeriodDays": 14,
   "tui": "default",
   "theme": "dark",
   "switchModelsOnFlag": true
