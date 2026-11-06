@@ -230,10 +230,39 @@
 		"mute_on_join": true
 	},
 	"context_servers": {
+		// >>> mcp:grafana (dott mcp:grafana la reescribe)
+		"Eraser": {
+			"enabled": false,
+			"url": "https://app.eraser.io/api/mcp"
+		},
+		"copac-grafana": {
+			"enabled": true,
+			"command": "/Users/fabian/.local/bin/copac-grafana-mcp",
+			"args": []
+		},
+		// <<< mcp:grafana
+		"copac-web": {
+			"enabled": true,
+			"command": "/Users/fabian/.local/bin/copac-web-mcp",
+			"args": []
+		},
 		"perseus-dott": {
 			"enabled": true,
 			"command": "/Users/fabian/.local/bin/perseus-mcp",
 			"args": []
+		},
+		"tailscale": {
+			"enabled": true,
+			"command": "/Users/fabian/.local/bin/tailscale-mcp",
+			"args": []
+		},
+		"sentry-mcp": {
+			"enabled": false,
+			"remote": false,
+			"settings": {
+				"sentry_access_token": "",
+				"sentry_host": ""
+			}
 		},
 		"mcp-server-playwright": {
 			"enabled": true,
@@ -635,43 +664,43 @@
 				"mcp:Filesystem:read_text_file": {
 					"default": "allow"
 				},
-				"mcp:grafana-copac:get_tempo_trace": {
+				"mcp:copac-grafana:get_tempo_trace": {
 					"default": "allow"
 				},
-				"mcp:grafana-copac:search_tempo_traces": {
+				"mcp:copac-grafana:search_tempo_traces": {
 					"default": "allow"
 				},
-				"mcp:grafana-copac:get_dashboard_panel_queries": {
+				"mcp:copac-grafana:get_dashboard_panel_queries": {
 					"default": "allow"
 				},
-				"mcp:grafana-copac:get_dashboard_summary": {
+				"mcp:copac-grafana:get_dashboard_summary": {
 					"default": "allow"
 				},
-				"mcp:grafana-copac:list_prometheus_label_names": {
+				"mcp:copac-grafana:list_prometheus_label_names": {
 					"default": "allow"
 				},
-				"mcp:grafana-copac:query_prometheus": {
+				"mcp:copac-grafana:query_prometheus": {
 					"default": "allow"
 				},
-				"mcp:grafana-copac:list_prometheus_metric_names": {
+				"mcp:copac-grafana:list_prometheus_metric_names": {
 					"default": "allow"
 				},
-				"mcp:grafana-copac:query_loki_logs": {
+				"mcp:copac-grafana:query_loki_logs": {
 					"default": "allow"
 				},
-				"mcp:grafana-copac:list_loki_label_values": {
+				"mcp:copac-grafana:list_loki_label_values": {
 					"default": "allow"
 				},
-				"mcp:grafana-copac:list_loki_label_names": {
+				"mcp:copac-grafana:list_loki_label_names": {
 					"default": "allow"
 				},
-				"mcp:grafana-copac:search_dashboards": {
+				"mcp:copac-grafana:search_dashboards": {
 					"default": "allow"
 				},
-				"mcp:grafana-copac:alerting_rules_read": {
+				"mcp:copac-grafana:alerting_rules_read": {
 					"default": "allow"
 				},
-				"mcp:grafana-copac:list_datasources": {
+				"mcp:copac-grafana:list_datasources": {
 					"default": "allow"
 				},
 				"mcp:posthog:exec": {
