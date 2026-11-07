@@ -19,6 +19,10 @@ HEREDOC = re.compile(r"(?<!<)<<-?(?!<)\s*\\?(['\"]?)([^\s'\"<>;&|()]+)\1")
 ENV_ASSIGNMENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
 DURATION = re.compile(r"^\d+(\.\d+)?[smhd]?$")
 REDIRECTION = re.compile(r"^[<>&]*[<>][<>&|]*$")
+FUNCTION = re.compile(
+    r"(?<![^\s;&|(){}])(?:function\s+([^\s;&|(){}<>'\"$`\\]+)(?:\s*\(\s*\))?|([^\s;&|(){}<>'\"$`\\]+)\s*\(\s*\))\s*\{"
+)
+POSITIONAL = re.compile(r'("?)\$(\{[1-9@*]\}|[1-9@*])\1')
 LARGE_COMMAND = 100_000
 
 WRAPPERS = {
@@ -77,7 +81,7 @@ def quoted_at(line, end):
         if line[i] in "'\"" and quote in (None, line[i]):
             quote = None if quote else line[i]
         i += 1
-    return quote is not None
+    return quote
 
 
 def strip_heredocs(command):
@@ -106,6 +110,77 @@ def closing(text, start, opener, closer):
         if depth == 0:
             return i
     return len(text)
+
+
+def brace_end(text, start):
+    depth, quote, i = 0, None, start
+    while i < len(text):
+        c = text[i]
+        if c == "\\" and quote != "'":
+            i += 2
+            continue
+        if c in "'\"" and quote in (None, c):
+            quote = None if quote else c
+        elif quote is None and c in "{}":
+            depth += 1 if c == "{" else -1
+            # A brace inside the body (`${1}`, a nested definition, `echo {`) is past what this
+            # reading can bound: the definition stays in the text and is judged as written.
+            if depth != 1:
+                return i if depth == 0 else None
+        i += 1
+    return None
+
+
+def definitions(text):
+    functions, kept, start = {}, [], 0
+    for m in FUNCTION.finditer(text):
+        end = None if m.start() < start or quoted_at(text, m.start()) else brace_end(text, m.end() - 1)
+        if end is not None:
+            functions.setdefault(m.group(1) or m.group(2), []).append(text[m.end():end])
+            kept.append(text[start:m.start()])
+            start = end + 1
+    return "".join(kept) + text[start:], functions
+
+
+def deferrable(name, bodies, sites, commands, nested):
+    # `q(){ psql -c "$1"; }; q "select 1"` may read each call's argument instead of asking only
+    # when plain calls are the one way into the body (no eval, trap, export -f or name in a
+    # variable) and nothing in it moves the arguments (shift, set, $@, an unquoted $1).
+    if len(bodies) != 1 or not sites or re.search(r"\b(shift|set|argv)\b", bodies[0]):
+        return False
+    body = bodies[0]
+    for m in re.finditer(r"\$\{?[0-9@*#]", body):
+        quote = quoted_at(body, m.start())
+        whole = re.fullmatch(r"\$[1-9]", m.group()) and body[m.start() - 1] + body[m.end():m.end() + 1] == '""'
+        if quote != "'" and not (quote == '"' and whole):
+            return False
+    word = re.compile(rf"(?<!\w){re.escape(name)}(?!\w)")
+    others = [token for argv in commands if unwrap(argv)[:1] != [name] for token in argv] + nested
+    return not any(word.search(token) for token in others)
+
+
+def resolve(sql, calls):
+    resolved = []
+    for statement in sql:
+        n = int(statement[1]) if re.fullmatch(r"\$[1-9]", statement) else 0
+        resolved += [args[n - 1] for args in calls if len(args) >= n] if n else [statement]
+    return resolved
+
+
+def expand(body, args):
+    # Substitutes as the shell does, word splitting included: a `-f` or a `;` inside an argument
+    # must reach the judge as an option or as data, never as a separator.
+    def value(m):
+        quote, whole, key = quoted_at(body, m.start()), m.group(1), m.group(2).strip("{}")
+        words = args if key in "@*" else args[int(key) - 1:int(key)]
+        if quote == "'" or (quote and whole):
+            return m.group()
+        if quote:
+            return re.sub(r'[\\"$`]', r"\\\g<0>", " ".join(words))
+        if not whole:
+            return " ".join(shlex.quote(w) for word in words for w in word.split())
+        return " ".join(map(shlex.quote, words)) if key == "@" else shlex.quote(" ".join(words))
+    return POSITIONAL.sub(value, body)
 
 
 def scan(text):
@@ -250,7 +325,7 @@ def read_only(name, sql):
     return True
 
 
-def judge(argv):
+def judge(argv, calls=None):
     argv = unwrap(argv)
     if not argv:
         return None
@@ -267,7 +342,7 @@ def judge(argv):
         return verdict(" ".join(args))
     if name in CONTAINERS:
         start = next((i + 1 for i, token in enumerate(argv) if token in {"exec", "run"}), len(argv))
-        return strongest(judge(argv[i:]) for i in range(start, len(argv)))
+        return strongest(judge(argv[i:], calls) for i in range(start, len(argv)))
     if name == "sail" and args[:1] != ["artisan"]:
         return judge(args)
     if name == "dott" and args[:1] == ["sail"]:
@@ -312,6 +387,8 @@ def judge(argv):
         return "deny", RM_REASON
     if name in DB_CLIENTS:
         sql = inline_sql(name, args)
+        if sql is not None and calls is not None:
+            sql = resolve(sql, calls)
         if sql is None or not all(read_only(name, s) for s in sql):
             return "ask", SQL_REASON
     return None
@@ -326,8 +403,9 @@ def strongest(results):
     return None
 
 
-def verdict(command):
+def verdict(command, calls=None):
     text, heredocs = strip_heredocs(command)
+    text, functions = definitions(scan(text)[0])
     commands, nested = simple_commands(text)
     for opener, quoted, body in heredocs:
         body = "\n".join(body)
@@ -336,7 +414,14 @@ def verdict(command):
         elif not quoted:
             # Quotes are literal in a heredoc body, but $(...) and backticks still run there.
             nested += scan(body.replace("'", " ").replace('"', " "))[1]
-    return strongest([judge(argv) for argv in commands] + [verdict(inner) for inner in nested])
+    results = [judge(argv, calls) for argv in commands] + [verdict(inner) for inner in nested]
+    for name, bodies in functions.items():
+        sites = [argv[1:] for argv in map(unwrap, commands) if argv[:1] == [name]]
+        # strip_heredocs reads line by line: a newline inside a call's argument can hide part of it.
+        deferred = sites if not heredocs and deferrable(name, bodies, sites, commands, nested) else None
+        results += [verdict(body, deferred) for body in bodies]
+        results += [verdict(expand(body, args)) for body in bodies for args in sites]
+    return strongest(results)
 
 
 def main():
